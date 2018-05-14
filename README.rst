@@ -13,7 +13,7 @@ Introduction
     :target: https://travis-ci.org/apatt/CircuitPython_LED_Animation
     :alt: Build Status
 
-.. todo:: Describe what the library does.
+Perform a variety of LED animation tasks
 
 Dependencies
 =============
@@ -28,7 +28,15 @@ This is easily achieved by downloading
 Usage Example
 =============
 
-.. todo:: Add a quick, simple example. It and other examples should live in the examples folder and be included in docs/examples.rst.
+import adafruit_dotstar as dotstar
+import board
+from led_animation import color
+# setup the pixel
+dot = dotstar.DotStar(board.APA102_SCK, board.APA102_MOSI, 1, brightness=.2)
+# set the color by name
+dot[0] = color.GOLD
+# show the pixel
+dot.show()
 
 Contributing
 ============
