@@ -1,8 +1,8 @@
 Introduction
 ============
 
-.. image:: https://readthedocs.org/projects/circuitpython-led_animation/badge/?version=latest
-    :target: https://circuitpython-led_animation.readthedocs.io/
+.. image:: https://readthedocs.org/projects/adafruit_circuitpython_led_animation/badge/?version=latest
+    :target: https://adafruit_circuitpython_led_animation.readthedocs.io/
     :alt: Documentation Status
 
 .. image:: https://img.shields.io/discord/327254708534116352.svg
