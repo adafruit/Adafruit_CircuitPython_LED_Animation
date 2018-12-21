@@ -9,8 +9,8 @@ Introduction
     :target: https://discord.gg/nBQh6qu
     :alt: Discord
 
-.. image:: https://travis-ci.org/apatt/CircuitPython_LED_Animation.svg?branch=master
-    :target: https://travis-ci.org/apatt/CircuitPython_LED_Animation
+.. image:: https://travis-ci.com/apatt/CircuitPython_LED_Animation.svg?branch=master
+    :target: https://travis-ci.com/apatt/CircuitPython_LED_Animation
     :alt: Build Status
 
 Perform a variety of LED animation tasks
