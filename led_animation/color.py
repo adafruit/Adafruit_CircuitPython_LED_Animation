@@ -1,3 +1,4 @@
+"""Color variables made available for import"""
 RED = (255, 0, 0)
 YELLOW = (255, 150, 0)
 ORANGE = (255, 40, 0)
