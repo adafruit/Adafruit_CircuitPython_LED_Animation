@@ -56,16 +56,44 @@ class Animation:
     def __init__(self, pixel_object, speed, color):
         self.pixel_object = pixel_object
         self.speed = speed
-        self.color = color
+        self._color = color
         self._next_update = time.monotonic()
         self.pixel_object.auto_write = False
+        self.color = color
 
-    def _timing_control(self):
+    def animate(self):
+        """
+        Call animate() from your code's main loop.  It will draw the animation draw() at intervals configured by
+        The speed property (set from init).
+        :return: True if the animation draw cycle was triggered, otherwise False.
+        """
         now = time.monotonic()
-        if now >= self._next_update:
-            self._next_update = now + self.speed
-            return True
-        return False
+        if now < self._next_update:
+            return False
+
+        self._next_update = now + self.speed
+        self.draw()
+        return True
+
+    def draw(self):
+        """
+        Animation subclasses must implement draw() to render the animation sequence.
+        """
+        pass
+
+    @property
+    def color(self):
+        return self._color
+
+    @color.setter
+    def color(self, value):
+        if isinstance(value, int):
+            value = (value >> 16 & 0xff, value >> 16 & 0xff, value & 0xff)
+        self._color = value
+        self._recompute_color(value)
+
+    def _recompute_color(self, color):
+        pass
 
 
 class Blink(Animation):
@@ -74,9 +102,7 @@ class Blink(Animation):
         self._state = False
         super(Blink, self).__init__(pixel_object, speed, color)
 
-    def animate(self):
-        if not self._timing_control():
-            return
+    def draw(self):
         self._state = not self._state
         self.pixel_object.fill(self.color if self._state else self.color_off)
         self.pixel_object.show()
@@ -87,21 +113,14 @@ class Comet(Animation):
         self._tail_length = tail_length
         self._color_step = 0.8 / tail_length
         self._color_offset = 0.2
-        self._color = color
         self._comet_colors = None
         super(Comet, self).__init__(pixel_object, speed, color)
         self._generator = self._comet_generator()
 
-    @property
-    def color(self):
-        return self._color
-
-    @color.setter
-    def color(self, value):
-        self._color = value
+    def _recompute_color(self, color):
         self._comet_colors = [
-            [int(self._color[rgb] * ((n * self._color_step) + self._color_offset))
-             for rgb in range(len(self._color))
+            [int(color[rgb] * ((n * self._color_step) + self._color_offset))
+             for rgb in range(len(color))
             ] for n in range(self._tail_length)
         ]
 
@@ -124,9 +143,7 @@ class Comet(Animation):
                 self.pixel_object.show()
                 yield
 
-    def animate(self):
-        if not self._timing_control():
-            return
+    def draw(self):
         next(self._generator)
 
 
@@ -134,17 +151,11 @@ class Sparkle(Animation):
     def __init__(self, pixel_object, speed, color):
         self._half_color = None
         self._dim_color = None
-        self._color = color
         super(Sparkle, self).__init__(pixel_object, speed, color)
 
-    @property
-    def color(self):
-        return self._color
-
-    @color.setter
-    def color(self, value):
-        half_color = tuple(value[rgb] // 2 for rgb in range(len(value)))
-        dim_color = tuple(value[rgb] // 10 for rgb in range(len(value)))
+    def _recompute_color(self, color):
+        half_color = tuple(color[rgb] // 2 for rgb in range(len(color)))
+        dim_color = tuple(color[rgb] // 10 for rgb in range(len(color)))
         for pixel in range(len(self.pixel_object)):
             if self.pixel_object[pixel] == self._half_color:
                 self.pixel_object[pixel] = half_color
@@ -152,11 +163,8 @@ class Sparkle(Animation):
                 self.pixel_object[pixel] = dim_color
         self._half_color = half_color
         self._dim_color = dim_color
-        self._color = value
 
-    def animate(self):
-        if not self._timing_control():
-            return
+    def draw(self):
         pixel = random.randint(0, (len(self.pixel_object) - 2))
         self.pixel_object[pixel] = self._color
         self.pixel_object.show()
