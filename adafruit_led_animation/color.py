@@ -9,6 +9,7 @@ BLUE = (0, 0, 255)
 PURPLE = (180, 0, 255)
 MAGENTA = (255, 0, 20)
 WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 
 # Sparkle colors:
 GOLD = (255, 222, 30)
