@@ -96,16 +96,45 @@ class Animation:
         pass
 
 
-class Blink(Animation):
-    def __init__(self, pixel_object, speed, color, color_off=BLACK):
-        self.color_off = color_off
-        self._state = False
-        super(Blink, self).__init__(pixel_object, speed, color)
+class ColorCycle(Animation):
+    """
+    Animate a sequence of 1 or more colours, cycling at the specified speed.
+    """
+    def __init__(self, pixel_object, speed, colors):
+        self.colors = colors
+        super(ColorCycle, self).__init__(pixel_object, speed, colors[0])
+        self._generator = self._color_generator()
 
     def draw(self):
-        self._state = not self._state
-        self.pixel_object.fill(self.color if self._state else self.color_off)
+        next(self._generator)
+        self.pixel_object.fill(self.color)
         self.pixel_object.show()
+
+    def _color_generator(self):
+        index = 0
+        while True:
+            index += 1
+            if index > len(self.colors):
+                index = 0
+            yield self.color
+
+
+class Blink(ColorCycle):
+    def __init__(self, pixel_object, speed, color):
+        super(Blink, self).__init__(pixel_object, speed,  [self.color, BLACK])
+
+    @Animation.color.setter
+    def color(self, value):
+        self.colors = [value, BLACK]
+
+
+class Solid(ColorCycle):
+    def __init__(self, pixel_object, speed, color):
+        super(Solid, self).__init__(pixel_object, speed, [color])
+
+    @Animation.color.setter
+    def color(self, value):
+        self.colors = [value, BLACK]
 
 
 class Comet(Animation):
