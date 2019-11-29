@@ -44,8 +44,8 @@ Implementation Notes
 """
 
 import time
-from .color import BLACK
 import random
+from .color import BLACK
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
@@ -53,9 +53,10 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git
 
 class Animation:
     # TODO: rename pixel_object to something more beginner friendly
-    def __init__(self, pixel_object, speed):
+    def __init__(self, pixel_object, speed, color):
         self.pixel_object = pixel_object
         self.speed = speed
+        self.color = color
         self._next_update = time.monotonic()
         self.pixel_object.auto_write = False
 
@@ -68,17 +69,16 @@ class Animation:
 
 
 class Blink(Animation):
-    def __init__(self, pixel_object, speed, color_on, color_off=BLACK):
-        self.color_on = color_on
+    def __init__(self, pixel_object, speed, color, color_off=BLACK):
         self.color_off = color_off
         self._state = False
-        super(Blink, self).__init__(pixel_object, speed)
+        super(Blink, self).__init__(pixel_object, speed, color)
 
     def animate(self):
         if not self._timing_control():
             return
         self._state = not self._state
-        self.pixel_object.fill(self.color_on if self._state else self.color_off)
+        self.pixel_object.fill(self.color if self._state else self.color_off)
         self.pixel_object.show()
 
 
@@ -87,8 +87,9 @@ class Comet(Animation):
         self._tail_length = tail_length
         self._color_step = 0.8 / tail_length
         self._color_offset = 0.2
-        self.color = color
-        super(Comet, self).__init__(pixel_object, speed)
+        self._color = color
+        self._comet_colors = None
+        super(Comet, self).__init__(pixel_object, speed, color)
         self._generator = self._comet_generator()
 
     @property
@@ -98,12 +99,9 @@ class Comet(Animation):
     @color.setter
     def color(self, value):
         self._color = value
-        self._compute_color()
-
-    def _compute_color(self):
         self._comet_colors = [
             [int(self._color[rgb] * ((n * self._color_step) + self._color_offset))
-                for rgb in range(len(self._color))
+             for rgb in range(len(self._color))
             ] for n in range(self._tail_length)
         ]
 
@@ -113,10 +111,14 @@ class Comet(Animation):
             for start in range(-self._tail_length, num_pixels + 1):
                 if start > 0:
                     self.pixel_object[start-1] = 0
-                end = self._tail_length if start + self._tail_length < num_pixels else num_pixels - start
+                if start + self._tail_length < num_pixels:
+                    end = self._tail_length
+                else:
+                    end = num_pixels - start
                 if start < 0:
                     num_visible = self._tail_length + start
-                    self.pixel_object[0:num_visible] = self._comet_colors[self._tail_length - num_visible:]
+                    self.pixel_object[0:num_visible] = self._comet_colors[self._tail_length -
+                                                                          num_visible:]
                 else:
                     self.pixel_object[start:start + end] = self._comet_colors[0:end]
                 self.pixel_object.show()
@@ -132,8 +134,8 @@ class Sparkle(Animation):
     def __init__(self, pixel_object, speed, color):
         self._half_color = None
         self._dim_color = None
-        super(Sparkle, self).__init__(pixel_object, speed)
-        self.color = color
+        self._color = color
+        super(Sparkle, self).__init__(pixel_object, speed, color)
 
     @property
     def color(self):
