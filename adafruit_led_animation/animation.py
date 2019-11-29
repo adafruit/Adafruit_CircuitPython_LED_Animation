@@ -121,7 +121,7 @@ class ColorCycle(Animation):
 
 class Blink(ColorCycle):
     def __init__(self, pixel_object, speed, color):
-        super(Blink, self).__init__(pixel_object, speed,  [self.color, BLACK])
+        super(Blink, self).__init__(pixel_object, speed,  [color, BLACK])
 
     @Animation.color.setter
     def color(self, value):
