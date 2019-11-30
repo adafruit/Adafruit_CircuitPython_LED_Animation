@@ -85,15 +85,12 @@ class Animation:
     @property
     def color(self):
         """
-        Return the current colour.
+        The current color.
         """
         return self._color
 
     @color.setter
     def color(self, color):
-        """
-        Set the current colour.
-        """
         if isinstance(color, int):
             color = (color >> 16 & 0xff, color >> 16 & 0xff, color & 0xff)
         self._color = color
@@ -105,7 +102,7 @@ class Animation:
 
 class ColorCycle(Animation):
     """
-    Animate a sequence of 1 or more colours, cycling at the specified speed.
+    Animate a sequence of one or more colors, cycling at the specified speed.
     """
     def __init__(self, pixel_object, speed, colors):
         self.colors = colors
@@ -138,7 +135,7 @@ class Blink(ColorCycle):
 
 class Solid(ColorCycle):
     """
-    Show a solid color.
+    A solid color.
     """
     def __init__(self, pixel_object, speed, color):
         super(Solid, self).__init__(pixel_object, speed, [color])
@@ -149,7 +146,7 @@ class Solid(ColorCycle):
 
 class Comet(Animation):
     """
-    Show a comet animation.
+    A comet animation.
     """
     def __init__(self, pixel_object, speed, color, tail_length=10):
         self._tail_length = tail_length
@@ -191,7 +188,7 @@ class Comet(Animation):
 
 class Sparkle(Animation):
     """
-    Sparkle a color.
+    Sparkle animation of a single color.
     """
     def __init__(self, pixel_object, speed, color):
         self._half_color = None
