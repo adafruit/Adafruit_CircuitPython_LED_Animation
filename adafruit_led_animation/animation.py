@@ -120,11 +120,9 @@ class ColorCycle(Animation):
     def _color_generator(self):
         index = 0
         while True:
-            index += 1
-            if index > len(self.colors):
-                index = 0
             self._color = self.colors[index]
             yield
+            index = (index + 1) % len(self.colors)
 
 
 class Blink(ColorCycle):
