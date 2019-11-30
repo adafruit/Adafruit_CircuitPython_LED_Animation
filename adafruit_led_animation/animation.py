@@ -73,8 +73,10 @@ class Animation:
         if now < self._next_update:
             return False
 
-        self._next_update = now + self.speed
         self.draw()
+
+        now = time.monotonic()
+        self._next_update = now + self.speed
         return True
 
     def draw(self):
