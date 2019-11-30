@@ -69,14 +69,12 @@ class Animation:
         configured by the speed property (set from init).
         :return: True if the animation draw cycle was triggered, otherwise False.
         """
-        now = time.monotonic()
+        now = time.monotonic_ns()
         if now < self._next_update:
             return False
 
         self.draw()
-
-        now = time.monotonic()
-        self._next_update = now + self.speed
+        self._next_update = now + self._speed_ns
         return True
 
     def draw(self):
@@ -97,6 +95,18 @@ class Animation:
             color = (color >> 16 & 0xff, color >> 16 & 0xff, color & 0xff)
         self._color = color
         self._recompute_color(color)
+
+    @property
+    def speed(self):
+        """
+        Get or set the animation speed in fractional seconds.
+        :return: speed
+        """
+        return self._speed_ns / 1000000000
+
+    @speed.setter
+    def speed(self, seconds):
+        self._speed_ns = int(seconds * 1000000000)
 
     def _recompute_color(self, color):
         pass
