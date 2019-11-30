@@ -52,7 +52,9 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git
 
 
 class Animation:
-    # TODO: rename pixel_object to something more beginner friendly
+    """
+    Base class for animations.
+    """
     def __init__(self, pixel_object, speed, color):
         self.pixel_object = pixel_object
         self.speed = speed
@@ -63,8 +65,8 @@ class Animation:
 
     def animate(self):
         """
-        Call animate() from your code's main loop.  It will draw the animation draw() at intervals configured by
-        The speed property (set from init).
+        Call animate() from your code's main loop.  It will draw the animation draw() at intervals
+        configured by the speed property (set from init).
         :return: True if the animation draw cycle was triggered, otherwise False.
         """
         now = time.monotonic()
@@ -79,18 +81,23 @@ class Animation:
         """
         Animation subclasses must implement draw() to render the animation sequence.
         """
-        pass
 
     @property
     def color(self):
+        """
+        Return the current colour.
+        """
         return self._color
 
     @color.setter
-    def color(self, value):
-        if isinstance(value, int):
-            value = (value >> 16 & 0xff, value >> 16 & 0xff, value & 0xff)
-        self._color = value
-        self._recompute_color(value)
+    def color(self, color):
+        """
+        Set the current colour.
+        """
+        if isinstance(color, int):
+            color = (color >> 16 & 0xff, color >> 16 & 0xff, color & 0xff)
+        self._color = color
+        self._recompute_color(color)
 
     def _recompute_color(self, color):
         pass
@@ -116,28 +123,36 @@ class ColorCycle(Animation):
             index += 1
             if index > len(self.colors):
                 index = 0
-            yield self.color
+            self._color = self.colors[index]
+            yield
 
 
 class Blink(ColorCycle):
+    """
+    Blink a color on and off.
+    """
     def __init__(self, pixel_object, speed, color):
-        super(Blink, self).__init__(pixel_object, speed,  [color, BLACK])
+        super(Blink, self).__init__(pixel_object, speed, [color, BLACK])
 
-    @Animation.color.setter
-    def color(self, value):
-        self.colors = [value, BLACK]
+    def _recompute_color(self, color):
+        self.colors = [color, BLACK]
 
 
 class Solid(ColorCycle):
+    """
+    Show a solid color.
+    """
     def __init__(self, pixel_object, speed, color):
         super(Solid, self).__init__(pixel_object, speed, [color])
 
-    @Animation.color.setter
-    def color(self, value):
-        self.colors = [value, BLACK]
+    def _recompute_color(self, color):
+        self.colors = [color, BLACK]
 
 
 class Comet(Animation):
+    """
+    Show a comet animation.
+    """
     def __init__(self, pixel_object, speed, color, tail_length=10):
         self._tail_length = tail_length
         self._color_step = 0.8 / tail_length
@@ -177,6 +192,9 @@ class Comet(Animation):
 
 
 class Sparkle(Animation):
+    """
+    Sparkle a color.
+    """
     def __init__(self, pixel_object, speed, color):
         self._half_color = None
         self._dim_color = None
