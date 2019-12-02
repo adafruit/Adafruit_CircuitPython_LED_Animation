@@ -149,8 +149,8 @@ class Solid(ColorCycle):
     """
     A solid color.
     """
-    def __init__(self, pixel_object, speed, color):
-        super(Solid, self).__init__(pixel_object, speed, [color])
+    def __init__(self, pixel_object, color):
+        super(Solid, self).__init__(pixel_object, [color])
 
     def _recompute_color(self, color):
         self.colors = [color, BLACK]
