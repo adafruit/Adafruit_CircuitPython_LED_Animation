@@ -65,7 +65,7 @@ class Animation:
     """
     Base class for animations.
     """
-    def __init__(self, pixel_object, speed, color):
+    def __init__(self, pixel_object, speed, color, peers=None):
         self.pixel_object = pixel_object
         self._speed_ns = 0
         self.speed = speed  # sets _speed_ns
@@ -73,6 +73,7 @@ class Animation:
         self._next_update = monotonic_ns()
         self.pixel_object.auto_write = False
         self.color = color
+        self.peers = peers if peers else []
 
     def animate(self):
         """
@@ -85,13 +86,30 @@ class Animation:
             return False
 
         self.draw()
+        if self.peers:
+            for peer in self.peers:
+                peer.draw()
+        self.show()
+        for peer in self.peers:
+            peer.show()
+
         self._next_update = now + self._speed_ns
         return True
+
+    def _next_update_time(self):
+        if self._slave_of:
+            return self._slave_of
 
     def draw(self):
         """
         Animation subclasses must implement draw() to render the animation sequence.
         """
+
+    def show(self):
+        """
+        Displays the updated pixels.  Called during animates with changes.
+        """
+        self.pixel_object.show()
 
     @property
     def color(self):
@@ -145,7 +163,7 @@ class ColorCycle(Animation):
     def draw(self):
         next(self._generator)
         self.pixel_object.fill(self.color)
-        self.pixel_object.show()
+        self.show()
 
     def _color_generator(self):
         index = 0
@@ -328,12 +346,18 @@ class AnimationGroup:
     A group of animations that are active together, such as a strip of
     pixels connected to and the onboard NeoPixels on a CPX or CPB.
     """
-    def __init__(self, *members):
+    def __init__(self, *members, sync=False):
         self._members = members
+        self._sync = sync
+        if sync:
+            main = members[0]
+            main.peers = members[1:]
 
     def animate(self):
-        for item in self._members:
-            item.animate()
+        if self._sync:
+            return self._members[0].animate()
+
+        return any([item.animate() for item in self._members])
 
     def change_color(self, color):
         """
