@@ -52,7 +52,7 @@ except ImportError:
         return int(time.time() * 1000000000)
 
 import random
-from .color import BLACK
+from .color import BLACK, RAINBOW
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
@@ -106,8 +106,7 @@ class Animation:
     @property
     def speed(self):
         """
-        Get or set the animation speed in fractional seconds.
-        :return: speed
+        The animation speed in fractional seconds.
         """
         return self._speed_ns / 1000000000
 
@@ -122,8 +121,13 @@ class Animation:
 class ColorCycle(Animation):
     """
     Animate a sequence of one or more colors, cycling at the specified speed.
+
+    :param pixel_object: The initialised LED object.
+    :param int speed: Animation speed in seconds, e.g. ``0.1``.
+    :param colors: A list of colors to cycle through in ``(r, g, b)`` tuple, or ``0x000000`` hex
+                   format. Defaults to a rainbow color cycle.
     """
-    def __init__(self, pixel_object, speed, colors):
+    def __init__(self, pixel_object, speed, colors=RAINBOW):
         self.colors = colors
         super(ColorCycle, self).__init__(pixel_object, speed, colors[0])
         self._generator = self._color_generator()
@@ -144,6 +148,10 @@ class ColorCycle(Animation):
 class Blink(ColorCycle):
     """
     Blink a color on and off.
+
+    :param pixel_object: The initialised LED object.
+    :param int speed: Animation speed in seconds, e.g. ``0.1``.
+    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     """
     def __init__(self, pixel_object, speed, color):
         super(Blink, self).__init__(pixel_object, speed, [color, BLACK])
@@ -155,6 +163,9 @@ class Blink(ColorCycle):
 class Solid(ColorCycle):
     """
     A solid color.
+
+    :param pixel_object: The initialised LED object.
+    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     """
     def __init__(self, pixel_object, color):
         super(Solid, self).__init__(pixel_object, speed=0.1, colors=[color])
@@ -166,6 +177,13 @@ class Solid(ColorCycle):
 class Comet(Animation):
     """
     A comet animation.
+
+    :param pixel_object: The initialised LED object.
+    :param int speed: Animation speed in seconds, e.g. ``0.1``.
+    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
+    :param int tail_length: The length of the comet. Defaults to 10. Cannot exceed the number of
+                            pixels present in the pixel object, e.g. if the strip is 30 pixels
+                            long, the ``tail_length`` cannot exceed 30 pixels.
     """
     def __init__(self, pixel_object, speed, color, tail_length=10):
         self._tail_length = tail_length
@@ -208,6 +226,10 @@ class Comet(Animation):
 class Sparkle(Animation):
     """
     Sparkle animation of a single color.
+
+    :param pixel_object: The initialised LED object.
+    :param int speed: Animation speed in seconds, e.g. ``0.1``.
+    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     """
     def __init__(self, pixel_object, speed, color):
         self._half_color = None

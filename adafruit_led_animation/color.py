@@ -1,4 +1,7 @@
-"""Color variables made available for import"""
+"""Color variables made available for import.
+
+RAINBOW is a list of colors to use for cycling through.
+"""
 RED = (255, 0, 0)
 YELLOW = (255, 150, 0)
 ORANGE = (255, 40, 0)
@@ -11,9 +14,10 @@ MAGENTA = (255, 0, 20)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-# Sparkle colors:
 GOLD = (255, 222, 30)
 PINK = (242, 90, 255)
 AQUA = (50, 255, 255)
 JADE = (0, 255, 40)
 AMBER = (255, 100, 0)
+
+RAINBOW = [RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE]
