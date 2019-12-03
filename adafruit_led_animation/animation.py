@@ -49,6 +49,9 @@ except ImportError:
     import time
 
     def monotonic_ns():
+        """
+        Implementation of monotonic_ns for platforms without time.monotonic_ns
+        """
         return int(time.time() * 1000000000)
 
 import random
@@ -64,7 +67,8 @@ class Animation:
     """
     def __init__(self, pixel_object, speed, color):
         self.pixel_object = pixel_object
-        self.speed = speed
+        self._speed_ns = 0
+        self.speed = speed  # sets _speed_ns
         self._color = color
         self._next_update = monotonic_ns()
         self.pixel_object.auto_write = False
@@ -254,20 +258,3 @@ class Sparkle(Animation):
         self.pixel_object[pixel] = self._half_color
         self.pixel_object[pixel + 1] = self._dim_color
         self.pixel_object.show()
-
-
-class DummyPixels(list):
-
-    @property
-    def auto_write(self):
-        return False
-
-    @auto_write.setter
-    def auto_write(self, value):
-        pass
-
-    def show(self):
-        pass
-
-    def fill(self, color):
-        self[:] = [color] * len(self)
