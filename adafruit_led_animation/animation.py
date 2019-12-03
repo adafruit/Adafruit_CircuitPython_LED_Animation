@@ -168,10 +168,10 @@ class Solid(ColorCycle):
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     """
     def __init__(self, pixel_object, color):
-        super(Solid, self).__init__(pixel_object, speed=0.1, colors=[color])
+        super(Solid, self).__init__(pixel_object, speed=1, colors=[color])
 
     def _recompute_color(self, color):
-        self.colors = [color, BLACK]
+        self.colors = [color]
 
 
 class Comet(Animation):
