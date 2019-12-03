@@ -92,7 +92,7 @@ class Animation:
     @color.setter
     def color(self, color):
         if isinstance(color, int):
-            color = (color >> 16 & 0xff, color >> 16 & 0xff, color & 0xff)
+            color = (color >> 16 & 0xff, color >> 8 & 0xff, color & 0xff)
         self._color = color
         self._recompute_color(color)
 
