@@ -43,7 +43,14 @@ Implementation Notes
 
 """
 
-import time
+try:
+    from time import monotonic_ns as monotonic_ns
+except ImportError:
+    import time
+
+    def monotonic_ns():
+        return int(time.time() * 1000000000)
+
 import random
 from .color import BLACK
 
@@ -59,7 +66,7 @@ class Animation:
         self.pixel_object = pixel_object
         self.speed = speed
         self._color = color
-        self._next_update = time.monotonic()
+        self._next_update = monotonic_ns()
         self.pixel_object.auto_write = False
         self.color = color
 
@@ -69,7 +76,7 @@ class Animation:
         configured by the speed property (set from init).
         :return: True if the animation draw cycle was triggered, otherwise False.
         """
-        now = time.monotonic_ns()
+        now = monotonic_ns()
         if now < self._next_update:
             return False
 
@@ -150,7 +157,7 @@ class Solid(ColorCycle):
     A solid color.
     """
     def __init__(self, pixel_object, color):
-        super(Solid, self).__init__(pixel_object, [color])
+        super(Solid, self).__init__(pixel_object, speed=0.1, colors=[color])
 
     def _recompute_color(self, color):
         self.colors = [color, BLACK]
@@ -225,3 +232,20 @@ class Sparkle(Animation):
         self.pixel_object[pixel] = self._half_color
         self.pixel_object[pixel + 1] = self._dim_color
         self.pixel_object.show()
+
+
+class DummyPixels(list):
+
+    @property
+    def auto_write(self):
+        return False
+
+    @auto_write.setter
+    def auto_write(self, value):
+        pass
+
+    def show(self):
+        pass
+
+    def fill(self, color):
+        self[:] = [color] * len(self)
