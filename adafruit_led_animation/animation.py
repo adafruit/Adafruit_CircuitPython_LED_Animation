@@ -121,6 +121,12 @@ class Animation:
     def _recompute_color(self, color):
         pass
 
+    def change_color(self, color):
+        """
+        By default changing color uses the color property.
+        """
+        self.color = color
+
 
 class ColorCycle(Animation):
     """
@@ -148,6 +154,11 @@ class ColorCycle(Animation):
             yield
             index = (index + 1) % len(self.colors)
 
+    def change_color(self, color):
+        """
+        ColorCycle doesn't support change_color.
+        """
+
 
 class Blink(ColorCycle):
     """
@@ -163,6 +174,12 @@ class Blink(ColorCycle):
     def _recompute_color(self, color):
         self.colors = [color, BLACK]
 
+    def change_color(self, color):
+        """
+        Change the color.
+        """
+        self.colors[0] = color
+
 
 class Solid(ColorCycle):
     """
@@ -176,6 +193,12 @@ class Solid(ColorCycle):
 
     def _recompute_color(self, color):
         self.colors = [color]
+
+    def change_color(self, color):
+        """
+        Change the color.
+        """
+        self.colors[0] = color
 
 
 class Comet(Animation):
@@ -258,3 +281,64 @@ class Sparkle(Animation):
         self.pixel_object[pixel] = self._half_color
         self.pixel_object[pixel + 1] = self._dim_color
         self.pixel_object.show()
+
+
+class AnimationSequence:
+    """
+    A sequence of Animations to run in sequence, looping forever.
+    Advances manually or at the specified interval.
+    """
+    def __init__(self, *members, advance_interval=None):
+        self._members = members
+        self._advance_interval = advance_interval * 1000000000 if advance_interval else None
+        self._last_advance = monotonic_ns()
+        self._current = 0
+
+    def _auto_advance(self):
+        if not self._advance_interval:
+            return
+        now = monotonic_ns()
+        if self._last_advance - now > self._advance_interval:
+            self._last_advance = now
+            self.next()
+
+    def next(self):
+        self._current = (self._current + 1) % len(self._members)
+        print("next animation is %d of %d" % (self._current, len(self._members)))
+
+    def animate(self):
+        self._auto_advance()
+        self.current_animation.animate()
+
+    @property
+    def current_animation(self):
+        return self._members[self._current]
+
+    def change_color(self, color):
+        """
+        Change the color of all members that support setting the color with change_color.
+        Ignored by animations that do not support it.
+        """
+        for item in self._members:
+            item.change_color(color)
+
+
+class AnimationGroup:
+    """
+    A group of animations that are active together, such as a strip of
+    pixels connected to and the onboard NeoPixels on a CPX or CPB.
+    """
+    def __init__(self, *members):
+        self._members = members
+
+    def animate(self):
+        for item in self._members:
+            item.animate()
+
+    def change_color(self, color):
+        """
+        Change the color of all members that support setting the color with change_color.
+        Ignored by animations that do not support it.
+        """
+        for item in self._members:
+            item.change_color(color)
