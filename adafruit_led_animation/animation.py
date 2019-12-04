@@ -44,7 +44,7 @@ Implementation Notes
 """
 
 try:
-    from time import monotonic_ns as monotonic_ns
+    from time import monotonic_ns as monotonic_ns, sleep
 except ImportError:
     import time
 
@@ -232,8 +232,8 @@ class Comet(Animation):
     """
     def __init__(self, pixel_object, speed, color, tail_length=10):
         self._tail_length = tail_length
-        self._color_step = 0.8 / tail_length
-        self._color_offset = 0.2
+        self._color_step = 0.9 / tail_length
+        self._color_offset = 0.1
         self._comet_colors = None
         super(Comet, self).__init__(pixel_object, speed, color)
         self._generator = self._comet_generator()
@@ -261,7 +261,7 @@ class Comet(Animation):
                                                                           num_visible:]
                 else:
                     self.pixel_object[start:start + end] = self._comet_colors[0:end]
-                self.pixel_object.show()
+                self.show()
                 yield
 
     def draw(self):
@@ -282,12 +282,12 @@ class Sparkle(Animation):
         super(Sparkle, self).__init__(pixel_object, speed, color)
 
     def _recompute_color(self, color):
-        half_color = tuple(color[rgb] // 2 for rgb in range(len(color)))
+        half_color = tuple(color[rgb] // 4 for rgb in range(len(color)))
         dim_color = tuple(color[rgb] // 10 for rgb in range(len(color)))
         for pixel in range(len(self.pixel_object)):
             if self.pixel_object[pixel] == self._half_color:
                 self.pixel_object[pixel] = half_color
-            else:
+            elif self.pixel_object[pixel] == self._dim_color:
                 self.pixel_object[pixel] = dim_color
         self._half_color = half_color
         self._dim_color = dim_color
@@ -295,10 +295,10 @@ class Sparkle(Animation):
     def draw(self):
         pixel = random.randint(0, (len(self.pixel_object) - 2))
         self.pixel_object[pixel] = self._color
-        self.pixel_object.show()
+        self.show()
         self.pixel_object[pixel] = self._half_color
         self.pixel_object[pixel + 1] = self._dim_color
-        self.pixel_object.show()
+        self.show()
 
 
 class AnimationSequence:
@@ -322,7 +322,6 @@ class AnimationSequence:
 
     def next(self):
         self._current = (self._current + 1) % len(self._members)
-        print("next animation is %d of %d" % (self._current, len(self._members)))
 
     def animate(self):
         self._auto_advance()
