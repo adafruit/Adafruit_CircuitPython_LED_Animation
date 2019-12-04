@@ -44,7 +44,7 @@ Implementation Notes
 """
 
 try:
-    from time import monotonic_ns as monotonic_ns, sleep
+    from time import monotonic_ns as monotonic_ns
 except ImportError:
     import time
 
@@ -95,10 +95,6 @@ class Animation:
 
         self._next_update = now + self._speed_ns
         return True
-
-    def _next_update_time(self):
-        if self._slave_of:
-            return self._slave_of
 
     def draw(self):
         """
@@ -230,11 +226,13 @@ class Comet(Animation):
                             pixels present in the pixel object, e.g. if the strip is 30 pixels
                             long, the ``tail_length`` cannot exceed 30 pixels.
     """
+    # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, color, tail_length=10, reverse=False, bounce=False):
         self._tail_length = tail_length + 1
         self._color_step = 0.9 / tail_length
         self._color_offset = 0.1
         self._comet_colors = None
+        self._reverse_comet_colors = None
         self.reverse = reverse
         self.bounce = bounce
         super(Comet, self).__init__(pixel_object, speed, color)
