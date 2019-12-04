@@ -230,37 +230,43 @@ class Comet(Animation):
                             pixels present in the pixel object, e.g. if the strip is 30 pixels
                             long, the ``tail_length`` cannot exceed 30 pixels.
     """
-    def __init__(self, pixel_object, speed, color, tail_length=10):
-        self._tail_length = tail_length
+    def __init__(self, pixel_object, speed, color, tail_length=10, reverse=False):
+        self._tail_length = tail_length + 1
         self._color_step = 0.9 / tail_length
         self._color_offset = 0.1
         self._comet_colors = None
+        self.reverse = reverse
         super(Comet, self).__init__(pixel_object, speed, color)
         self._generator = self._comet_generator()
 
     def _recompute_color(self, color):
-        self._comet_colors = [
+        self._comet_colors = [BLACK] + [
             [int(color[rgb] * ((n * self._color_step) + self._color_offset))
              for rgb in range(len(color))
-            ] for n in range(self._tail_length)
+            ] for n in range(self._tail_length - 1)
         ]
+        self._reverse_comet_colors = list(reversed(self._comet_colors))
+
+    def _get_range(self, num_pixels):
+        if self.reverse:
+            return range(num_pixels, -self._tail_length - 1, -1)
+        return range(-self._tail_length, num_pixels + 1)
 
     def _comet_generator(self):
         num_pixels = len(self.pixel_object)
         while True:
-            for start in range(-self._tail_length, num_pixels + 1):
-                if start > 0:
-                    self.pixel_object[start-1] = 0
+            colors = self._reverse_comet_colors if self.reverse else self._comet_colors
+            for start in self._get_range(num_pixels):
+
                 if start + self._tail_length < num_pixels:
                     end = self._tail_length
                 else:
                     end = num_pixels - start
-                if start < 0:
+                if start <= 0:
                     num_visible = self._tail_length + start
-                    self.pixel_object[0:num_visible] = self._comet_colors[self._tail_length -
-                                                                          num_visible:]
+                    self.pixel_object[0:num_visible] = colors[self._tail_length - num_visible:]
                 else:
-                    self.pixel_object[start:start + end] = self._comet_colors[0:end]
+                    self.pixel_object[start:start + end] = colors[0:end]
                 self.show()
                 yield
 
