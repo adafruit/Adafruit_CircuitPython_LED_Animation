@@ -230,12 +230,13 @@ class Comet(Animation):
                             pixels present in the pixel object, e.g. if the strip is 30 pixels
                             long, the ``tail_length`` cannot exceed 30 pixels.
     """
-    def __init__(self, pixel_object, speed, color, tail_length=10, reverse=False):
+    def __init__(self, pixel_object, speed, color, tail_length=10, reverse=False, bounce=False):
         self._tail_length = tail_length + 1
         self._color_step = 0.9 / tail_length
         self._color_offset = 0.1
         self._comet_colors = None
         self.reverse = reverse
+        self.bounce = bounce
         super(Comet, self).__init__(pixel_object, speed, color)
         self._generator = self._comet_generator()
 
@@ -269,6 +270,8 @@ class Comet(Animation):
                     self.pixel_object[start:start + end] = colors[0:end]
                 self.show()
                 yield
+            if self.bounce:
+                self.reverse = not self.reverse
 
     def draw(self):
         next(self._generator)
