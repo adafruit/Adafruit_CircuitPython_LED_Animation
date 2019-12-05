@@ -225,6 +225,8 @@ class Comet(Animation):
     :param int tail_length: The length of the comet. Defaults to 10. Cannot exceed the number of
                             pixels present in the pixel object, e.g. if the strip is 30 pixels
                             long, the ``tail_length`` cannot exceed 30 pixels.
+    :param bool reverse: Animates the comet in the reverse order. Defaults to ``False``.
+    :param bool bounce: Comet will bounce back and forth. Defaults to ``True``.
     """
     # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, color, tail_length=10, reverse=False, bounce=False):
@@ -312,6 +314,10 @@ class AnimationSequence:
     """
     A sequence of Animations to run in sequence, looping forever.
     Advances manually or at the specified interval.
+
+    :param members: The animation objects or groups.
+    :param advance_interval: Time in seconds between animations if cycling automatically. Defaults
+                             to ``None``.
     """
     def __init__(self, *members, advance_interval=None):
         self._members = members
@@ -340,7 +346,7 @@ class AnimationSequence:
 
     def change_color(self, color):
         """
-        Change the color of all members that support setting the color with change_color.
+        Change the color of all members that support setting the color with ``change_color``.
         Ignored by animations that do not support it.
         """
         for item in self._members:
