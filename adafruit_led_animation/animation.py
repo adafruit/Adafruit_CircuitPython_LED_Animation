@@ -76,6 +76,7 @@ class Animation:
         self.color = color
         self.peers = peers if peers else []
         self._paused = paused
+        self._time_left_at_pause = 0
 
     def animate(self):
         """
@@ -117,11 +118,14 @@ class Animation:
         Stops the animation until resumed.
         """
         self._paused = True
+        self._time_left_at_pause = max(0, monotonic_ns() - self._next_update)
 
     def resume(self):
         """
         Resumes the animation.
         """
+        self._next_update = monotonic_ns() + self._time_left_at_pause
+        self._time_left_at_pause = 0
         self._paused = False
 
     def fill(self, color):
@@ -350,6 +354,7 @@ class AnimationSequence:
         self._auto_clear = auto_clear
         self.clear_color = BLACK
         self._paused = False
+        self._paused_at = 0
 
     def _auto_advance(self):
         if not self._advance_interval:
@@ -392,7 +397,10 @@ class AnimationSequence:
         Freeze the current animation in the sequence.
         Also stops auto_advance.
         """
+        if self._paused:
+            return
         self._paused = True
+        self._paused_at = monotonic_ns()
         self.current_animation.freeze()
 
     def resume(self):
@@ -400,8 +408,14 @@ class AnimationSequence:
         Resume the current animation in the sequence and resumes auto advance
         if enabled.
         """
+        if not self._paused:
+            return
         self._paused = False
+        now = monotonic_ns()
+        self._last_advance += now - self._paused_at
+        self._paused_at = 0
         self.current_animation.resume()
+
 
 class AnimationGroup:
     """
