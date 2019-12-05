@@ -65,7 +65,8 @@ class Animation:
     """
     Base class for animations.
     """
-    def __init__(self, pixel_object, speed, color, peers=None):
+    # pylint: disable=too-many-arguments
+    def __init__(self, pixel_object, speed, color, peers=None, paused=False):
         self.pixel_object = pixel_object
         self._speed_ns = 0
         self.speed = speed  # sets _speed_ns
@@ -74,6 +75,7 @@ class Animation:
         self.pixel_object.auto_write = False
         self.color = color
         self.peers = peers if peers else []
+        self._paused = paused
 
     def animate(self):
         """
@@ -81,6 +83,9 @@ class Animation:
         configured by the speed property (set from init).
         :return: True if the animation draw cycle was triggered, otherwise False.
         """
+        if self._paused:
+            return False
+
         now = monotonic_ns()
         if now < self._next_update:
             return False
@@ -106,6 +111,24 @@ class Animation:
         Displays the updated pixels.  Called during animates with changes.
         """
         self.pixel_object.show()
+
+    def freeze(self):
+        """
+        Stops the animation until resumed.
+        """
+        self._paused = True
+
+    def resume(self):
+        """
+        Resumes the animation.
+        """
+        self._paused = False
+
+    def fill(self, color):
+        """
+        Fills the pixel object with a color.
+        """
+        self.pixel_object.fill(color)
 
     @property
     def color(self):
@@ -319,25 +342,31 @@ class AnimationSequence:
     :param advance_interval: Time in seconds between animations if cycling automatically. Defaults
                              to ``None``.
     """
-    def __init__(self, *members, advance_interval=None):
+    def __init__(self, *members, advance_interval=None, auto_clear=False):
         self._members = members
         self._advance_interval = advance_interval * 1000000000 if advance_interval else None
         self._last_advance = monotonic_ns()
         self._current = 0
+        self._auto_clear = auto_clear
+        self.clear_color = BLACK
+        self._paused = False
 
     def _auto_advance(self):
         if not self._advance_interval:
             return
         now = monotonic_ns()
-        if self._last_advance - now > self._advance_interval:
+        if now - self._last_advance > self._advance_interval:
             self._last_advance = now
             self.next()
 
     def next(self):
+        if self._auto_clear:
+            self.fill(self.clear_color)
         self._current = (self._current + 1) % len(self._members)
 
     def animate(self):
-        self._auto_advance()
+        if not self._paused:
+            self._auto_advance()
         self.current_animation.animate()
 
     @property
@@ -352,6 +381,27 @@ class AnimationSequence:
         for item in self._members:
             item.change_color(color)
 
+    def fill(self, color):
+        """
+        Fills the current animation with a color.
+        """
+        self.current_animation.fill(color)
+
+    def freeze(self):
+        """
+        Freeze the current animation in the sequence.
+        Also stops auto_advance.
+        """
+        self._paused = True
+        self.current_animation.freeze()
+
+    def resume(self):
+        """
+        Resume the current animation in the sequence and resumes auto advance
+        if enabled.
+        """
+        self._paused = False
+        self.current_animation.resume()
 
 class AnimationGroup:
     """
@@ -371,10 +421,32 @@ class AnimationGroup:
 
         return any([item.animate() for item in self._members])
 
+
+    def _for_all(self, method, *args, **kwargs):
+        for item in self._members:
+            getattr(item, method)(*args, **kwargs)
+
     def change_color(self, color):
         """
         Change the color of all members that support setting the color with change_color.
         Ignored by animations that do not support it.
         """
-        for item in self._members:
-            item.change_color(color)
+        self._for_all('change_color', color)
+
+    def fill(self, color):
+        """
+        Fills all pixel objects in the group with a color.
+        """
+        self._for_all('fill', color)
+
+    def freeze(self):
+        """
+        Freeze all animations in the group.
+        """
+        self._for_all('freeze')
+
+    def resume(self):
+        """
+        Resume all animations in the group.
+        """
+        self._for_all('resume')
