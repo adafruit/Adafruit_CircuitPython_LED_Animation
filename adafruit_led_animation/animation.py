@@ -44,7 +44,7 @@ Implementation Notes
 """
 
 try:
-    from time import monotonic_ns as monotonic_ns
+    from time import monotonic_ns
 except ImportError:
     import time
 
@@ -345,8 +345,8 @@ class AnimationSequence:
     Advances manually or at the specified interval.
 
     :param members: The animation objects or groups.
-    :param int advance_interval: Time in seconds between animations if cycling automatically. Defaults
-                             to ``None``.
+    :param int advance_interval: Time in seconds between animations if cycling
+                                 automatically. Defaults to ``None``.
 
     .. code-block:: python
 
