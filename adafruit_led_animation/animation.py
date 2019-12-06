@@ -385,17 +385,29 @@ class AnimationSequence:
             self.next()
 
     def next(self):
+        """
+        Jump to the next animation.
+        """
         if self._auto_clear:
             self.fill(self.clear_color)
         self._current = (self._current + 1) % len(self._members)
 
     def animate(self):
+        """
+        Call animate() from your code's main loop.  It will draw the current animation
+        or go to the next animation based on the advance_interval if set.
+
+        :return: True if the animation draw cycle was triggered, otherwise False.
+        """
         if not self._paused:
             self._auto_advance()
         self.current_animation.animate()
 
     @property
     def current_animation(self):
+        """
+        Returns the current animation in the sequence.
+        """
         return self._members[self._current]
 
     def change_color(self, color):
@@ -454,6 +466,12 @@ class AnimationGroup:
             main.peers = members[1:]
 
     def animate(self):
+        """
+        Call animate() from your code's main loop.  It will draw all of the animations
+        in the group.
+
+        :return: True if any animation draw cycle was triggered, otherwise False.
+        """
         if self._sync:
             return self._members[0].animate()
 
