@@ -82,6 +82,7 @@ class Animation:
         """
         Call animate() from your code's main loop.  It will draw the animation draw() at intervals
         configured by the speed property (set from init).
+
         :return: True if the animation draw cycle was triggered, otherwise False.
         """
         if self._paused:
@@ -133,6 +134,7 @@ class Animation:
         Fills the pixel object with a color.
         """
         self.pixel_object.fill(color)
+        self.show()
 
     @property
     def color(self):
@@ -343,8 +345,26 @@ class AnimationSequence:
     Advances manually or at the specified interval.
 
     :param members: The animation objects or groups.
-    :param advance_interval: Time in seconds between animations if cycling automatically. Defaults
+    :param int advance_interval: Time in seconds between animations if cycling automatically. Defaults
                              to ``None``.
+
+    .. code-block:: python
+
+        from adafruit_led_animation.animation import AnimationSequence, Blink, Comet, Sparkle
+        import adafruit_led_animation.color as color
+        import board
+        import neopixel
+
+        strip_pixels = neopixel.NeoPixel(board.A1, 30, brightness=1, auto_write=False)
+
+        blink = Blink(strip_pixels, 0.2, color.RED)
+        comet = Comet(strip_pixels, 0.1, color.BLUE)
+        sparkle = Sparkle(strip_pixels, 0.05, color.GREEN)
+
+        animations = AnimationSequence(blink, comet, sparkle, advance_interval=1)
+
+        while True:
+            animations.animate()
     """
     def __init__(self, *members, advance_interval=None, auto_clear=False):
         self._members = members
@@ -405,8 +425,7 @@ class AnimationSequence:
 
     def resume(self):
         """
-        Resume the current animation in the sequence and resumes auto advance
-        if enabled.
+        Resume the current animation in the sequence, and resumes auto advance if enabled.
         """
         if not self._paused:
             return
@@ -419,8 +438,13 @@ class AnimationSequence:
 
 class AnimationGroup:
     """
-    A group of animations that are active together, such as a strip of
-    pixels connected to and the onboard NeoPixels on a CPX or CPB.
+    A group of animations that are active together. An example would be grouping a strip of
+    pixels connected to a board and the onboard LED.
+
+    :param members: The animation objects or groups.
+    :param bool sync: Synchronises the timing of all members of the group to the settings of the
+                      first member of the group. Defaults to ``False``.
+
     """
     def __init__(self, *members, sync=False):
         self._members = members
@@ -434,7 +458,6 @@ class AnimationGroup:
             return self._members[0].animate()
 
         return any([item.animate() for item in self._members])
-
 
     def _for_all(self, method, *args, **kwargs):
         for item in self._members:
