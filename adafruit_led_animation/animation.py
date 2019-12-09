@@ -339,6 +339,30 @@ class Sparkle(Animation):
         self.show()
 
 
+class Pulse(Animation):
+
+    def __init__(self, pixel_object, speed, color, period=5, max_intensity=1, min_intensity=0):
+        self._intensity = min_intensity
+        self.max_intensity = max_intensity
+        self.min_intensity = min_intensity
+        self._direction = 1.0
+        self._intensity_step = 2 / (period / speed)
+        self._bpp = len(pixel_object[0])
+        super(Pulse, self).__init__(pixel_object, speed, color)
+
+    def draw(self):
+        self._intensity += self._intensity_step * self._direction
+        if self._direction < 0 and self._intensity <= self.min_intensity:
+            self._direction = -self._direction
+            self._intensity = self.min_intensity
+        elif self._direction > 0 and self._intensity >= self.max_intensity:
+            self._direction = -self._direction
+            self._intensity = self.max_intensity
+        color = [int(self._color[n] * self._intensity) for n in range(self._bpp)]
+        self.fill(color)
+        self.show()
+
+
 class AnimationSequence:
     """
     A sequence of Animations to run in sequence, looping forever.
