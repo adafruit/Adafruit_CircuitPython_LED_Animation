@@ -420,7 +420,7 @@ class Chase(Animation):
             self.pixel_object[n::self._repeat_width] = [self.group_color(n) for n in range(num)]
         self.show()
 
-    def group_color(self, n):
+    def group_color(self, n):  # pylint: disable=unused-argument
         """
         Generate the color for the n'th group
 
