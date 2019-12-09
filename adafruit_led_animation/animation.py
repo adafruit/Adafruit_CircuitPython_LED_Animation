@@ -401,7 +401,7 @@ class AnimationSequence:
         """
         if not self._paused:
             self._auto_advance()
-        self.current_animation.animate()
+        return self.current_animation.animate()
 
     @property
     def current_animation(self):
