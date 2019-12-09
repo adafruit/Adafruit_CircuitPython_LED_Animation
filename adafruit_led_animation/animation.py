@@ -382,13 +382,18 @@ class Chase(Animation):
     :param pixel_object: The initialised LED object.
     :param int speed: Animation speed rate in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
-    :param size: Number of pixels per chase group.
-    :param reverse: Reverse direction.
+    :param size: Number of pixels to turn on in a row.
+    :param spacing: Number of pixels to turn off in a row.
+    :param reverse: Reverse direction of movement.
     """
 
     # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, color, size=3, reverse=False):
-        self._size = size * 2
+    def __init__(self, pixel_object, speed, color, size=1, spacing=3, reverse=False):
+        self._size = size
+        self._spacing = spacing
+        self._repeat_width = size + spacing
+        self._num_repeats = len(pixel_object) // self._repeat_width
+        self._overflow = len(pixel_object) % self._repeat_width
         self._direction = 1
         self._reverse = reverse
         self._n = 0
@@ -405,14 +410,14 @@ class Chase(Animation):
     def reverse(self, value):
         self._reverse = value
         self._direction = -1 if self._reverse else 1
+        print("Set Reverse", self._reverse, self._direction)
 
     def draw(self):
-        self._n = (self._n + 1) % self._size
-        n = self._n
-        size = self._size
-        half_size = size // 2
-        for i in range(len(self.pixel_object)):
-            self.pixel_object[i] = self.color if ((i + n) % size) < half_size else (0, 0, 0)
+        self._n = (self._n + self._direction) % self._repeat_width
+        self.pixel_object.fill((0, 0, 0))
+        for n in range(self._n, self._n + self._size):
+            num = self._num_repeats + (1 if n < self._overflow else 0)
+            self.pixel_object[n::self._repeat_width] = [self.color] * num
         self.show()
 
 
