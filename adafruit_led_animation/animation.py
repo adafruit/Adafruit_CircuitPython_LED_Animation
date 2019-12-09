@@ -357,6 +357,7 @@ class Pulse(Animation):
         self.max_intensity = max_intensity
         self.min_intensity = min_intensity
         self._direction = 1.0
+        # TODO Fix this:
         self._intensity_step = 2 / (period / speed)
         self._bpp = len(pixel_object[0])
         super(Pulse, self).__init__(pixel_object, speed, color)
@@ -371,6 +372,47 @@ class Pulse(Animation):
             self._intensity = self.max_intensity
         color = [int(self._color[n] * self._intensity) for n in range(self._bpp)]
         self.fill(color)
+        self.show()
+
+
+class Chase(Animation):
+    """
+    Chase pixels in one direction single color.
+
+    :param pixel_object: The initialised LED object.
+    :param int speed: Animation speed rate in seconds, e.g. ``0.1``.
+    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
+    :param size: Number of pixels per chase group.
+    :param reverse: Reverse direction.
+    """
+
+    # pylint: disable=too-many-arguments
+    def __init__(self, pixel_object, speed, color, size=3, reverse=False):
+        self._size = size * 2
+        self._direction = 1
+        self._reverse = reverse
+        self._n = 0
+        super(Chase, self).__init__(pixel_object, speed, color)
+
+    @property
+    def reverse(self):
+        """
+        Whether the animation is reversed
+        """
+        return self._reverse
+
+    @reverse.setter
+    def reverse(self, value):
+        self._reverse = value
+        self._direction = -1 if self._reverse else 1
+
+    def draw(self):
+        self._n = (self._n + 1) % self._size
+        n = self._n
+        size = self._size
+        half_size = size // 2
+        for i in range(len(self.pixel_object)):
+            self.pixel_object[i] = self.color if ((i + n) % size) < half_size else (0, 0, 0)
         self.show()
 
 
