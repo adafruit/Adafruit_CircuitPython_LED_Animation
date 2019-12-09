@@ -55,7 +55,7 @@ except ImportError:
         return int(time.time() * 1000000000)
 
 import random
-from math import ceil, sin
+from math import ceil, sin, radians
 from .color import BLACK, RAINBOW
 
 __version__ = "0.0.0-auto.0"
@@ -354,24 +354,24 @@ class Pulse(Animation):
 
     # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, color, period=5, max_intensity=1, min_intensity=0):
-        self._intensity = min_intensity
         self.max_intensity = max_intensity
         self.min_intensity = min_intensity
-        self._direction = 1.0
-        # TODO Fix this:
-        self._intensity_step = 2 / (period / speed)
+        self._period = period
+        self._intensity_delta = max_intensity - min_intensity
+        self._radians_per_second = radians(180 / period)
         self._bpp = len(pixel_object[0])
+        self._last_update = monotonic_ns()
+        self._cycle_position = 0
         super(Pulse, self).__init__(pixel_object, speed, color)
 
     def draw(self):
-        self._intensity += self._intensity_step * self._direction
-        if self._direction < 0 and self._intensity <= self.min_intensity:
-            self._direction = -self._direction
-            self._intensity = self.min_intensity
-        elif self._direction > 0 and self._intensity >= self.max_intensity:
-            self._direction = -self._direction
-            self._intensity = self.max_intensity
-        color = [int(self._color[n] * self._intensity) for n in range(self._bpp)]
+        now = monotonic_ns()
+        time_since_last_draw = (now - self._last_update) / 1000000000
+        self._last_update = now
+        self._cycle_position = (self._cycle_position + time_since_last_draw) % self._period
+        intensity = self.min_intensity + (sin(self._radians_per_second * self._cycle_position) * self._intensity_delta)
+
+        color = [int(self._color[n] * intensity) for n in range(self._bpp)]
         self.fill(color)
         self.show()
 
