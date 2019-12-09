@@ -394,7 +394,7 @@ class Chase(Animation):
         self._repeat_width = size + spacing
         self._num_repeats = len(pixel_object) // self._repeat_width
         self._overflow = len(pixel_object) % self._repeat_width
-        self._direction = 1
+        self._direction = 1 if not reverse else -1
         self._reverse = reverse
         self._n = 0
         super(Chase, self).__init__(pixel_object, speed, color)
