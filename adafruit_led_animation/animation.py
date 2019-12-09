@@ -340,7 +340,18 @@ class Sparkle(Animation):
 
 
 class Pulse(Animation):
+    """
+    Pulse all pixels a single color.
 
+    :param pixel_object: The initialised LED object.
+    :param int speed: Animation refresh rate in seconds, e.g. ``0.1``.
+    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
+    :param period: Period to pulse the LEDs over.  Default 5.
+    :param max_intensity: The maximum intensity to pulse, between 0 and 1.0.  Default 1.
+    :param min_intensity: The minimum intensity to pulse, between 0 and 1.0.  Default 0.
+    """
+
+    # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, color, period=5, max_intensity=1, min_intensity=0):
         self._intensity = min_intensity
         self.max_intensity = max_intensity
