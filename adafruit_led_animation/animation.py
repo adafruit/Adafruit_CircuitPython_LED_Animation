@@ -417,8 +417,16 @@ class Chase(Animation):
         self.pixel_object.fill((0, 0, 0))
         for n in range(self._n, self._n + self._size):
             num = self._num_repeats + (1 if n < self._overflow else 0)
-            self.pixel_object[n::self._repeat_width] = [self.color] * num
+            self.pixel_object[n::self._repeat_width] = [self.group_color(n) for n in range(num)]
         self.show()
+
+    def group_color(self, n):
+        """
+        Generate the color for the n'th group
+
+        :param n: The pixel group to get the color for
+        """
+        return self.color
 
 
 class AnimationSequence:
