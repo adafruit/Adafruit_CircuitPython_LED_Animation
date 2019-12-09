@@ -55,6 +55,7 @@ except ImportError:
         return int(time.time() * 1000000000)
 
 import random
+from math import ceil, sin
 from .color import BLACK, RAINBOW
 
 __version__ = "0.0.0-auto.0"
@@ -377,7 +378,7 @@ class Pulse(Animation):
 
 class Chase(Animation):
     """
-    Chase pixels in one direction single color.
+    Chase pixels in one direction in a single color, like a theater marquee sign.
 
     :param pixel_object: The initialised LED object.
     :param int speed: Animation speed rate in seconds, e.g. ``0.1``.
@@ -388,11 +389,11 @@ class Chase(Animation):
     """
 
     # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, color, size=1, spacing=3, reverse=False):
+    def __init__(self, pixel_object, speed, color, size=2, spacing=3, reverse=False):
         self._size = size
         self._spacing = spacing
         self._repeat_width = size + spacing
-        self._num_repeats = len(pixel_object) // self._repeat_width
+        self._num_repeats = ceil(len(pixel_object) / self._repeat_width)
         self._overflow = len(pixel_object) % self._repeat_width
         self._direction = 1 if not reverse else -1
         self._reverse = reverse
@@ -410,14 +411,14 @@ class Chase(Animation):
     def reverse(self, value):
         self._reverse = value
         self._direction = -1 if self._reverse else 1
-        print("Set Reverse", self._reverse, self._direction)
 
     def draw(self):
-        self._n = (self._n + self._direction) % self._repeat_width
         self.pixel_object.fill((0, 0, 0))
-        for n in range(self._n, self._n + self._size):
+        for i in range(self._size):
+            n = (self._n + i) % self._repeat_width
             num = self._num_repeats + (1 if n < self._overflow else 0)
             self.pixel_object[n::self._repeat_width] = [self.group_color(n) for n in range(num)]
+        self._n = (self._n + self._direction) % self._repeat_width
         self.show()
 
     def group_color(self, n):  # pylint: disable=unused-argument
