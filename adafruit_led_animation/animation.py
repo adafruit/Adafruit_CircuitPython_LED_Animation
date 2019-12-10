@@ -1,6 +1,7 @@
 # The MIT License (MIT)
 #
 # Copyright (c) 2019 Kattni Rembor for Adafruit Industries
+# Copyright (c) 2019 Roy Hooper
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -116,20 +117,24 @@ class Animation:
         """
         self.pixel_object.show()
 
-    def freeze(self):
+    @property
+    def paused(self):
         """
-        Stops the animation until resumed.
+        Whether the animation is paused.
         """
-        self._paused = True
-        self._time_left_at_pause = max(0, monotonic_ns() - self._next_update)
+        return self._paused
 
-    def resume(self):
-        """
-        Resumes the animation.
-        """
-        self._next_update = monotonic_ns() + self._time_left_at_pause
-        self._time_left_at_pause = 0
-        self._paused = False
+    @paused.setter
+    def paused(self, value):
+        if self._paused == value:
+            return
+
+        self._paused = value
+        if value:
+            self._time_left_at_pause = max(0, monotonic_ns() - self._next_update)
+        else:
+            self._next_update = monotonic_ns() + self._time_left_at_pause
+            self._time_left_at_pause = 0
 
     def fill(self, color):
         """
@@ -498,28 +503,25 @@ class AnimationSequence:
         """
         self.current_animation.fill(color)
 
-    def freeze(self):
+    @property
+    def paused(self):
         """
-        Freeze the current animation in the sequence.
-        Also stops auto_advance.
+        Whether the sequence is paused.
         """
-        if self._paused:
-            return
-        self._paused = True
-        self._paused_at = monotonic_ns()
-        self.current_animation.freeze()
+        return self._paused
 
-    def resume(self):
-        """
-        Resume the current animation in the sequence, and resumes auto advance if enabled.
-        """
-        if not self._paused:
+    @paused.setter
+    def paused(self, value):
+        if self._paused == value:
             return
-        self._paused = False
+        self._paused = value
         now = monotonic_ns()
-        self._last_advance += now - self._paused_at
-        self._paused_at = 0
-        self.current_animation.resume()
+        if value:
+            self._paused_at = now
+        else:
+            self._last_advance += now - self._paused_at
+            self._paused_at = 0
+        self.current_animation.paused = value
 
 
 class AnimationGroup:
@@ -551,10 +553,6 @@ class AnimationGroup:
 
         return any([item.animate() for item in self._members])
 
-    def _for_all(self, method, *args, **kwargs):
-        for item in self._members:
-            getattr(item, method)(*args, **kwargs)
-
     @property
     def color(self):
         """
@@ -571,16 +569,17 @@ class AnimationGroup:
         """
         Fills all pixel objects in the group with a color.
         """
-        self._for_all('fill', color)
+        for member in self._members:
+            member.fill(color)
 
-    def freeze(self):
+    @property
+    def paused(self):
         """
-        Freeze all animations in the group.
+        Whether the group is paused.
         """
-        self._for_all('freeze')
+        return all([member.paused for member in self._members])
 
-    def resume(self):
-        """
-        Resume all animations in the group.
-        """
-        self._for_all('resume')
+    @paused.setter
+    def paused(self, value):
+        for member in self._members:
+            member.paused = value
