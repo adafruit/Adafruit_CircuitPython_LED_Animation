@@ -44,7 +44,7 @@ Implementation Notes
 """
 
 import random
-from math import ceil, sin, radians
+from math import ceil
 
 from . import NANOS_PER_SECOND
 from .color import BLACK, RAINBOW
@@ -349,7 +349,8 @@ class Pulse(Animation):
         self.min_intensity = min_intensity
         self._period = period
         self._intensity_delta = max_intensity - min_intensity
-        self._radians_per_second = radians(180 / period)
+        self._half_period = period / 2
+        self._position_factor = 1 / self._half_period
         self._bpp = len(pixel_object[0])
         self._last_update = monotonic_ns()
         self._cycle_position = 0
@@ -359,10 +360,10 @@ class Pulse(Animation):
         now = monotonic_ns()
         time_since_last_draw = (now - self._last_update) / NANOS_PER_SECOND
         self._last_update = now
-        self._cycle_position = (self._cycle_position + time_since_last_draw) % self._period
-        intensity = self.min_intensity + (
-            sin(self._radians_per_second * self._cycle_position) * self._intensity_delta)
-
+        pos = self._cycle_position = (self._cycle_position + time_since_last_draw) % self._period
+        if pos > self._half_period:
+            pos = self._period - pos
+        intensity = self.min_intensity + (pos * self._intensity_delta * self._position_factor)
         color = [int(self.color[n] * intensity) for n in range(self._bpp)]
         self.fill(color)
         self.show()
