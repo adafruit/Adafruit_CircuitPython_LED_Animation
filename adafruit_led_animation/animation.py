@@ -108,6 +108,7 @@ class Animation:
         """
         Animation subclasses must implement draw() to render the animation sequence.
         """
+        raise NotImplementedError()
 
     def show(self):
         """
@@ -165,12 +166,6 @@ class Animation:
     def _recompute_color(self, color):
         pass
 
-    def change_color(self, color):
-        """
-        By default changing color uses the color property.
-        """
-        self.color = color
-
 
 class ColorCycle(Animation):
     """
@@ -198,11 +193,6 @@ class ColorCycle(Animation):
             yield
             index = (index + 1) % len(self.colors)
 
-    def change_color(self, color):
-        """
-        ColorCycle doesn't support change_color.
-        """
-
 
 class Blink(ColorCycle):
     """
@@ -218,12 +208,6 @@ class Blink(ColorCycle):
     def _recompute_color(self, color):
         self.colors = [color, BLACK]
 
-    def change_color(self, color):
-        """
-        Change the color.
-        """
-        self.colors[0] = color
-
 
 class Solid(ColorCycle):
     """
@@ -237,12 +221,6 @@ class Solid(ColorCycle):
 
     def _recompute_color(self, color):
         self.colors = [color]
-
-    def change_color(self, color):
-        """
-        Change the color.
-        """
-        self.colors[0] = color
 
 
 class Comet(Animation):
@@ -372,7 +350,7 @@ class Pulse(Animation):
         intensity = self.min_intensity + (
             sin(self._radians_per_second * self._cycle_position) * self._intensity_delta)
 
-        color = [int(self._color[n] * intensity) for n in range(self._bpp)]
+        color = [int(self.color[n] * intensity) for n in range(self._bpp)]
         self.fill(color)
         self.show()
 
@@ -502,13 +480,17 @@ class AnimationSequence:
         """
         return self._members[self._current]
 
-    def change_color(self, color):
+    @property
+    def color(self):
         """
-        Change the color of all members that support setting the color with ``change_color``.
-        Ignored by animations that do not support it.
+        Use this property to change the color of all members of the animation.
         """
+        return None
+
+    @color.setter
+    def color(self, color):
         for item in self._members:
-            item.change_color(color)
+            item.color = color
 
     def fill(self, color):
         """
@@ -573,12 +555,17 @@ class AnimationGroup:
         for item in self._members:
             getattr(item, method)(*args, **kwargs)
 
-    def change_color(self, color):
+    @property
+    def color(self):
         """
-        Change the color of all members that support setting the color with change_color.
-        Ignored by animations that do not support it.
+        Use this property to change the color of all members of the animation group.
         """
-        self._for_all('change_color', color)
+        return None
+
+    @color.setter
+    def color(self, color):
+        for item in self._members:
+            item.color = color
 
     def fill(self, color):
         """
