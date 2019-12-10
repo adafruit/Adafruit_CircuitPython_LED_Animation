@@ -416,7 +416,7 @@ class Chase(Animation):
         self.pixel_object.fill((0, 0, 0))
         for i in range(self._size):
             n = (self._n + i) % self._repeat_width
-            num = self._num_repeats + (1 if n < self._overflow else 0)
+            num = len(self.pixel_object[n::self._repeat_width])
             self.pixel_object[n::self._repeat_width] = [self.group_color(n) for n in range(num)]
         self._n = (self._n + self._direction) % self._repeat_width
         self.show()
