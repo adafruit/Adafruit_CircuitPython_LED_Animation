@@ -43,6 +43,11 @@ Implementation Notes
 
 """
 
+import random
+from math import ceil, sin, radians
+
+from . import NANOS_PER_SECOND
+from .color import BLACK, RAINBOW
 try:
     from time import monotonic_ns
 except ImportError:
@@ -52,11 +57,8 @@ except ImportError:
         """
         Implementation of monotonic_ns for platforms without time.monotonic_ns
         """
-        return int(time.time() * 1000000000)
+        return int(time.time() * NANOS_PER_SECOND)
 
-import random
-from math import ceil, sin, radians
-from .color import BLACK, RAINBOW
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
@@ -69,15 +71,15 @@ class Animation:
     # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, color, peers=None, paused=False):
         self.pixel_object = pixel_object
-        self._speed_ns = 0
-        self.speed = speed  # sets _speed_ns
-        self._color = color
-        self._next_update = monotonic_ns()
         self.pixel_object.auto_write = False
-        self.color = color
         self.peers = peers if peers else []
+        self._speed_ns = 0
+        self._color = None
         self._paused = paused
+        self._next_update = monotonic_ns()
         self._time_left_at_pause = 0
+        self.speed = speed  # sets _speed_ns
+        self.color = color  # Triggers _recompute_color
 
     def animate(self):
         """
@@ -147,6 +149,8 @@ class Animation:
 
     @color.setter
     def color(self, color):
+        if self._color == color:
+            return
         if isinstance(color, int):
             color = (color >> 16 & 0xff, color >> 8 & 0xff, color & 0xff)
         self._color = color
@@ -157,13 +161,17 @@ class Animation:
         """
         The animation speed in fractional seconds.
         """
-        return self._speed_ns / 1000000000
+        return self._speed_ns / NANOS_PER_SECOND
 
     @speed.setter
     def speed(self, seconds):
-        self._speed_ns = int(seconds * 1000000000)
+        self._speed_ns = int(seconds * NANOS_PER_SECOND)
 
     def _recompute_color(self, color):
+        """
+        Called if the color is changed, which includes at initialization.
+        Override as needed.
+        """
         pass
 
 
@@ -245,7 +253,10 @@ class Comet(Animation):
         self._reverse_comet_colors = None
         self.reverse = reverse
         self.bounce = bounce
+        # Super is called late because it needs ._color to be initialized.
         super(Comet, self).__init__(pixel_object, speed, color)
+        # _recompute_color needs calling before creating the generator, so setup the generator
+        # afterwards
         self._generator = self._comet_generator()
 
     def _recompute_color(self, color):
@@ -294,6 +305,8 @@ class Sparkle(Animation):
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     """
     def __init__(self, pixel_object, speed, color):
+        if len(pixel_object) < 2:
+            raise ValueError("Sparkle needs at least 2 pixels")
         self._half_color = None
         self._dim_color = None
         super(Sparkle, self).__init__(pixel_object, speed, color)
@@ -344,7 +357,7 @@ class Pulse(Animation):
 
     def draw(self):
         now = monotonic_ns()
-        time_since_last_draw = (now - self._last_update) / 1000000000
+        time_since_last_draw = (now - self._last_update) / NANOS_PER_SECOND
         self._last_update = now
         self._cycle_position = (self._cycle_position + time_since_last_draw) % self._period
         intensity = self.min_intensity + (
@@ -438,7 +451,7 @@ class AnimationSequence:
     """
     def __init__(self, *members, advance_interval=None, auto_clear=False):
         self._members = members
-        self._advance_interval = advance_interval * 1000000000 if advance_interval else None
+        self._advance_interval = advance_interval * NANOS_PER_SECOND if advance_interval else None
         self._last_advance = monotonic_ns()
         self._current = 0
         self._auto_clear = auto_clear
