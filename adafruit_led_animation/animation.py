@@ -369,7 +369,8 @@ class Pulse(Animation):
         time_since_last_draw = (now - self._last_update) / 1000000000
         self._last_update = now
         self._cycle_position = (self._cycle_position + time_since_last_draw) % self._period
-        intensity = self.min_intensity + (sin(self._radians_per_second * self._cycle_position) * self._intensity_delta)
+        intensity = self.min_intensity + (
+            sin(self._radians_per_second * self._cycle_position) * self._intensity_delta)
 
         color = [int(self._color[n] * intensity) for n in range(self._bpp)]
         self.fill(color)
