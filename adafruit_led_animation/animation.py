@@ -172,7 +172,6 @@ class Animation:
         Called if the color is changed, which includes at initialization.
         Override as needed.
         """
-        pass
 
 
 class ColorCycle(Animation):
