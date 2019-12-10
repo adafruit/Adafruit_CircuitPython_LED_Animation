@@ -55,6 +55,7 @@ except ImportError:
         return int(time.time() * 1000000000)
 
 import random
+from math import ceil, sin, radians
 from .color import BLACK, RAINBOW
 
 __version__ = "0.0.0-auto.0"
@@ -337,6 +338,96 @@ class Sparkle(Animation):
         self.pixel_object[pixel] = self._half_color
         self.pixel_object[pixel + 1] = self._dim_color
         self.show()
+
+
+class Pulse(Animation):
+    """
+    Pulse all pixels a single color.
+
+    :param pixel_object: The initialised LED object.
+    :param int speed: Animation refresh rate in seconds, e.g. ``0.1``.
+    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
+    :param period: Period to pulse the LEDs over.  Default 5.
+    :param max_intensity: The maximum intensity to pulse, between 0 and 1.0.  Default 1.
+    :param min_intensity: The minimum intensity to pulse, between 0 and 1.0.  Default 0.
+    """
+
+    # pylint: disable=too-many-arguments
+    def __init__(self, pixel_object, speed, color, period=5, max_intensity=1, min_intensity=0):
+        self.max_intensity = max_intensity
+        self.min_intensity = min_intensity
+        self._period = period
+        self._intensity_delta = max_intensity - min_intensity
+        self._radians_per_second = radians(180 / period)
+        self._bpp = len(pixel_object[0])
+        self._last_update = monotonic_ns()
+        self._cycle_position = 0
+        super(Pulse, self).__init__(pixel_object, speed, color)
+
+    def draw(self):
+        now = monotonic_ns()
+        time_since_last_draw = (now - self._last_update) / 1000000000
+        self._last_update = now
+        self._cycle_position = (self._cycle_position + time_since_last_draw) % self._period
+        intensity = self.min_intensity + (sin(self._radians_per_second * self._cycle_position) * self._intensity_delta)
+
+        color = [int(self._color[n] * intensity) for n in range(self._bpp)]
+        self.fill(color)
+        self.show()
+
+
+class Chase(Animation):
+    """
+    Chase pixels in one direction in a single color, like a theater marquee sign.
+
+    :param pixel_object: The initialised LED object.
+    :param int speed: Animation speed rate in seconds, e.g. ``0.1``.
+    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
+    :param size: Number of pixels to turn on in a row.
+    :param spacing: Number of pixels to turn off in a row.
+    :param reverse: Reverse direction of movement.
+    """
+
+    # pylint: disable=too-many-arguments
+    def __init__(self, pixel_object, speed, color, size=2, spacing=3, reverse=False):
+        self._size = size
+        self._spacing = spacing
+        self._repeat_width = size + spacing
+        self._num_repeats = ceil(len(pixel_object) / self._repeat_width)
+        self._overflow = len(pixel_object) % self._repeat_width
+        self._direction = 1 if not reverse else -1
+        self._reverse = reverse
+        self._n = 0
+        super(Chase, self).__init__(pixel_object, speed, color)
+
+    @property
+    def reverse(self):
+        """
+        Whether the animation is reversed
+        """
+        return self._reverse
+
+    @reverse.setter
+    def reverse(self, value):
+        self._reverse = value
+        self._direction = -1 if self._reverse else 1
+
+    def draw(self):
+        self.pixel_object.fill((0, 0, 0))
+        for i in range(self._size):
+            n = (self._n + i) % self._repeat_width
+            num = self._num_repeats + (1 if n < self._overflow else 0)
+            self.pixel_object[n::self._repeat_width] = [self.group_color(n) for n in range(num)]
+        self._n = (self._n + self._direction) % self._repeat_width
+        self.show()
+
+    def group_color(self, n):  # pylint: disable=unused-argument
+        """
+        Generate the color for the n'th group
+
+        :param n: The pixel group to get the color for
+        """
+        return self.color
 
 
 class AnimationSequence:
