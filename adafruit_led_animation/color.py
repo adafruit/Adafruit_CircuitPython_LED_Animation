@@ -21,3 +21,21 @@ JADE = (0, 255, 40)
 AMBER = (255, 100, 0)
 
 RAINBOW = (RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE)
+
+
+try:
+    from _pixelbuf import wheel  # pylint: disable=unused-import
+except ImportError:
+    # Ensure we have a wheel if not built in
+    def wheel(pos):  # pylint: disable=missing-docstring
+        # Input a value 0 to 255 to get a color value.
+        # The colours are a transition r - g - b - back to r.
+        if pos < 0 or pos > 255:
+            return 0, 0, 0
+        if pos < 85:
+            return int(255 - pos * 3), int(pos * 3), 0
+        if pos < 170:
+            pos -= 85
+            return 0, int(255 - pos * 3), int(pos * 3)
+        pos -= 170
+        return int(pos * 3), 0, int(255 - (pos * 3))
