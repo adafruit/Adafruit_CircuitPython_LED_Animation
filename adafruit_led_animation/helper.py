@@ -8,13 +8,22 @@ class AggregatePixels:
     """
     AggregatePixels lets you treat ranges of pixels as single pixels for animation purposes.
     """
-    def __init__(self, strip, pixel_ranges):
+    def __init__(self, strip, pixel_ranges, individual_pixels=False):
         self._pixels = strip
-        self._ranges = list(sorted(pixel_ranges))
+        self._ranges = pixel_ranges
         self.n = len(self._ranges)
+        self._individual_pixels = individual_pixels
 
     def __repr__(self):
         return "[" + ", ".join([str(x) for x in self]) + "]"
+
+    def _set_pixels(self, index, val):
+        if self._individual_pixels:
+            for pixel in self._ranges[index]:
+                self._pixels[pixel] = [val]
+        else:
+            range_start, range_stop = self._ranges[index]
+            self._pixels[range_start:range_stop] = [val] * (range_stop - range_start)
 
     def __setitem__(self, index, val):
         if isinstance(index, slice):
@@ -25,11 +34,9 @@ class AggregatePixels:
             if len(val) != length:
                 raise ValueError("Slice and input sequence size do not match.")
             for val_i, in_i in enumerate(range(start, stop, step)):
-                range_start, range_stop = self._ranges[in_i]
-                self._pixels[range_start:range_stop] = [val[val_i]] * (range_stop - range_start)
+                self._set_pixels(in_i, val[val_i])
         else:
-            range_start, range_stop = self._ranges[index]
-            self._pixels[range_start:range_stop] = [val] * (range_stop - range_start)
+            self._set_pixels(index, val)
 
         if self._pixels.auto_write:
             self.show()
