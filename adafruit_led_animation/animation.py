@@ -329,12 +329,15 @@ class Sparkle(Animation):
     :param pixel_object: The initialised LED object.
     :param int speed: Animation speed in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
+    :param num_sparkles: Number of sparkles to generate per animation cycle.
     """
-    def __init__(self, pixel_object, speed, color, name=None):
+    # pylint: disable=too-many-arguments
+    def __init__(self, pixel_object, speed, color, num_sparkles=1, name=None):
         if len(pixel_object) < 2:
             raise ValueError("Sparkle needs at least 2 pixels")
         self._half_color = None
         self._dim_color = None
+        self._num_sparkles = num_sparkles
         super(Sparkle, self).__init__(pixel_object, speed, color, name=name)
 
     def _recompute_color(self, color):
@@ -349,11 +352,14 @@ class Sparkle(Animation):
         self._dim_color = dim_color
 
     def draw(self):
-        pixel = random.randint(0, (len(self.pixel_object) - 2))
-        self.pixel_object[pixel] = self._color
+        pixels = [random.randint(0, (len(self.pixel_object) - 2))
+                  for n in range(self._num_sparkles)]
+        for pixel in pixels:
+            self.pixel_object[pixel] = self._color
         self.show()
-        self.pixel_object[pixel] = self._half_color
-        self.pixel_object[pixel + 1] = self._dim_color
+        for pixel in pixels:
+            self.pixel_object[pixel] = self._half_color
+            self.pixel_object[pixel + 1] = self._dim_color
         self.show()
 
 
