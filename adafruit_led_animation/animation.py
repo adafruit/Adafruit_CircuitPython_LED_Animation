@@ -378,7 +378,6 @@ class Pulse(Animation):
         period = int(period * NANOS_PER_SECOND)
         white = len(self.pixel_object[0]) > 3
         half_period = period // 2
-        period = period
 
         last_update = monotonic_ns()
         cycle_position = 0
@@ -646,7 +645,6 @@ class AnimationSequence:
         """
         Called by some animations when they finish a sequence.
         """
-        pass
 
 
 class AnimationGroup:
