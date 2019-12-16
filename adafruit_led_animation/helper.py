@@ -96,3 +96,74 @@ class AggregatePixels:
     @auto_write.setter
     def auto_write(self, value):
         self._pixels.auto_write = value
+
+
+class SubsetPixels:
+    """
+    SubsetPixels lets you work with a subset of a pixel object.
+    """
+    def __init__(self, strip, start, end):
+        self._pixels = strip
+        self._start = start
+        self._end = end
+        self.n = self._end - self._start
+
+    def __repr__(self):
+        return "[" + ", ".join([str(x) for x in self]) + "]"
+
+    def __setitem__(self, index, val):
+        if isinstance(index, slice):
+            start, stop, step = index.indices(self.n)
+            self._pixels[start + self._start:stop + self._start:step] = val
+        else:
+            self._pixels[index + self._start] = val
+
+        if self._pixels.auto_write:
+            self.show()
+
+    def __getitem__(self, index):
+        if isinstance(index, slice):
+            start, stop, step = index.indices(self.n)
+            return self._pixels[start + self._start:stop + self._start:step]
+        if index < 0:
+            index += len(self)
+        if index >= self.n or index < 0:
+            raise IndexError
+        return self._pixels[index]
+
+    def __len__(self):
+        return self.n
+
+    @property
+    def brightness(self):
+        """
+        brightness from the underlying strip.
+        """
+        return self._pixels.brightness
+
+    @brightness.setter
+    def brightness(self, brightness):
+        self._pixels.brightness = min(max(brightness, 0.0), 1.0)
+
+    def fill(self, color):
+        """
+        Fill the used pixel ranges with color.
+        """
+        self._pixels[self._start:self._end] = [color] * (self.n)
+
+    def show(self):
+        """
+        Shows the pixels on the underlying strip.
+        """
+        self._pixels.show()
+
+    @property
+    def auto_write(self):
+        """
+        auto_write from the underlying strip.
+        """
+        return self._pixels.auto_write
+
+    @auto_write.setter
+    def auto_write(self, value):
+        self._pixels.auto_write = value
