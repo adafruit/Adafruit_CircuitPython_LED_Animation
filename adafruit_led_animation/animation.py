@@ -546,6 +546,8 @@ class AnimationSequence:
         self._paused = False
         self._paused_at = 0
         self._random = random_order
+        if random_order:
+            self._current = random.randint(0, len(self._members) - 1)
         self._color = None
         for item in self._members:
             item.done_cycle_handler = self.done_handler
@@ -570,7 +572,10 @@ class AnimationSequence:
         """
         Activates a specific animation.
         """
-        self._current = index
+        if isinstance(index, str):
+            self._current = [member.name for member in self._members].index(index)
+        else:
+            self._current = index
         if self._auto_clear:
             self.fill(self.clear_color)
         if self._color:
