@@ -20,7 +20,7 @@ class AggregatePixels:
     def _set_pixels(self, index, val):
         if self._individual_pixels:
             for pixel in self._ranges[index]:
-                self._pixels[pixel] = [val]
+                self._pixels[pixel] = val
         else:
             range_start, range_stop = self._ranges[index]
             self._pixels[range_start:range_stop] = [val] * (range_stop - range_start)
@@ -72,8 +72,13 @@ class AggregatePixels:
         """
         Fill the used pixel ranges with color.
         """
-        for start, stop in self._ranges:
-            self._pixels[start:stop] = [color] * (stop - start)
+        if self._individual_pixels:
+            for pixels in self._ranges:
+                for pixel in pixels:
+                    self._pixels[pixel] = color
+        else:
+            for start, stop in self._ranges:
+                self._pixels[start:stop] = [color] * (stop - start)
 
     def show(self):
         """
