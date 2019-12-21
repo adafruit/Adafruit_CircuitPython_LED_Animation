@@ -185,6 +185,11 @@ class Animation:
         if self.done_cycle_handler:
             self.done_cycle_handler(self)  # pylint: disable=not-callable
 
+    def reset(self):
+        """
+        Resets the animation sequence.
+        """
+
 
 class ColorCycle(Animation):
     """
@@ -213,6 +218,12 @@ class ColorCycle(Animation):
             index = (index + 1) % len(self.colors)
             if index == len(self.colors):
                 self._cycle_done()
+
+    def reset(self):
+        """
+        Resets to the first color.
+        """
+        self._generator = self._color_generator()
 
 
 class Blink(ColorCycle):
@@ -321,6 +332,12 @@ class Comet(Animation):
     def draw(self):
         next(self._generator)
 
+    def reset(self):
+        """
+        Resets to the first color.
+        """
+        self._generator = self._comet_generator()
+
 
 class Sparkle(Animation):
     """
@@ -378,6 +395,7 @@ class Pulse(Animation):
     # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, color, period=5, name=None):
         super(Pulse, self).__init__(pixel_object, speed, color, name=name)
+        self._period = period
         self._generator = self._pulse_generator(period)
 
     def _pulse_generator(self, period):
@@ -411,6 +429,12 @@ class Pulse(Animation):
 
     def draw(self):
         next(self._generator)
+
+    def reset(self):
+        """
+        Resets the animation.
+        """
+        self._generator = self._pulse_generator(self._period)
 
 
 class ColorWheel(Animation):
@@ -450,6 +474,12 @@ class ColorWheel(Animation):
     def draw(self):
         next(self._generator)
 
+    def reset(self):
+        """
+        Resets the animation.
+        """
+        self._generator = self._wheel_generator(period)
+
 
 class Chase(Animation):
     """
@@ -473,6 +503,14 @@ class Chase(Animation):
         self._direction = 1 if not reverse else -1
         self._reverse = reverse
         self._n = 0
+
+        def resetter():
+            self._n = 0
+            self._reverse = reverse
+            self._direction = 1 if not reverse else -1
+
+        self._reset = resetter
+
         super(Chase, self).__init__(pixel_object, speed, color, name=name)
 
     @property
@@ -506,6 +544,12 @@ class Chase(Animation):
         :param n: The pixel group to get the color for
         """
         return self.color
+
+    def reset(self):
+        """
+        Reset the animation.
+        """
+        self._reset()
 
 
 class AnimationSequence:
@@ -549,6 +593,7 @@ class AnimationSequence:
         if random_order:
             self._current = random.randint(0, len(self._members) - 1)
         self._color = None
+        self.done_cycle_handler = None
         for item in self._members:
             item.done_cycle_handler = self.done_handler
 
@@ -585,7 +630,10 @@ class AnimationSequence:
         """
         Jump to the next animation.
         """
+        current = self._current
         self.activate((self._current + 1) % len(self._members))
+        if current > self._current:
+            self._cycle_done()
 
     def random(self):
         """
@@ -657,6 +705,20 @@ class AnimationSequence:
         Called by some animations when they finish a sequence.
         """
 
+    def _cycle_done(self):
+        """
+        Called when the (first) member animation cycles.
+        Calls done_cycle_handler if one is set.
+        """
+        if self.done_cycle_handler:
+            self.done_cycle_handler(self)  # pylint: disable=not-callable
+
+    def reset(self):
+        """
+        Resets the current animation.
+        """
+        self.current_animation.reset()
+
 
 class AnimationGroup:
     """
@@ -674,6 +736,11 @@ class AnimationGroup:
         if sync:
             main = members[0]
             main.peers = members[1:]
+        # Register the done handler on the last animation.
+        self.done_cycle_handler = None
+        if not self._members:
+            return
+        self._members[-1].done_cycle_handler = self.done_handler
 
     def animate(self):
         """
@@ -719,3 +786,25 @@ class AnimationGroup:
         """
         for item in self._members:
             item.resume()
+
+    def done_handler(self, animation):
+        """
+        Called by some animations when they complete a cycle.  For an AnimationGroup this is the
+        first member of the group, if any.
+        """
+        self._cycle_done()
+
+    def _cycle_done(self):
+        """
+        Called when the (first) member animation cycles.
+        Calls done_cycle_handler if one is set.
+        """
+        if self.done_cycle_handler:
+            self.done_cycle_handler(self)  # pylint: disable=not-callable
+
+    def reset(self):
+        """
+        Resets the animations in the group.
+        """
+        for item in self._members:
+            item.reset()
