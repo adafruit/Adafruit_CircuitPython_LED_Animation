@@ -400,7 +400,7 @@ class Pulse(Animation):
 
     def _pulse_generator(self, period):
         period = int(period * NANOS_PER_SECOND)
-        white = len(self.pixel_object[0]) > 3
+        white = len(self.pixel_object[0]) > 3 and type(self.pixel_object[0][-1]) is not float
         half_period = period // 2
 
         last_update = monotonic_ns()
