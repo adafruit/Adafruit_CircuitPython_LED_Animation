@@ -2,6 +2,7 @@
 Example animation sequence.
 """
 from adafruit_led_animation.animation import Comet, AnimationSequence, Chase
+from adafruit_led_animation.color import PURPLE, WHITE
 import neopixel
 import board
 
