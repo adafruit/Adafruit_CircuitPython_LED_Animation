@@ -1,17 +1,14 @@
-"""Blink LED animation."""
-import board
+"""
+Example animation sequence.
+"""
+from adafruit_led_animation.animation import Comet, AnimationSequence, Chase
 import neopixel
-from adafruit_led_animation.animation import Blink
-import adafruit_led_animation.color as color
+import board
 
-# Works on Circuit Playground Express and Bluefruit.
-# For other boards, change board.NEOPIXEL to match the pin to which the NeoPixels are attached.
-pixel_pin = board.NEOPIXEL
-# Change to match the number of pixels you have attached to your board.
-num_pixels = 10
-
-pixels = neopixel.NeoPixel(pixel_pin, num_pixels)
-blink = Blink(pixels, 0.5, color.PURPLE)
+pixels = neopixel.NeoPixel(board.D6, 32, brightness=0.2, auto_write=False)
+comet = Comet(pixels, speed=0.01, color=PURPLE, tail_length=10, bounce=True)
+chase = Chase(pixels, speed=0.1, size=3, spacing=6, color=WHITE)
+animations = AnimationSequence(comet, chase, advance_interval=15)
 
 while True:
-    blink.animate()
+    animations.animate()

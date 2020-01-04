@@ -196,7 +196,7 @@ class ColorCycle(Animation):
     Animate a sequence of one or more colors, cycling at the specified speed.
 
     :param pixel_object: The initialised LED object.
-    :param int speed: Animation speed in seconds, e.g. ``0.1``.
+    :param float speed: Animation speed in seconds, e.g. ``0.1``.
     :param colors: A list of colors to cycle through in ``(r, g, b)`` tuple, or ``0x000000`` hex
                    format. Defaults to a rainbow color cycle.
     """
@@ -231,7 +231,7 @@ class Blink(ColorCycle):
     Blink a color on and off.
 
     :param pixel_object: The initialised LED object.
-    :param int speed: Animation speed in seconds, e.g. ``0.1``.
+    :param float speed: Animation speed in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     """
     def __init__(self, pixel_object, speed, color, name=None):
@@ -263,7 +263,7 @@ class Comet(Animation):
     A comet animation.
 
     :param pixel_object: The initialised LED object.
-    :param int speed: Animation speed in seconds, e.g. ``0.1``.
+    :param float speed: Animation speed in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     :param int tail_length: The length of the comet. Defaults to 10. Cannot exceed the number of
                             pixels present in the pixel object, e.g. if the strip is 30 pixels
@@ -344,7 +344,7 @@ class Sparkle(Animation):
     Sparkle animation of a single color.
 
     :param pixel_object: The initialised LED object.
-    :param int speed: Animation speed in seconds, e.g. ``0.1``.
+    :param float speed: Animation speed in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     :param num_sparkles: Number of sparkles to generate per animation cycle.
     """
@@ -385,22 +385,20 @@ class Pulse(Animation):
     Pulse all pixels a single color.
 
     :param pixel_object: The initialised LED object.
-    :param int speed: Animation refresh rate in seconds, e.g. ``0.1``.
+    :param float speed: Animation refresh rate in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     :param period: Period to pulse the LEDs over.  Default 5.
-    :param max_intensity: The maximum intensity to pulse, between 0 and 1.0.  Default 1.
-    :param min_intensity: The minimum intensity to pulse, between 0 and 1.0.  Default 0.
     """
 
     # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, color, period=5, name=None):
         super(Pulse, self).__init__(pixel_object, speed, color, name=name)
         self._period = period
-        self._generator = self._pulse_generator(period)
+        self._generator = self._pulse_generator()
 
-    def _pulse_generator(self, period):
-        period = int(period * NANOS_PER_SECOND)
-        white = len(self.pixel_object[0]) > 3 and type(self.pixel_object[0][-1]) is not float
+    def _pulse_generator(self):
+        period = int(self._period * NANOS_PER_SECOND)
+        white = len(self.pixel_object[0]) > 3 and isinstance(self.pixel_object[0][-1], float)
         half_period = period // 2
 
         last_update = monotonic_ns()
@@ -434,7 +432,7 @@ class Pulse(Animation):
         """
         Resets the animation.
         """
-        self._generator = self._pulse_generator(self._period)
+        self._generator = self._pulse_generator()
 
 
 class ColorWheel(Animation):
@@ -442,17 +440,18 @@ class ColorWheel(Animation):
     The classic adafruit colorwheel.
 
     :param pixel_object: The initialised LED object.
-    :param int speed: Animation refresh rate in seconds, e.g. ``0.1``.
+    :param float speed: Animation refresh rate in seconds, e.g. ``0.1``.
     :param period: Period to cycle the colorwheel over.  Default 5.
     """
 
     # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, period=5, name=None):
         super(ColorWheel, self).__init__(pixel_object, speed, BLACK, name=name)
-        self._generator = self._wheel_generator(period)
+        self._period = period
+        self._generator = self._wheel_generator()
 
-    def _wheel_generator(self, period):
-        period = int(period * NANOS_PER_SECOND)
+    def _wheel_generator(self):
+        period = int(self._period * NANOS_PER_SECOND)
 
         last_update = monotonic_ns()
         cycle_position = 0
@@ -478,7 +477,7 @@ class ColorWheel(Animation):
         """
         Resets the animation.
         """
-        self._generator = self._wheel_generator(period)
+        self._generator = self._wheel_generator()
 
 
 class Chase(Animation):
@@ -486,7 +485,7 @@ class Chase(Animation):
     Chase pixels in one direction in a single color, like a theater marquee sign.
 
     :param pixel_object: The initialised LED object.
-    :param int speed: Animation speed rate in seconds, e.g. ``0.1``.
+    :param float speed: Animation speed rate in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     :param size: Number of pixels to turn on in a row.
     :param spacing: Number of pixels to turn off in a row.
@@ -504,12 +503,12 @@ class Chase(Animation):
         self._reverse = reverse
         self._n = 0
 
-        def resetter():
+        def _resetter():
             self._n = 0
             self._reverse = reverse
             self._direction = 1 if not reverse else -1
 
-        self._reset = resetter
+        self._reset = _resetter
 
         super(Chase, self).__init__(pixel_object, speed, color, name=name)
 
@@ -787,7 +786,7 @@ class AnimationGroup:
         for item in self._members:
             item.resume()
 
-    def done_handler(self, animation):
+    def done_handler(self, animation):  # pylint: disable=unused-argument
         """
         Called by some animations when they complete a cycle.  For an AnimationGroup this is the
         first member of the group, if any.

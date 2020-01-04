@@ -20,7 +20,7 @@ extensions = [
 # Uncomment the below if you use native CircuitPython modules such as
 # digitalio, micropython and busio. List the modules you use. Without it, the
 # autodoc module docs will fail to generate with a warning.
-autodoc_mock_imports = ["led_animation"]
+# autodoc_mock_imports = ["digitalio", "busio"]
 
 
 intersphinx_mapping = {'python': ('https://docs.python.org/3.4', None),'CircuitPython': ('https://circuitpython.readthedocs.io/en/latest/', None)}
@@ -34,9 +34,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'LED_Animation Library'
-copyright = u'2017 Adam Patt'
-author = u'Adam Patt'
+project = u'Adafruit_LED_Animation Library'
+copyright = u'2020 Roy Hooper'
+author = u'Roy Hooper'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -109,7 +109,7 @@ html_static_path = ['_static']
 html_favicon = '_static/favicon.ico'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Led_animationLibrarydoc'
+htmlhelp_basename = 'Adafruit_LED_animation_Librarydoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -135,7 +135,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'LED_AnimationLibrary.tex', u'LED_Animation Library Documentation',
+    (master_doc, 'Adafruit_LED_Animation_Library.tex', 
+     u'Adafruit_LED_Animation Library Documentation',
      author, 'manual'),
 ]
 
@@ -144,7 +145,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'LED_Animationlibrary', u'LED_Animation Library Documentation',
+    (master_doc, 'Adafruit_LED_Animation_library', u'Adafruit LED_Animation Library Documentation',
      [author], 1)
 ]
 
@@ -154,7 +155,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'LED_AnimationLibrary', u' LED_Animation Library Documentation',
-     author, 'LED_AnimationLibrary', 'One line description of project.',
+    (master_doc, 'Adafruit_LED_Animation_library', u'Adafruit LED_Animation Library Documentation',
+     author, 'Adafruit_LED_Animation_library', 'One line description of project.',
      'Miscellaneous'),
 ]

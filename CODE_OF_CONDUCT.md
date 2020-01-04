@@ -40,8 +40,8 @@ Examples of unacceptable behavior by participants include:
 * Other conduct which could reasonably be considered inappropriate
 
 The goal of the standards and moderation guidelines outlined here is to build
-and maintain a respectful community. We ask that you don’t just aim to be
-"technically unimpeachable", but rather try to be your best self. 
+and maintain a respectful community. We ask that you donâ€™t just aim to be
+"technically unimpeachable", but rather try to be your best self.
 
 We value many things beyond technical expertise, including collaboration and
 supporting others within our community. Providing a positive experience for
@@ -72,7 +72,7 @@ You may report in the following ways:
 In any situation, you may send an email to <support@adafruit.com>.
 
 On the Adafruit Discord, you may send an open message from any channel
-to all Community Helpers by tagging @community helpers. You may also send an
+to all Community Helpers by tagging @community moderators. You may also send an
 open message from any channel, or a direct message to @kattni#1507,
 @tannewt#4653, @Dan Halbert#1614, @cater#2442, @sommersoft#0222, or
 @Andon#8175.
@@ -83,7 +83,7 @@ In situations on Discord where the issue is particularly egregious, possibly
 illegal, requires immediate action, or violates the Discord terms of service,
 you should also report the message directly to Discord.
 
-These are the steps for upholding our community’s standards of conduct.
+These are the steps for upholding our communityâ€™s standards of conduct.
 
 1. Any member of the community may report any situation that violates the
 Adafruit Community Code of Conduct. All reports will be reviewed and
