@@ -7,6 +7,26 @@ import math
 class AggregatePixels:
     """
     AggregatePixels lets you treat ranges of pixels as single pixels for animation purposes.
+
+    :param strip: An object that implements the Neopixel or Dotstar protocol.
+    :param iterable pixel_ranges: Pixel ranges (or individual pixels).
+    :param bool individual_pixels: Whether pixel_ranges are individual pixels.
+
+    .. code-block:: python
+
+        import board
+        import neopixel
+        from adafruit_led_animation.helper import AggregatePixels
+        pixels = neopixel.NeoPixel(board.D12, 307, auto_write=False)
+
+        tree = AggregatePixels(pixels, [
+            (0, 21), (21, 48), (48, 71), (71, 93),(93, 115), (115, 135), (135, 153),
+            (153, 170), (170, 188), (188, 203), (203, 217), (217, 228), (228, 240),
+            (240, 247), (247, 253), (253, 256), (256, 260), (260, 307)]
+        )
+        tree[0] = (255, 255, 0)
+        tree.show()
+
     """
     def __init__(self, strip, pixel_ranges, individual_pixels=False):
         self._pixels = strip
@@ -71,6 +91,7 @@ class AggregatePixels:
     def fill(self, color):
         """
         Fill the used pixel ranges with color.
+        :param color: Color to fill all pixels referenced by this AggregatePixels definition with.
         """
         if self._individual_pixels:
             for pixels in self._ranges:
@@ -100,9 +121,27 @@ class AggregatePixels:
 
 class SubsetPixels:
     """
-    SubsetPixels lets you work with a subset of a pixel object.
     """
     def __init__(self, strip, start, end):
+        """
+        SubsetPixels lets you work with a subset of a pixel object.
+
+        :param strip: An object that implements the Neopixel or Dotstar protocol.
+        :param int start: Starting pixel number.
+        :param int end: Ending pixel number.
+
+        .. code-block:: python
+
+            import board
+            import neopixel
+            from adafruit_led_animation.helper import SubsetPixels
+            pixels = neopixel.NeoPixel(board.D12, 307, auto_write=False)
+
+            star_start = 260
+            star_arm = SubsetPixels(pixels, star_start + 7, star_start + 15)
+            star_arm.fill((255, 0, 255))
+            pixels.show()
+        """
         self._pixels = strip
         self._start = start
         self._end = end
