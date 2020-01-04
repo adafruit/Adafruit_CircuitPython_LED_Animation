@@ -121,27 +121,25 @@ class AggregatePixels:
 
 class SubsetPixels:
     """
+    SubsetPixels lets you work with a subset of a pixel object.
+
+    :param strip: An object that implements the Neopixel or Dotstar protocol.
+    :param int start: Starting pixel number.
+    :param int end: Ending pixel number.
+
+    .. code-block:: python
+
+        import board
+        import neopixel
+        from adafruit_led_animation.helper import SubsetPixels
+        pixels = neopixel.NeoPixel(board.D12, 307, auto_write=False)
+
+        star_start = 260
+        star_arm = SubsetPixels(pixels, star_start + 7, star_start + 15)
+        star_arm.fill((255, 0, 255))
+        pixels.show()
     """
     def __init__(self, strip, start, end):
-        """
-        SubsetPixels lets you work with a subset of a pixel object.
-
-        :param strip: An object that implements the Neopixel or Dotstar protocol.
-        :param int start: Starting pixel number.
-        :param int end: Ending pixel number.
-
-        .. code-block:: python
-
-            import board
-            import neopixel
-            from adafruit_led_animation.helper import SubsetPixels
-            pixels = neopixel.NeoPixel(board.D12, 307, auto_write=False)
-
-            star_start = 260
-            star_arm = SubsetPixels(pixels, star_start + 7, star_start + 15)
-            star_arm.fill((255, 0, 255))
-            pixels.show()
-        """
         self._pixels = strip
         self._start = start
         self._end = end
