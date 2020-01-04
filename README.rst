@@ -58,10 +58,10 @@ Usage Example
 
 .. code-block:: python
 
+    import board
+    import neopixel
     from adafruit_led_animation.animation import Comet, AnimationSequence, Chase
     from adafruit_led_animation.color import PURPLE, WHITE
-    import neopixel
-    import board
 
     pixels = neopixel.NeoPixel(board.D6, 32, brightness=0.2, auto_write=False)
     comet = Comet(pixels, speed=0.01, color=PURPLE, tail_length=10, bounce=True)
