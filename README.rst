@@ -28,15 +28,17 @@ This is easily achieved by downloading
 Usage Example
 =============
 
-import adafruit_dotstar as dotstar
-import board
-from led_animation import color
-# setup the pixel
-dot = dotstar.DotStar(board.APA102_SCK, board.APA102_MOSI, 1, brightness=.2)
-# set the color by name
-dot[0] = color.GOLD
-# show the pixel
-dot.show()
+.. code-block:: python
+
+    import adafruit_dotstar as dotstar
+    import board
+    from led_animation import color
+    # setup the pixel
+    dot = dotstar.DotStar(board.APA102_SCK, board.APA102_MOSI, 1, brightness=.2)
+    # set the color by name
+    dot[0] = color.GOLD
+    # show the pixel
+    dot.show()
 
 Contributing
 ============
