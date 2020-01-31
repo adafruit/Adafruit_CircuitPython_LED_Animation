@@ -369,7 +369,7 @@ class Pulse(Animation):
 
 class SparklePulse(Animation):
     """
-    Combination of the Spark and Pulse animations. 
+    Combination of the Spark and Pulse animations.
 
     :param pixel_object: The initialised LED object.
     :param int speed: Animation refresh rate in seconds, e.g. ``0.1``.
