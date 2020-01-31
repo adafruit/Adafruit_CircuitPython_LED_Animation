@@ -378,6 +378,8 @@ class SparklePulse(Animation):
     :param max_intensity: The maximum intensity to pulse, between 0 and 1.0.  Default 1.
     :param min_intensity: The minimum intensity to pulse, between 0 and 1.0.  Default 0.
     """
+
+    # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, color, period=5, max_intensity=1, min_intensity=0):
         if len(pixel_object) < 2:
             raise ValueError("Sparkle needs at least 2 pixels")
