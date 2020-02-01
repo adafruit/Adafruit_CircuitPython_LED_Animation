@@ -46,21 +46,13 @@ Implementation Notes
 import random
 from math import ceil
 
-from . import NANOS_PER_SECOND
+from . import NANOS_PER_SECOND, monotonic_ns
 from .color import BLACK, RAINBOW, wheel
-try:
-    from time import monotonic_ns
-except ImportError:
-    import time
-
-    def monotonic_ns():
-        """
-        Implementation of monotonic_ns for platforms without time.monotonic_ns
-        """
-        return int(time.time() * NANOS_PER_SECOND)
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
+
+from .helper import pulse_generator
 
 
 class Animation:
@@ -394,45 +386,20 @@ class Pulse(Animation):
     def __init__(self, pixel_object, speed, color, period=5, name=None):
         super(Pulse, self).__init__(pixel_object, speed, color, name=name)
         self._period = period
-        self._generator = self._pulse_generator()
-
-    def _pulse_generator(self):
-        period = int(self._period * NANOS_PER_SECOND)
-        white = len(self.pixel_object[0]) > 3 and isinstance(self.pixel_object[0][-1], float)
-        half_period = period // 2
-
-        last_update = monotonic_ns()
-        cycle_position = 0
-        last_pos = 0
-        while True:
-            fill_color = list(self.color)
-            now = monotonic_ns()
-            time_since_last_draw = now - last_update
-            last_update = now
-            pos = cycle_position = (cycle_position + time_since_last_draw) % period
-            if pos < last_pos:
-                self._cycle_done()
-            last_pos = pos
-            if pos > half_period:
-                pos = period - pos
-            intensity = (pos / half_period)
-            if white:
-                fill_color[3] = int(fill_color[3] * intensity)
-            fill_color[0] = int(fill_color[0] * intensity)
-            fill_color[1] = int(fill_color[1] * intensity)
-            fill_color[2] = int(fill_color[2] * intensity)
-            self.fill(fill_color)
-            self.show()
-            yield
+        self._generator = None
+        self.reset()
 
     def draw(self):
-        next(self._generator)
+        color = next(self._generator)
+        self.fill(color)
+        self.show()
 
     def reset(self):
         """
         Resets the animation.
         """
-        self._generator = self._pulse_generator()
+        white = len(self.pixel_object[0]) > 3 and isinstance(self.pixel_object[0][-1], float)
+        self._generator = pulse_generator(self._period, self, white)
 
 
 class ColorWheel(Animation):

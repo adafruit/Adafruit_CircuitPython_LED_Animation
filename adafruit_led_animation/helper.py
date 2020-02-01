@@ -3,6 +3,9 @@ Helper classes for making complex animations.
 """
 import math
 
+from adafruit_led_animation import NANOS_PER_SECOND
+from adafruit_led_animation.animation import monotonic_ns
+
 
 class AggregatePixels:
     """
@@ -204,3 +207,37 @@ class SubsetPixels:
     @auto_write.setter
     def auto_write(self, value):
         self._pixels.auto_write = value
+
+
+def pulse_generator(period: float, animation_object, white=False):
+    """
+    Generates a sequence of colors for a pulse, based on the time period specified.
+    :param period: Pulse duration in seconds.
+    :param animation_object: An animation object to interact with.
+    :param white: Whether the pixel strip has a white pixel.
+    """
+    period = int(period * NANOS_PER_SECOND)
+    half_period = period // 2
+
+    last_update = monotonic_ns()
+    cycle_position = 0
+    last_pos = 0
+    while True:
+        fill_color = list(animation_object.color)
+        now = monotonic_ns()
+        time_since_last_draw = now - last_update
+        last_update = now
+        pos = cycle_position = (cycle_position + time_since_last_draw) % period
+        if pos < last_pos:
+            if animation_object.done_cycle_handler:
+                animation_object.done_cycle_handler(animation_object)
+        last_pos = pos
+        if pos > half_period:
+            pos = period - pos
+        intensity = (pos / half_period)
+        if white:
+            fill_color[3] = int(fill_color[3] * intensity)
+        fill_color[0] = int(fill_color[0] * intensity)
+        fill_color[1] = int(fill_color[1] * intensity)
+        fill_color[2] = int(fill_color[2] * intensity)
+        yield fill_color
