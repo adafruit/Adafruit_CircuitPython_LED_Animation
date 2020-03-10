@@ -48,6 +48,7 @@ from math import ceil
 
 from . import NANOS_PER_SECOND
 from .color import BLACK, RAINBOW
+
 try:
     from time import monotonic_ns
 except ImportError:
@@ -68,6 +69,7 @@ class Animation:
     """
     Base class for animations.
     """
+
     # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, color, peers=None, paused=False):
         self.pixel_object = pixel_object
@@ -152,7 +154,7 @@ class Animation:
         if self._color == color:
             return
         if isinstance(color, int):
-            color = (color >> 16 & 0xff, color >> 8 & 0xff, color & 0xff)
+            color = (color >> 16 & 0xFF, color >> 8 & 0xFF, color & 0xFF)
         self._color = color
         self._recompute_color(color)
 
@@ -183,6 +185,7 @@ class ColorCycle(Animation):
     :param colors: A list of colors to cycle through in ``(r, g, b)`` tuple, or ``0x000000`` hex
                    format. Defaults to a rainbow color cycle.
     """
+
     def __init__(self, pixel_object, speed, colors=RAINBOW):
         self.colors = colors
         super(ColorCycle, self).__init__(pixel_object, speed, colors[0])
@@ -209,6 +212,7 @@ class Blink(ColorCycle):
     :param int speed: Animation speed in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     """
+
     def __init__(self, pixel_object, speed, color):
         super(Blink, self).__init__(pixel_object, speed, [color, BLACK])
 
@@ -223,6 +227,7 @@ class Solid(ColorCycle):
     :param pixel_object: The initialised LED object.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     """
+
     def __init__(self, pixel_object, color):
         super(Solid, self).__init__(pixel_object, speed=1, colors=[color])
 
@@ -243,8 +248,11 @@ class Comet(Animation):
     :param bool reverse: Animates the comet in the reverse order. Defaults to ``False``.
     :param bool bounce: Comet will bounce back and forth. Defaults to ``True``.
     """
+
     # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, color, tail_length=10, reverse=False, bounce=False):
+    def __init__(
+        self, pixel_object, speed, color, tail_length=10, reverse=False, bounce=False
+    ):
         self._tail_length = tail_length + 1
         self._color_step = 0.9 / tail_length
         self._color_offset = 0.1
@@ -260,9 +268,11 @@ class Comet(Animation):
 
     def _recompute_color(self, color):
         self._comet_colors = [BLACK] + [
-            [int(color[rgb] * ((n * self._color_step) + self._color_offset))
-             for rgb in range(len(color))
-            ] for n in range(self._tail_length - 1)
+            [
+                int(color[rgb] * ((n * self._color_step) + self._color_offset))
+                for rgb in range(len(color))
+            ]
+            for n in range(self._tail_length - 1)
         ]
         self._reverse_comet_colors = list(reversed(self._comet_colors))
 
@@ -283,9 +293,11 @@ class Comet(Animation):
                     end = num_pixels - start
                 if start <= 0:
                     num_visible = self._tail_length + start
-                    self.pixel_object[0:num_visible] = colors[self._tail_length - num_visible:]
+                    self.pixel_object[0:num_visible] = colors[
+                        self._tail_length - num_visible :
+                    ]
                 else:
-                    self.pixel_object[start:start + end] = colors[0:end]
+                    self.pixel_object[start : start + end] = colors[0:end]
                 self.show()
                 yield
             if self.bounce:
@@ -303,6 +315,7 @@ class Sparkle(Animation):
     :param int speed: Animation speed in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     """
+
     def __init__(self, pixel_object, speed, color):
         if len(pixel_object) < 2:
             raise ValueError("Sparkle needs at least 2 pixels")
@@ -343,7 +356,9 @@ class Pulse(Animation):
     """
 
     # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, color, period=5, max_intensity=1, min_intensity=0):
+    def __init__(
+        self, pixel_object, speed, color, period=5, max_intensity=1, min_intensity=0
+    ):
         self.max_intensity = max_intensity
         self.min_intensity = min_intensity
         self._period = period
@@ -359,10 +374,14 @@ class Pulse(Animation):
         now = monotonic_ns()
         time_since_last_draw = (now - self._last_update) / NANOS_PER_SECOND
         self._last_update = now
-        pos = self._cycle_position = (self._cycle_position + time_since_last_draw) % self._period
+        pos = self._cycle_position = (
+            self._cycle_position + time_since_last_draw
+        ) % self._period
         if pos > self._half_period:
             pos = self._period - pos
-        intensity = self.min_intensity + (pos * self._intensity_delta * self._position_factor)
+        intensity = self.min_intensity + (
+            pos * self._intensity_delta * self._position_factor
+        )
         color = [int(self.color[n] * intensity) for n in range(self._bpp)]
         self.fill(color)
         self.show()
@@ -408,8 +427,10 @@ class Chase(Animation):
         self.pixel_object.fill((0, 0, 0))
         for i in range(self._size):
             n = (self._n + i) % self._repeat_width
-            num = len(self.pixel_object[n::self._repeat_width])
-            self.pixel_object[n::self._repeat_width] = [self.group_color(n) for n in range(num)]
+            num = len(self.pixel_object[n :: self._repeat_width])
+            self.pixel_object[n :: self._repeat_width] = [
+                self.group_color(n) for n in range(num)
+            ]
         self._n = (self._n + self._direction) % self._repeat_width
         self.show()
 
@@ -449,9 +470,12 @@ class AnimationSequence:
         while True:
             animations.animate()
     """
+
     def __init__(self, *members, advance_interval=None, auto_clear=False):
         self._members = members
-        self._advance_interval = advance_interval * NANOS_PER_SECOND if advance_interval else None
+        self._advance_interval = (
+            advance_interval * NANOS_PER_SECOND if advance_interval else None
+        )
         self._last_advance = monotonic_ns()
         self._current = 0
         self._auto_clear = auto_clear
@@ -545,6 +569,7 @@ class AnimationGroup:
                       first member of the group. Defaults to ``False``.
 
     """
+
     def __init__(self, *members, sync=False):
         self._members = members
         self._sync = sync
@@ -584,16 +609,16 @@ class AnimationGroup:
         """
         Fills all pixel objects in the group with a color.
         """
-        self._for_all('fill', color)
+        self._for_all("fill", color)
 
     def freeze(self):
         """
         Freeze all animations in the group.
         """
-        self._for_all('freeze')
+        self._for_all("freeze")
 
     def resume(self):
         """
         Resume all animations in the group.
         """
-        self._for_all('resume')
+        self._for_all("resume")
