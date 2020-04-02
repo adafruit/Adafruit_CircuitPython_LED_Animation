@@ -2,7 +2,7 @@ Introduction
 ============
 
 .. image:: https://readthedocs.org/projects/adafruit_circuitpython_led_animation/badge/?version=latest
-    :target: https://adafruit_circuitpython_led_animation.readthedocs.io/
+    :target: https://circuitpython.readthedocs.io/projects/led-animation/en/latest/
     :alt: Documentation Status
 
 .. image:: https://img.shields.io/discord/327254708534116352.svg
