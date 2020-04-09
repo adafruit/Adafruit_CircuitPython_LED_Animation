@@ -386,6 +386,7 @@ class Pulse(Animation):
         self.fill(color)
         self.show()
 
+
 class SparklePulse(Animation):
     """
     Combination of the Spark and Pulse animations.
@@ -399,7 +400,9 @@ class SparklePulse(Animation):
     """
 
     # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, color, period=5, max_intensity=1, min_intensity=0):
+    def __init__(
+        self, pixel_object, speed, color, period=5, max_intensity=1, min_intensity=0
+    ):
         if len(pixel_object) < 2:
             raise ValueError("Sparkle needs at least 2 pixels")
         self.max_intensity = max_intensity
@@ -432,13 +435,18 @@ class SparklePulse(Animation):
         now = monotonic_ns()
         time_since_last_draw = (now - self._last_update) / NANOS_PER_SECOND
         self._last_update = now
-        pos = self._cycle_position = (self._cycle_position + time_since_last_draw) % self._period
+        pos = self._cycle_position = (
+            self._cycle_position + time_since_last_draw
+        ) % self._period
         if pos > self._half_period:
             pos = self._period - pos
-        intensity = self.min_intensity + (pos * self._intensity_delta * self._position_factor)
+        intensity = self.min_intensity + (
+            pos * self._intensity_delta * self._position_factor
+        )
         color = [int(self.color[n] * intensity) for n in range(self._bpp)]
         self.pixel_object[pixel] = color
         self.show()
+
 
 class Chase(Animation):
     """
