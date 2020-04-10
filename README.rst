@@ -25,20 +25,52 @@ Please ensure all dependencies are available on the CircuitPython filesystem.
 This is easily achieved by downloading
 `the Adafruit library and driver bundle <https://github.com/adafruit/Adafruit_CircuitPython_Bundle>`_.
 
+
+Installing from PyPI
+=====================
+On supported GNU/Linux systems like the Raspberry Pi, you can install the driver locally `from
+PyPI <https://pypi.org/project/adafruit-circuitpython-led animation/>`_. To install for current user:
+
+.. code-block:: shell
+
+    pip3 install adafruit-circuitpython-led animation
+
+To install system-wide (this may be required in some cases):
+
+.. code-block:: shell
+
+    sudo pip3 install adafruit-circuitpython-led animation
+
+To install in a virtual environment in your current project:
+
+.. code-block:: shell
+
+    mkdir project-name && cd project-name
+    python3 -m venv .env
+    source .env/bin/activate
+    pip3 install adafruit-circuitpython-led animation
+
 Usage Example
 =============
 
 .. code-block:: python
 
-    import adafruit_dotstar as dotstar
     import board
-    from led_animation import color
-    # setup the pixel
-    dot = dotstar.DotStar(board.APA102_SCK, board.APA102_MOSI, 1, brightness=.2)
-    # set the color by name
-    dot[0] = color.GOLD
-    # show the pixel
-    dot.show()
+    import neopixel
+    from adafruit_led_animation.animation import Blink
+    import adafruit_led_animation.color as color
+
+    # Works on Circuit Playground Express and Bluefruit.
+    # For other boards, change board.NEOPIXEL to match the pin to which the NeoPixels are attached.
+    pixel_pin = board.NEOPIXEL
+    # Change to match the number of pixels you have attached to your board.
+    num_pixels = 10
+
+    pixels = neopixel.NeoPixel(pixel_pin, num_pixels)
+    blink = Blink(pixels, 0.5, color.PURPLE)
+
+    while True:
+        blink.animate()
 
 Contributing
 ============
