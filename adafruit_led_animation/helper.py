@@ -31,6 +31,7 @@ class AggregatePixels:
         tree.show()
 
     """
+
     def __init__(self, strip, pixel_ranges, individual_pixels=False):
         self._pixels = strip
         self._ranges = pixel_ranges
@@ -142,6 +143,7 @@ class SubsetPixels:
         star_arm.fill((255, 0, 255))
         pixels.show()
     """
+
     def __init__(self, strip, start, end):
         self._pixels = strip
         self._start = start
@@ -154,7 +156,7 @@ class SubsetPixels:
     def __setitem__(self, index, val):
         if isinstance(index, slice):
             start, stop, step = index.indices(self.n)
-            self._pixels[start + self._start:stop + self._start:step] = val
+            self._pixels[start + self._start : stop + self._start : step] = val
         else:
             self._pixels[index + self._start] = val
 
@@ -164,7 +166,7 @@ class SubsetPixels:
     def __getitem__(self, index):
         if isinstance(index, slice):
             start, stop, step = index.indices(self.n)
-            return self._pixels[start + self._start:stop + self._start:step]
+            return self._pixels[start + self._start : stop + self._start : step]
         if index < 0:
             index += len(self)
         if index >= self.n or index < 0:
@@ -189,7 +191,7 @@ class SubsetPixels:
         """
         Fill the used pixel ranges with color.
         """
-        self._pixels[self._start:self._end] = [color] * (self.n)
+        self._pixels[self._start : self._end] = [color] * (self.n)
 
     def show(self):
         """
@@ -234,7 +236,7 @@ def pulse_generator(period: float, animation_object, white=False):
         last_pos = pos
         if pos > half_period:
             pos = period - pos
-        intensity = (pos / half_period)
+        intensity = pos / half_period
         if white:
             fill_color[3] = int(fill_color[3] * intensity)
         fill_color[0] = int(fill_color[0] * intensity)
