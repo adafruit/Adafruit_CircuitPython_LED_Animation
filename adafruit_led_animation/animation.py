@@ -45,13 +45,12 @@ Implementation Notes
 
 import random
 from math import ceil
+import adafruit_led_animation.helper
 from . import NANOS_PER_SECOND, monotonic_ns
 from .color import BLACK, RAINBOW, wheel
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
-
-from .helper import pulse_generator
 
 
 class Animation:
@@ -420,7 +419,7 @@ class Pulse(Animation):
         white = len(self.pixel_object[0]) > 3 and isinstance(
             self.pixel_object[0][-1], float
         )
-        self._generator = pulse_generator(self._period, self, white)
+        self._generator = adafruit_led_animation.helper.pulse_generator(self._period, self, white)
 
 
 class ColorWheel(Animation):
