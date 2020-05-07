@@ -419,7 +419,9 @@ class Pulse(Animation):
         white = len(self.pixel_object[0]) > 3 and isinstance(
             self.pixel_object[0][-1], float
         )
-        self._generator = adafruit_led_animation.helper.pulse_generator(self._period, self, white)
+        self._generator = adafruit_led_animation.helper.pulse_generator(
+            self._period, self, white
+        )
 
 
 class ColorWheel(Animation):
