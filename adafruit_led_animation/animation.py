@@ -867,4 +867,3 @@ class AnimationGroup:
         """
         for item in self._members:
             item.reset()
-
