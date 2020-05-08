@@ -28,6 +28,7 @@ Author(s): Roy Hooper
 try:
     from micropython import const
 except ImportError:
+
     def const(value):  # pylint: disable=missing-docstring
         return value
 

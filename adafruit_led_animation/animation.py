@@ -424,22 +424,22 @@ class Pulse(Animation):
         )
 
 
-class ColorWheel(Animation):
+class Rainbow(Animation):
     """
-    The classic adafruit colorwheel.
+    The classic rainbow color wheel.
 
     :param pixel_object: The initialised LED object.
     :param float speed: Animation refresh rate in seconds, e.g. ``0.1``.
-    :param period: Period to cycle the colorwheel over.  Default 5.
+    :param period: Period to cycle the rainbow over.  Default 5.
     """
 
     # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, period=5, name=None):
-        super(ColorWheel, self).__init__(pixel_object, speed, BLACK, name=name)
+        super(Rainbow, self).__init__(pixel_object, speed, BLACK, name=name)
         self._period = period
-        self._generator = self._wheel_generator()
+        self._generator = self._color_wheel_generator()
 
-    def _wheel_generator(self):
+    def _color_wheel_generator(self):
         period = int(self._period * NANOS_PER_SECOND)
 
         last_update = monotonic_ns()
@@ -455,7 +455,8 @@ class ColorWheel(Animation):
             last_pos = pos
             wheel_index = int((pos / period) * 256)
             self.pixel_object[:] = [
-                wheel((i + wheel_index) % 255) for i, _ in enumerate(self.pixel_object)
+                colorwheel((i + wheel_index) % 255)
+                for i, _ in enumerate(self.pixel_object)
             ]
             self.show()
             yield
@@ -467,7 +468,7 @@ class ColorWheel(Animation):
         """
         Resets the animation.
         """
-        self._generator = self._wheel_generator()
+        self._generator = self._color_wheel_generator()
 
 
 class SparklePulse(Animation):
