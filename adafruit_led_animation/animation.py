@@ -285,6 +285,7 @@ class Comet(Animation):
         self._color_offset = 0.1
         self._comet_colors = None
         self._reverse_comet_colors = None
+        self._initial_reverse = reverse
         self.reverse = reverse
         self.bounce = bounce
         self._computed_color = color
@@ -347,6 +348,47 @@ class Comet(Animation):
         Resets to the first color.
         """
         self._generator = self._comet_generator()
+        self.reverse = self._initial_reverse
+
+
+class RainbowComet(Comet):
+    """
+    A comet animation.
+
+    :param pixel_object: The initialised LED object.
+    :param float speed: Animation speed in seconds, e.g. ``0.1``.
+    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
+    :param int tail_length: The length of the comet. Defaults to 10. Cannot exceed the number of
+                            pixels present in the pixel object, e.g. if the strip is 30 pixels
+                            long, the ``tail_length`` cannot exceed 30 pixels.
+    :param bool reverse: Animates the comet in the reverse order. Defaults to ``False``.
+    :param bool bounce: Comet will bounce back and forth. Defaults to ``True``.
+    :param int colorwheel_offset: Offset from start of colorwheel (0-255).
+    """
+
+    # pylint: disable=too-many-arguments
+    def __init__(self, pixel_object, speed, color, tail_length=10, reverse=False, bounce=False,
+                 colorwheel_offset=0, name=None):
+        self._colorwheel_is_tuple = isinstance(colorwheel(0), tuple)
+        self._colorwheel_offset = colorwheel_offset
+
+        super().__init__(pixel_object, speed, color, tail_length, reverse, bounce, name)
+
+    def _calc_brightness(self, n, color):
+        brightness = ((n * self._color_step) + self._color_offset)
+        if not self._colorwheel_is_tuple:
+            color = (color & 0xff, ((color & 0xff00) >> 8), (color >> 16))
+        return [int(i * brightness) for i in color]
+
+    def __recompute_color(self, color):
+        factor = int(256 / self._tail_length)
+        self._comet_colors = [BLACK] + [
+            self._calc_brightness(n, colorwheel(int(
+                (n * factor) + self._color_offset + self._colorwheel_offset) % 256))
+            for n in range(self._tail_length - 1)
+        ]
+        self._reverse_comet_colors = list(reversed(self._comet_colors))
+        self._computed_color = color
 
 
 class Sparkle(Animation):
@@ -687,9 +729,9 @@ class AnimationSequence:
             animations.animate()
     """
 
-    def __init__(
-        self, *members, advance_interval=None, auto_clear=False, random_order=False
-    ):
+    # pylint: disable=too-many-instance-attributes
+    def __init__(self, *members, advance_interval=None, auto_clear=False, random_order=False,
+                 auto_reset=False):
         self._members = members
         self._advance_interval = (
             advance_interval * NANOS_PER_SECOND if advance_interval else None
@@ -697,6 +739,7 @@ class AnimationSequence:
         self._last_advance = monotonic_ns()
         self._current = 0
         self._auto_clear = auto_clear
+        self._auto_reset = auto_reset
         self.clear_color = BLACK
         self._paused = False
         self._paused_at = 0
@@ -743,6 +786,8 @@ class AnimationSequence:
         """
         current = self._current
         self.activate((self._current + 1) % len(self._members))
+        if self._auto_reset:
+            self.current_animation.reset()
         if current > self._current:
             self._cycle_done()
 
