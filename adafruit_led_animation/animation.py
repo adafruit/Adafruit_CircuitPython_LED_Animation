@@ -58,7 +58,7 @@ class Animation:
     Base class for animations.
     """
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments,too-many-instance-attributes
     def __init__(self, pixel_object, speed, color, peers=None, paused=False, name=None):
         self.pixel_object = pixel_object
         self.pixel_object.auto_write = False
@@ -614,7 +614,7 @@ class Chase(Animation):
         """
         return self.color
 
-    def space_color(self, n, pixel_no=0):
+    def space_color(self, n, pixel_no=0):  # pylint: disable=unused-argument,no-self-use
         """
         Generate the spacing color for the n'th bar_color in the Chase
 
@@ -650,15 +650,12 @@ class RainbowChase(Chase):
         self._color_idx = 0
         super(RainbowChase, self).__init__(pixel_object, speed, color, size, spacing, reverse, name)
 
-    def bar_color(self, n, *_):
+    def bar_color(self, n, pixel_no=0):
         return self._colors[self._color_idx - n]
 
     def _cycle_done(self):
         self._color_idx = (self._color_idx + self._direction) % len(self._colors)
         super(RainbowChase, self)._cycle_done()
-
-    def show(self):
-        super(RainbowChase, self).show()
 
 
 class AnimationSequence:
