@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2019 Kattni Rembor for Adafruit Industries
+# Copyright (c) 2019 Roy Hooper
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -47,9 +47,9 @@ import math
 from . import NANOS_PER_SECOND, monotonic_ns
 
 
-class AggregatePixels:
+class PixelMap:
     """
-    AggregatePixels lets you treat ranges of pixels as single pixels for animation purposes.
+    PixelMap lets you treat ranges of pixels as single pixels for animation purposes.
 
     :param strip: An object that implements the Neopixel or Dotstar protocol.
     :param iterable pixel_ranges: Pixel ranges (or individual pixels).
@@ -59,10 +59,10 @@ class AggregatePixels:
 
         import board
         import neopixel
-        from adafruit_led_animation.helper import AggregatePixels
+        from adafruit_led_animation.helper import PixelMap
         pixels = neopixel.NeoPixel(board.D12, 307, auto_write=False)
 
-        tree = AggregatePixels(pixels, [
+        tree = PixelMap(pixels, [
             (0, 21), (21, 48), (48, 71), (71, 93),(93, 115), (115, 135), (135, 153),
             (153, 170), (170, 188), (188, 203), (203, 217), (217, 228), (228, 240),
             (240, 247), (247, 253), (253, 256), (256, 260), (260, 307)]
@@ -135,7 +135,7 @@ class AggregatePixels:
     def fill(self, color):
         """
         Fill the used pixel ranges with color.
-        :param color: Color to fill all pixels referenced by this AggregatePixels definition with.
+        :param color: Color to fill all pixels referenced by this PixelMap definition with.
         """
         if self._individual_pixels:
             for pixels in self._ranges:
@@ -163,9 +163,9 @@ class AggregatePixels:
         self._pixels.auto_write = value
 
 
-class SubsetPixels:
+class PixelSubset:
     """
-    SubsetPixels lets you work with a subset of a pixel object.
+    PixelSubset lets you work with a subset of a pixel object.
 
     :param strip: An object that implements the Neopixel or Dotstar protocol.
     :param int start: Starting pixel number.
@@ -175,11 +175,11 @@ class SubsetPixels:
 
         import board
         import neopixel
-        from adafruit_led_animation.helper import SubsetPixels
+        from adafruit_led_animation.helper import PixelSubset
         pixels = neopixel.NeoPixel(board.D12, 307, auto_write=False)
 
         star_start = 260
-        star_arm = SubsetPixels(pixels, star_start + 7, star_start + 15)
+        star_arm = PixelSubset(pixels, star_start + 7, star_start + 15)
         star_arm.fill((255, 0, 255))
         pixels.show()
     """
