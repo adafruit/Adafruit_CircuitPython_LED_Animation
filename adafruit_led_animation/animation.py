@@ -48,7 +48,7 @@ import random
 from math import ceil
 import adafruit_led_animation.helper
 from . import NANOS_PER_SECOND, monotonic_ns
-from .color import BLACK, RAINBOW, colorwheel
+from .color import BLACK, WHITE, RAINBOW, colorwheel
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
@@ -368,12 +368,12 @@ class RainbowComet(Comet):
     """
 
     # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, color, tail_length=10, reverse=False, bounce=False,
+    def __init__(self, pixel_object, speed, tail_length=10, reverse=False, bounce=False,
                  colorwheel_offset=0, name=None):
         self._colorwheel_is_tuple = isinstance(colorwheel(0), tuple)
         self._colorwheel_offset = colorwheel_offset
 
-        super().__init__(pixel_object, speed, color, tail_length, reverse, bounce, name)
+        super().__init__(pixel_object, speed, 0, tail_length, reverse, bounce, name)
 
     def _calc_brightness(self, n, color):
         brightness = ((n * self._color_step) + self._color_offset)
@@ -686,12 +686,12 @@ class RainbowChase(Chase):
     :param wheel_step: How many colors to skip in `colorwheel` per bar (default 8)
     """
     # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, color, size=2, spacing=3, reverse=False, name=None,
+    def __init__(self, pixel_object, speed, size=2, spacing=3, reverse=False, name=None,
                  wheel_step=8):
         self._num_colors = 256 // wheel_step
         self._colors = [colorwheel(n % 256) for n in range(0, 512, wheel_step)]
         self._color_idx = 0
-        super(RainbowChase, self).__init__(pixel_object, speed, color, size, spacing, reverse, name)
+        super(RainbowChase, self).__init__(pixel_object, speed, 0, size, spacing, reverse, name)
 
     def bar_color(self, n, pixel_no=0):
         return self._colors[self._color_idx - n]
@@ -703,20 +703,24 @@ class RainbowChase(Chase):
 
 class AnimationSequence:
     """
-    A sequence of Animations to run in sequence, looping forever.
+    A sequence of Animations to run in succession, looping forever.
     Advances manually or at the specified interval.
 
     :param members: The animation objects or groups.
     :param int advance_interval: Time in seconds between animations if cycling
                                  automatically. Defaults to ``None``.
-    :param random_order: Switch to a different animation each advance.
+    :param bool auto_clear: Clear the pixels between animations. If ``True``, the current animation
+                            will be cleared from the pixels before the next one starts.
+                            Defaults to ``False``.
+    :param bool random_order: Activate the animations in a random order. Defaults to ``False``.
+    :param bool auto_reset:
 
     .. code-block:: python
 
-        from adafruit_led_animation.animation import AnimationSequence, Blink, Comet, Sparkle
-        import adafruit_led_animation.color as color
         import board
         import neopixel
+        from adafruit_led_animation.animation import AnimationSequence, Blink, Comet, Sparkle
+        import adafruit_led_animation.color as color
 
         strip_pixels = neopixel.NeoPixel(board.A1, 30, brightness=1, auto_write=False)
 
@@ -875,6 +879,40 @@ class AnimationSequence:
         Resets the current animation.
         """
         self.current_animation.reset()
+
+
+class NotifiedAnimationSequence(AnimationSequence):
+    """Prints the current animation type (e.g. ``RainbowComet``, ``Chase``) and ``name`` (e.g. the
+    string from ``name=`` in the animation setup). Use for debugging when running multiple versions
+    of the same animation, or simply to print the names to the serial console. Used in the same
+    manner as ``AnimationSequence`` which is a sequence of Animations to run in succession, looping
+    forever. Advances manually or at the specified interval.
+
+    :param members: The animation objects or groups.
+    :param int advance_interval: Time in seconds between animations if cycling
+                                 automatically. Defaults to ``None``.
+    :param random_order: Activate the animations in a random order. Defaults to ``False``.
+
+    .. code-block:: python
+
+        import board
+        import neopixel
+        from adafruit_led_animation.animation import NotifiedAnimationSequence, Blink, Comet
+        import adafruit_led_animation.color as color
+
+        strip_pixels = neopixel.NeoPixel(board.A1, 30, brightness=1, auto_write=False)
+
+        blink = Blink(strip_pixels, 0.2, color.RED, name="red-blink")
+        comet = Comet(strip_pixels, 0.1, color.BLUE, name="blue-comet")
+
+        animations = NotifiedAnimationSequence(blink, comet, advance_interval=1)
+
+        while True:
+            animations.animate()
+    """
+    def activate(self, index):
+        super(NotifiedAnimationSequence, self).activate(index)
+        print("Activating:", self.current_animation)
 
 
 class AnimationGroup:
