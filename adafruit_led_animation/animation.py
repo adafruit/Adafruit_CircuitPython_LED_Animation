@@ -72,9 +72,12 @@ class Animation:
         self._paused = paused
         self._next_update = monotonic_ns()
         self._time_left_at_pause = 0
+        self._also_notify = []
         self.speed = speed  # sets _speed_ns
         self.color = color  # Triggers _recompute_color
         self.name = name
+        self.notify_cycles = 1
+        """Number of cycles to trigger additional cycle_done notifications after"""
         self.draw_count = 0
         """Number of animation frames drawn."""
         self.cycle_count = 0
@@ -185,6 +188,17 @@ class Animation:
         Override as needed.
         """
         self.cycle_count += 1
+        if self.cycle_count % self.notify_cycles == 0:
+            for callback in self._also_notify:
+                callback(self)
+
+    def add_cycle_complete_receiver(self, callback):
+        """
+        Adds an additional callback when the cycle completes.
+        :param callback: Additional callback to trigger when a cycle completes.  The callback
+                         is passed the animation object instance.
+        """
+        self._also_notify.append(callback)
 
     def reset(self):
         """
@@ -203,7 +217,7 @@ class ColorCycle(Animation):
     """
     def __init__(self, pixel_object, speed, colors=RAINBOW, name=None):
         self.colors = colors
-        super(ColorCycle, self).__init__(pixel_object, speed, colors[0], name=name)
+        super().__init__(pixel_object, speed, colors[0], name=name)
         self._generator = self._color_generator()
 
     cycle_complete_supported = True
@@ -239,7 +253,7 @@ class Blink(ColorCycle):
     """
 
     def __init__(self, pixel_object, speed, color, name=None):
-        super(Blink, self).__init__(pixel_object, speed, [color, BLACK], name=name)
+        super().__init__(pixel_object, speed, [color, BLACK], name=name)
 
     def _recompute_color(self, color):
         self.colors = [color, BLACK]
@@ -254,7 +268,7 @@ class Solid(ColorCycle):
     """
 
     def __init__(self, pixel_object, color, name=None):
-        super(Solid, self).__init__(pixel_object, speed=1, colors=[color], name=name)
+        super().__init__(pixel_object, speed=1, colors=[color], name=name)
 
     def _recompute_color(self, color):
         self.colors = [color]
@@ -295,7 +309,7 @@ class Comet(Animation):
         self.bounce = bounce
         self._computed_color = color
         self._generator = self._comet_generator()
-        super(Comet, self).__init__(pixel_object, speed, color, name=name)
+        super().__init__(pixel_object, speed, color, name=name)
 
     cycle_complete_supported = True
 
@@ -415,7 +429,7 @@ class Sparkle(Animation):
         self._half_color = None
         self._dim_color = None
         self._num_sparkles = num_sparkles
-        super(Sparkle, self).__init__(pixel_object, speed, color, name=name)
+        super().__init__(pixel_object, speed, color, name=name)
 
     def _recompute_color(self, color):
         half_color = tuple(color[rgb] // 4 for rgb in range(len(color)))
@@ -454,7 +468,7 @@ class Pulse(Animation):
 
     # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, color, period=5, name=None):
-        super(Pulse, self).__init__(pixel_object, speed, color, name=name)
+        super().__init__(pixel_object, speed, color, name=name)
         self._period = period
         self._generator = None
         self.reset()
@@ -489,7 +503,7 @@ class Rainbow(Animation):
 
     # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, period=5, name=None):
-        super(Rainbow, self).__init__(pixel_object, speed, BLACK, name=name)
+        super().__init__(pixel_object, speed, BLACK, name=name)
         self._period = period
         self._generator = self._color_wheel_generator()
 
@@ -556,7 +570,7 @@ class SparklePulse(Animation):
         self._cycle_position = 0
         self._half_color = None
         self._dim_color = None
-        super(SparklePulse, self).__init__(pixel_object, speed, color)
+        super().__init__(pixel_object, speed, color)
 
     def _recompute_color(self, color):
         half_color = tuple(color[rgb] // 4 for rgb in range(len(color)))
@@ -620,7 +634,7 @@ class Chase(Animation):
 
         self._reset = _resetter
 
-        super(Chase, self).__init__(pixel_object, speed, color, name=name)
+        super().__init__(pixel_object, speed, color, name=name)
 
     cycle_complete_supported = True
 
@@ -656,7 +670,7 @@ class Chase(Animation):
         colorgen = bar_colors()
         self.pixel_object[:] = [next(colorgen) for _ in self.pixel_object]
 
-        if self._offset == 0:
+        if self.draw_count % len(self.pixel_object) == 0:
             self.cycle_complete()
         self._offset = (self._offset + self._direction) % self._repeat_width
 
@@ -703,11 +717,11 @@ class RainbowChase(Chase):
         self._num_colors = 256 // wheel_step
         self._colors = [colorwheel(n % 256) for n in range(0, 512, wheel_step)]
         self._color_idx = 0
-        super(RainbowChase, self).__init__(pixel_object, speed, 0, size, spacing, reverse, name)
+        super().__init__(pixel_object, speed, 0, size, spacing, reverse, name)
 
     def bar_color(self, n, pixel_no=0):
         return self._colors[self._color_idx - n]
 
     def cycle_complete(self):
         self._color_idx = (self._color_idx + self._direction) % len(self._colors)
-        super(RainbowChase, self).cycle_complete()
+        super().cycle_complete()

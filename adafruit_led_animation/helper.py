@@ -286,18 +286,6 @@ def pulse_generator(period: float, animation_object, white=False):
         yield fill_color
 
 
-def _wrap_cycle_complete(obj, animation):
-    if not animation.cycle_complete_supported:
-        raise NotImplementedError(animation + " does not support cycle_complete")
-    method = animation.cycle_complete
-
-    def wrapper():
-        method()
-        obj.cycle_complete()
-
-    return wrapper
-
-
 class AnimationGroup:
     """
     A group of animations that are active together. An example would be grouping a strip of
@@ -312,21 +300,45 @@ class AnimationGroup:
     def __init__(self, *members, sync=False):
         if not members:
             raise ValueError("At least one member required in an AnimationGroup")
-
-        self._members = members
+        self.draw_count = 0
+        """Number of animation frames drawn."""
+        self.cycle_count = 0
+        """Number of animation cycles completed."""
+        self.notify_cycles = 1
+        """Number of cycles to trigger additional cycle_done notifications after"""
+        self._members = list(members)
         self._sync = sync
+        self._also_notify = []
+        self.cycle_count = 0
         if sync:
             main = members[0]
             main.peers = members[1:]
 
         # Catch cycle_complete on the last animation.
-        self._members[-1].animation_cycle_done = _wrap_cycle_complete(self, self._members[-1])
+        self._members[-1].add_cycle_complete_receiver(self._group_done)
         self.cycle_complete_supported = self._members[-1].cycle_complete_supported
+
+    def _group_done(self, animation):  # pylint: disable=unused-argument
+        self.cycle_complete()
 
     def cycle_complete(self):
         """
-        Called when the animation group is done the last animation in the sequence.
+        Called by some animations when they complete an animation cycle.
+        Animations that support cycle complete notifications will have X property set to False.
+        Override as needed.
         """
+        self.cycle_count += 1
+        if self.cycle_count % self.notify_cycles == 0:
+            for callback in self._also_notify:
+                callback(self)
+
+    def add_cycle_complete_receiver(self, callback):
+        """
+        Adds an additional callback when the cycle completes.
+        :param callback: Additional callback to trigger when a cycle completes.  The callback
+                         is passed the animation object instance.
+        """
+        self._also_notify.append(callback)
 
     def animate(self):
         """
@@ -432,22 +444,41 @@ class AnimationSequence:
         self._paused = False
         self._paused_at = 0
         self._random = random_order
+        self._also_notify = []
+        self.cycle_count = 0
+        self.notify_cycles = 1
         if random_order:
             self._current = random.randint(0, len(self._members) - 1)
         self._color = None
-
-        for item in self._members:
-            item.animation_cycle_done = _wrap_cycle_complete(self, item)
+        for member in self._members:
+            member.add_cycle_complete_receiver(self._sequence_complete)
+        self.cycle_complete_supported = self._members[-1].cycle_complete_supported
 
     cycle_complete_supported = True
 
     def cycle_complete(self):
         """
-        Called when the animation sequence is done all animations in the sequence.
-        Advances the animation if advance_on_cycle_complete is True.
+        Called by some animations when they complete an animation cycle.
+        Animations that support cycle complete notifications will have X property set to False.
+        Override as needed.
         """
+        self.cycle_count += 1
+        if self.cycle_count % self.notify_cycles == 0:
+            for callback in self._also_notify:
+                callback(self)
+
+    def _sequence_complete(self, animation):  # pylint: disable=unused-argument
+        self.cycle_complete()
         if self.advance_on_cycle_complete:
             self._advance()
+
+    def add_cycle_complete_receiver(self, callback):
+        """
+        Adds an additional callback when the cycle completes.
+        :param callback: Additional callback to trigger when a cycle completes.  The callback
+                         is passed the animation object instance.
+        """
+        self._also_notify.append(callback)
 
     def _auto_advance(self):
         if not self._advance_interval:
