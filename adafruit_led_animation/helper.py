@@ -455,7 +455,7 @@ class AnimationSequence:
         now = monotonic_ns()
         if now - self._last_advance > self._advance_interval:
             self._last_advance = now
-        self._advance()
+            self._advance()
 
     def _advance(self):
         if self._random:
