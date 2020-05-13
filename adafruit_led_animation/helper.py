@@ -502,21 +502,21 @@ class AnimationSequence:
             self._current = [member.name for member in self._members].index(index)
         else:
             self._current = index
-        if self.auto_clear:
-            self.fill(self.clear_color)
         if self._color:
             self.current_animation.color = self._color
+        if self.auto_clear:
+            self.fill(self.clear_color)
 
     def next(self):
         """
         Jump to the next animation.
         """
         current = self._current
+        if current > self._current:
+            self.cycle_complete()
         self.activate((self._current + 1) % len(self._members))
         if self.auto_reset:
             self.current_animation.reset()
-        if current > self._current:
-            self.cycle_complete()
 
     def random(self):
         """
