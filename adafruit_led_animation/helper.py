@@ -44,7 +44,9 @@ Implementation Notes
 """
 
 import math
+import random
 from . import NANOS_PER_SECOND, monotonic_ns
+from .color import BLACK
 
 
 class PixelMap:
@@ -271,8 +273,7 @@ def pulse_generator(period: float, animation_object, white=False):
         last_update = now
         pos = cycle_position = (cycle_position + time_since_last_draw) % period
         if pos < last_pos:
-            if animation_object.done_cycle_handler:
-                animation_object.done_cycle_handler(animation_object)
+            animation_object.cycle_complete()
         last_pos = pos
         if pos > half_period:
             pos = period - pos
@@ -283,3 +284,276 @@ def pulse_generator(period: float, animation_object, white=False):
         fill_color[1] = int(fill_color[1] * intensity)
         fill_color[2] = int(fill_color[2] * intensity)
         yield fill_color
+
+
+def _wrap_cycle_complete(obj, animation):
+    if not animation.cycle_complete_supported:
+        raise NotImplementedError(animation + " does not support cycle_complete")
+    method = animation.cycle_complete
+
+    def wrapper():
+        method()
+        obj.cycle_complete()
+
+    return wrapper
+
+
+class AnimationGroup:
+    """
+    A group of animations that are active together. An example would be grouping a strip of
+    pixels connected to a board and the onboard LED.
+
+    :param members: The animation objects or groups.
+    :param bool sync: Synchronises the timing of all members of the group to the settings of the
+                      first member of the group. Defaults to ``False``.
+
+    """
+
+    def __init__(self, *members, sync=False):
+        if not members:
+            raise ValueError("At least one member required in an AnimationGroup")
+
+        self._members = members
+        self._sync = sync
+        if sync:
+            main = members[0]
+            main.peers = members[1:]
+
+        # Catch cycle_complete on the last animation.
+        self._members[-1].animation_cycle_done = _wrap_cycle_complete(self, self._members[-1])
+        self.cycle_complete_supported = self._members[-1].cycle_complete_supported
+
+    def cycle_complete(self):
+        """
+        Called when the animation group is done the last animation in the sequence.
+        """
+
+    def animate(self):
+        """
+        Call animate() from your code's main loop.  It will draw all of the animations
+        in the group.
+
+        :return: True if any animation draw cycle was triggered, otherwise False.
+        """
+        if self._sync:
+            return self._members[0].animate()
+
+        return any([item.animate() for item in self._members])
+
+    @property
+    def color(self):
+        """
+        Use this property to change the color of all members of the animation group.
+        """
+        return None
+
+    @color.setter
+    def color(self, color):
+        for item in self._members:
+            item.color = color
+
+    def fill(self, color):
+        """
+        Fills all pixel objects in the group with a color.
+        """
+        for item in self._members:
+            item.fill(color)
+
+    def freeze(self):
+        """
+        Freeze all animations in the group.
+        """
+        for item in self._members:
+            item.freeze()
+
+    def resume(self):
+        """
+        Resume all animations in the group.
+        """
+        for item in self._members:
+            item.resume()
+
+    def reset(self):
+        """
+        Resets the animations in the group.
+        """
+        for item in self._members:
+            item.reset()
+
+
+class AnimationSequence:
+    """
+    A sequence of Animations to run in succession, looping forever.
+    Advances manually, or at the specified interval.
+
+    :param members: The animation objects or groups.
+    :param int advance_interval: Time in seconds between animations if cycling
+                                 automatically. Defaults to ``None``.
+    :param bool auto_clear: Clear the pixels between animations. If ``True``, the current animation
+                            will be cleared from the pixels before the next one starts.
+                            Defaults to ``False``.
+    :param bool random_order: Activate the animations in a random order. Defaults to ``False``.
+    :param bool auto_reset: Automatically call reset() on animations when changing animations.
+    :param bool advance_on_cycle_complete: Automatically advance when `cycle_complete` is triggered
+                                           on member animations. All Animations must support
+                                           cycle_complete to use this.
+    .. code-block:: python
+
+        import board
+        import neopixel
+        from adafruit_led_animation.animation import AnimationSequence, Blink, Comet, Sparkle
+        import adafruit_led_animation.color as color
+
+        strip_pixels = neopixel.NeoPixel(board.A1, 30, brightness=1, auto_write=False)
+
+        blink = Blink(strip_pixels, 0.2, color.RED)
+        comet = Comet(strip_pixels, 0.1, color.BLUE)
+        sparkle = Sparkle(strip_pixels, 0.05, color.GREEN)
+
+        animations = AnimationSequence(blink, comet, sparkle, advance_interval=1)
+
+        while True:
+            animations.animate()
+    """
+
+    # pylint: disable=too-many-instance-attributes
+    def __init__(self, *members, advance_interval=None, auto_clear=False, random_order=False,
+                 auto_reset=False, advance_on_cycle_complete=False):
+        self._members = members
+        self._advance_interval = (
+            advance_interval * NANOS_PER_SECOND if advance_interval else None
+        )
+        self._last_advance = monotonic_ns()
+        self._current = 0
+        self.auto_clear = auto_clear
+        self.auto_reset = auto_reset
+        self.advance_on_cycle_complete = advance_on_cycle_complete
+        self.clear_color = BLACK
+        self._paused = False
+        self._paused_at = 0
+        self._random = random_order
+        if random_order:
+            self._current = random.randint(0, len(self._members) - 1)
+        self._color = None
+
+        for item in self._members:
+            item.animation_cycle_done = _wrap_cycle_complete(self, item)
+
+    cycle_complete_supported = True
+
+    def cycle_complete(self):
+        """
+        Called when the animation sequence is done all animations in the sequence.
+        Advances the animation if advance_on_cycle_complete is True.
+        """
+        if self.advance_on_cycle_complete:
+            self._advance()
+
+    def _auto_advance(self):
+        if not self._advance_interval:
+            return
+        now = monotonic_ns()
+        if now - self._last_advance > self._advance_interval:
+            self._last_advance = now
+        self._advance()
+
+    def _advance(self):
+        if self._random:
+            self.random()
+        else:
+            self.next()
+
+    def activate(self, index):
+        """
+        Activates a specific animation.
+        """
+        if isinstance(index, str):
+            self._current = [member.name for member in self._members].index(index)
+        else:
+            self._current = index
+        if self.auto_clear:
+            self.fill(self.clear_color)
+        if self._color:
+            self.current_animation.color = self._color
+
+    def next(self):
+        """
+        Jump to the next animation.
+        """
+        current = self._current
+        self.activate((self._current + 1) % len(self._members))
+        if self.auto_reset:
+            self.current_animation.reset()
+        if current > self._current:
+            self.cycle_complete()
+
+    def random(self):
+        """
+        Jump to a random animation.
+        """
+        self.activate(random.randint(0, len(self._members) - 1))
+
+    def animate(self):
+        """
+        Call animate() from your code's main loop.  It will draw the current animation
+        or go to the next animation based on the advance_interval if set.
+
+        :return: True if the animation draw cycle was triggered, otherwise False.
+        """
+        if not self._paused:
+            self._auto_advance()
+        return self.current_animation.animate()
+
+    @property
+    def current_animation(self):
+        """
+        Returns the current animation in the sequence.
+        """
+        return self._members[self._current]
+
+    @property
+    def color(self):
+        """
+        Use this property to change the color of all animations in the sequence.
+        """
+        return self._color
+
+    @color.setter
+    def color(self, color):
+        self._color = color
+        self.current_animation.color = color
+
+    def fill(self, color):
+        """
+        Fills the current animation with a color.
+        """
+        self.current_animation.fill(color)
+
+    def freeze(self):
+        """
+        Freeze the current animation in the sequence.
+        Also stops auto_advance.
+        """
+        if self._paused:
+            return
+        self._paused = True
+        self._paused_at = monotonic_ns()
+        self.current_animation.freeze()
+
+    def resume(self):
+        """
+        Resume the current animation in the sequence, and resumes auto advance if enabled.
+        """
+        if not self._paused:
+            return
+        self._paused = False
+        now = monotonic_ns()
+        self._last_advance += now - self._paused_at
+        self._paused_at = 0
+        self.current_animation.resume()
+
+    def reset(self):
+        """
+        Resets the current animation.
+        """
+        self.current_animation.reset()
