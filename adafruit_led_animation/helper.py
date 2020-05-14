@@ -224,10 +224,12 @@ def vertical_strip_gridmap(height, alternating=True):
     :param alternating: strips alternate directions in a zigzag
     :return: mapper(x, y)
     """
+
     def mapper(x, y):
         if alternating and x % 2:
             return x * height + (height - 1 - y)
         return x * height + y
+
     return mapper
 
 
@@ -238,10 +240,12 @@ def horizontal_strip_gridmap(width, alternating=True):
     :param alternating: strips alternate directions in a zigzag
     :return: mapper(x, y)
     """
+
     def mapper(x, y):
         if alternating and y % 2:
             return y * width + (width - 1 - x)
         return y * width + x
+
     return mapper
 
 
@@ -520,8 +524,16 @@ class AnimationSequence:
     """
 
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, *members, advance_interval=None, auto_clear=False, random_order=False,
-                 auto_reset=False, advance_on_cycle_complete=False, name=None):
+    def __init__(
+        self,
+        *members,
+        advance_interval=None,
+        auto_clear=False,
+        random_order=False,
+        auto_reset=False,
+        advance_on_cycle_complete=False,
+        name=None
+    ):
         if advance_interval and advance_on_cycle_complete:
             raise ValueError("Cannot use both advance_interval and auto_clear")
         self._members = members

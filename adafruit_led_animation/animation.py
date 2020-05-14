@@ -212,6 +212,7 @@ class ColorCycle(Animation):
     :param colors: A list of colors to cycle through in ``(r, g, b)`` tuple, or ``0x000000`` hex
                    format. Defaults to a rainbow color cycle.
     """
+
     def __init__(self, pixel_object, speed, colors=RAINBOW, name=None):
         self.colors = colors
         super().__init__(pixel_object, speed, colors[0], name=name)
@@ -386,24 +387,37 @@ class RainbowComet(Comet):
     """
 
     # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, tail_length=10, reverse=False, bounce=False,
-                 colorwheel_offset=0, name=None):
+    def __init__(
+        self,
+        pixel_object,
+        speed,
+        tail_length=10,
+        reverse=False,
+        bounce=False,
+        colorwheel_offset=0,
+        name=None,
+    ):
         self._colorwheel_is_tuple = isinstance(colorwheel(0), tuple)
         self._colorwheel_offset = colorwheel_offset
 
         super().__init__(pixel_object, speed, 0, tail_length, reverse, bounce, name)
 
     def _calc_brightness(self, n, color):
-        brightness = ((n * self._color_step) + self._color_offset)
+        brightness = (n * self._color_step) + self._color_offset
         if not self._colorwheel_is_tuple:
-            color = (color & 0xff, ((color & 0xff00) >> 8), (color >> 16))
+            color = (color & 0xFF, ((color & 0xFF00) >> 8), (color >> 16))
         return [int(i * brightness) for i in color]
 
     def __recompute_color(self, color):
         factor = int(256 / self._tail_length)
         self._comet_colors = [BLACK] + [
-            self._calc_brightness(n, colorwheel(int(
-                (n * factor) + self._color_offset + self._colorwheel_offset) % 256))
+            self._calc_brightness(
+                n,
+                colorwheel(
+                    int((n * factor) + self._color_offset + self._colorwheel_offset)
+                    % 256
+                ),
+            )
             for n in range(self._tail_length - 1)
         ]
         self._reverse_comet_colors = list(reversed(self._comet_colors))
@@ -652,7 +666,6 @@ class Chase(Animation):
         self._direction = -1 if self._reverse else 1
 
     def draw(self):
-
         def bar_colors():
             bar_no = 0
             for i in range(self._offset, 0, -1):
@@ -713,9 +726,18 @@ class RainbowChase(Chase):
     :param reverse: Reverse direction of movement.
     :param wheel_step: How many colors to skip in `colorwheel` per bar (default 8)
     """
+
     # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, size=2, spacing=3, reverse=False, name=None,
-                 wheel_step=8):
+    def __init__(
+        self,
+        pixel_object,
+        speed,
+        size=2,
+        spacing=3,
+        reverse=False,
+        name=None,
+        wheel_step=8,
+    ):
         self._num_colors = 256 // wheel_step
         self._colors = [colorwheel(n % 256) for n in range(0, 512, wheel_step)]
         self._color_idx = 0
