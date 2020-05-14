@@ -59,7 +59,7 @@ class Animation:
     """
     Base class for animations.
     """
-    CYCLE_NOTIFICATIONS_SUPPORTED = False
+    cycle_complete_supported = False
 
     # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, color, peers=None, paused=False, name=None):
