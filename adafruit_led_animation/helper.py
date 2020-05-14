@@ -165,6 +165,85 @@ class PixelMap:
     def auto_write(self, value):
         self._pixels.auto_write = value
 
+    @classmethod
+    def vertical_lines(cls, pixels, width, height, gridmapper):
+        """
+        Generate a PixelMap of horizontal lines on a strip arranged in a grid.
+
+        :param pixels: pixel object
+        :param width: width of grid
+        :param height: height of grid
+        :param gridmapper: a function to map x and y coordinates to the grid
+                           see vertical_strip_gridmap and horizontal_strip_gridmap
+        :return: PixelMap
+
+        Example: Vertical lines on a 32x8 grid with the pixel rows oriented vertically,
+                 alternating direction every row.
+
+        .. code-block:: python
+            PixelMap.vertical_lines(pixels, 32, 8, vertical_strip_gridmap(8))
+
+        """
+        if len(pixels) < width * height:
+            raise ValueError("number of pixels is less than width x height")
+        mapping = []
+        for x in range(width):
+            mapping.append([gridmapper(x, y) for y in range(height)])
+        return cls(pixels, mapping, individual_pixels=True)
+
+    @classmethod
+    def horizontal_lines(cls, pixels, width, height, gridmapper):
+        """
+        Generate a PixelMap of horizontal lines on a strip arranged in a grid.
+
+        :param pixels: pixel object
+        :param width: width of grid
+        :param height: height of grid
+        :param gridmapper: a function to map x and y coordinates to the grid
+                           see vertical_strip_gridmap and horizontal_strip_gridmap
+        :return: PixelMap
+
+        Example: Horizontal lines on a 16x16 grid with the pixel rows oriented vertically,
+                 alternating direction every row.
+
+        .. code-block:: python
+            PixelMap.horizontal_lines(pixels, 16, 16, vertical_strip_gridmap(16))
+        """
+        if len(pixels) < width * height:
+            raise ValueError("number of pixels is less than width x height")
+        mapping = []
+        for y in range(height):
+            mapping.append([gridmapper(x, y) for x in range(width)])
+        return cls(pixels, mapping, individual_pixels=True)
+
+
+def vertical_strip_gridmap(height, alternating=True):
+    """
+    Returns a function that determines the pixel number for a grid with strips arranged vertically.
+    :param height: strip height in pixels
+    :param alternating: strips alternate directions in a zigzag
+    :return: mapper(x, y)
+    """
+    def mapper(x, y):
+        if alternating and x % 2:
+            return x * height + (height - 1 - y)
+        return x * height + y
+    return mapper
+
+
+def horizontal_strip_gridmap(width, alternating=True):
+    """
+    Determines the pixel number for a grid with strips arranged horizontally.
+    :param width: strip width in pixels
+    :param alternating: strips alternate directions in a zigzag
+    :return: mapper(x, y)
+    """
+    def mapper(x, y):
+        if alternating and y % 2:
+            return y * width + (width - 1 - x)
+        return y * width + x
+    return mapper
+
 
 class PixelSubset:
     """
