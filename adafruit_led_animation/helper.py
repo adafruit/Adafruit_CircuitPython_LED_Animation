@@ -181,6 +181,7 @@ class PixelMap:
                  alternating direction every row.
 
         .. code-block:: python
+
             PixelMap.vertical_lines(pixels, 32, 8, vertical_strip_gridmap(8))
 
         """
@@ -207,6 +208,7 @@ class PixelMap:
                  alternating direction every row.
 
         .. code-block:: python
+
             PixelMap.horizontal_lines(pixels, 16, 16, vertical_strip_gridmap(16))
         """
         if len(pixels) < width * height:
@@ -423,6 +425,7 @@ class AnimationGroup:
     def add_cycle_complete_receiver(self, callback):
         """
         Adds an additional callback when the cycle completes.
+
         :param callback: Additional callback to trigger when a cycle completes.  The callback
                          is passed the animation object instance.
         """
@@ -504,6 +507,7 @@ class AnimationSequence:
     :param bool advance_on_cycle_complete: Automatically advance when `cycle_complete` is triggered
                                            on member animations. All Animations must support
                                            cycle_complete to use this.
+
     .. code-block:: python
 
         import board
@@ -584,6 +588,7 @@ class AnimationSequence:
     def add_cycle_complete_receiver(self, callback):
         """
         Adds an additional callback when the cycle completes.
+
         :param callback: Additional callback to trigger when a cycle completes.  The callback
                          is passed the animation object instance.
         """

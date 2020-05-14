@@ -192,6 +192,7 @@ class Animation:
     def add_cycle_complete_receiver(self, callback):
         """
         Adds an additional callback when the cycle completes.
+
         :param callback: Additional callback to trigger when a cycle completes.  The callback
                          is passed the animation object instance.
         """
