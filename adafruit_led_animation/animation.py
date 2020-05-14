@@ -84,7 +84,7 @@ class Animation:
         """Number of animation cycles completed."""
 
     def __str__(self):
-        return "<Animation %s: %s>" % (self.__class__.__name__, self.name)
+        return "<%s: %s>" % (self.__class__.__name__, self.name)
 
     def animate(self):
         """
@@ -107,9 +107,6 @@ class Animation:
         if self.peers:
             for peer in self.peers:
                 peer.draw()
-        self.show()
-        for peer in self.peers:
-            peer.show()
 
         self._next_update = now + self._speed_ns
         return True
@@ -117,6 +114,7 @@ class Animation:
     def draw(self):
         """
         Animation subclasses must implement draw() to render the animation sequence.
+        Draw must call show().
         """
         raise NotImplementedError()
 
@@ -146,7 +144,6 @@ class Animation:
         Fills the pixel object with a color.
         """
         self.pixel_object.fill(color)
-        self.show()
 
     @property
     def color(self):
@@ -517,12 +514,13 @@ class Rainbow(Animation):
         cycle_position = 0
         last_pos = 0
         while True:
+            cycle_completed = False
             now = monotonic_ns()
             time_since_last_draw = now - last_update
             last_update = now
             pos = cycle_position = (cycle_position + time_since_last_draw) % period
             if pos < last_pos:
-                self.cycle_complete()
+                cycle_completed = True
             last_pos = pos
             wheel_index = int((pos / period) * 256)
             self.pixel_object[:] = [
@@ -530,6 +528,8 @@ class Rainbow(Animation):
                 for i, _ in enumerate(self.pixel_object)
             ]
             self.show()
+            if cycle_completed:
+                self.cycle_complete()
             yield
 
     def draw(self):
@@ -670,6 +670,7 @@ class Chase(Animation):
 
         colorgen = bar_colors()
         self.pixel_object[:] = [next(colorgen) for _ in self.pixel_object]
+        self.show()
 
         if self.draw_count % len(self.pixel_object) == 0:
             self.cycle_complete()

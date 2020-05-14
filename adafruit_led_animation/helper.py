@@ -45,6 +45,7 @@ Implementation Notes
 
 import math
 import random
+
 from . import NANOS_PER_SECOND, monotonic_ns
 from .color import BLACK
 
@@ -104,7 +105,7 @@ class PixelMap:
         else:
             self._set_pixels(index, val)
 
-        if self._pixels.auto_write:
+        if not self._pixels.auto_write:
             self.show()
 
     def __getitem__(self, index):
@@ -202,7 +203,7 @@ class PixelSubset:
         else:
             self._pixels[index + self._start] = val
 
-        if self._pixels.auto_write:
+        if not self._pixels.auto_write:
             self.show()
 
     def __getitem__(self, index):
@@ -297,7 +298,7 @@ class AnimationGroup:
 
     """
 
-    def __init__(self, *members, sync=False):
+    def __init__(self, *members, sync=False, name=None):
         if not members:
             raise ValueError("At least one member required in an AnimationGroup")
         self.draw_count = 0
@@ -310,6 +311,7 @@ class AnimationGroup:
         self._sync = sync
         self._also_notify = []
         self.cycle_count = 0
+        self.name = name
         if sync:
             main = members[0]
             main.peers = members[1:]
@@ -317,6 +319,9 @@ class AnimationGroup:
         # Catch cycle_complete on the last animation.
         self._members[-1].add_cycle_complete_receiver(self._group_done)
         self.cycle_complete_supported = self._members[-1].cycle_complete_supported
+
+    def __str__(self):
+        return "<AnimationGroup %s: %s>" % (self.__class__.__name__, self.name)
 
     def _group_done(self, animation):  # pylint: disable=unused-argument
         self.cycle_complete()
@@ -392,6 +397,13 @@ class AnimationGroup:
         for item in self._members:
             item.reset()
 
+    def show(self):
+        """
+        Draws the current animation group members.
+        """
+        for item in self._members:
+            item.show()
+
 
 class AnimationSequence:
     """
@@ -430,7 +442,9 @@ class AnimationSequence:
 
     # pylint: disable=too-many-instance-attributes
     def __init__(self, *members, advance_interval=None, auto_clear=False, random_order=False,
-                 auto_reset=False, advance_on_cycle_complete=False):
+                 auto_reset=False, advance_on_cycle_complete=False, name=None):
+        if advance_interval and advance_on_cycle_complete:
+            raise ValueError("Cannot use both advance_interval and auto_clear")
         self._members = members
         self._advance_interval = (
             advance_interval * NANOS_PER_SECOND if advance_interval else None
@@ -447,6 +461,7 @@ class AnimationSequence:
         self._also_notify = []
         self.cycle_count = 0
         self.notify_cycles = 1
+        self.name = name
         if random_order:
             self._current = random.randint(0, len(self._members) - 1)
         self._color = None
@@ -455,6 +470,9 @@ class AnimationSequence:
         self.cycle_complete_supported = self._members[-1].cycle_complete_supported
 
     cycle_complete_supported = True
+
+    def __str__(self):
+        return "<%s: %s>" % (self.__class__.__name__, self.name)
 
     def cycle_complete(self):
         """
@@ -489,6 +507,11 @@ class AnimationSequence:
             self._advance()
 
     def _advance(self):
+        if self.auto_reset:
+            self.current_animation.reset()
+        if self.auto_clear:
+            self.current_animation.fill(self.clear_color)
+            self.current_animation.show()
         if self._random:
             self.random()
         else:
@@ -504,8 +527,6 @@ class AnimationSequence:
             self._current = index
         if self._color:
             self.current_animation.color = self._color
-        if self.auto_clear:
-            self.fill(self.clear_color)
 
     def next(self):
         """
@@ -515,8 +536,6 @@ class AnimationSequence:
         if current > self._current:
             self.cycle_complete()
         self.activate((self._current + 1) % len(self._members))
-        if self.auto_reset:
-            self.current_animation.reset()
 
     def random(self):
         """
@@ -531,7 +550,7 @@ class AnimationSequence:
 
         :return: True if the animation draw cycle was triggered, otherwise False.
         """
-        if not self._paused:
+        if not self._paused and self._advance_interval:
             self._auto_advance()
         return self.current_animation.animate()
 
@@ -588,3 +607,9 @@ class AnimationSequence:
         Resets the current animation.
         """
         self.current_animation.reset()
+
+    def show(self):
+        """
+        Draws the current animation group members.
+        """
+        self.current_animation.show()
