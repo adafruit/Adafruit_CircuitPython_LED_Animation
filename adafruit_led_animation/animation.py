@@ -486,7 +486,7 @@ class Pulse(Animation):
         Resets the animation.
         """
         white = len(self.pixel_object[0]) > 3 and isinstance(
-            self.pixel_object[0][-1], float
+            self.pixel_object[0][-1], int
         )
         self._generator = adafruit_led_animation.helper.pulse_generator(
             self._period, self, white
