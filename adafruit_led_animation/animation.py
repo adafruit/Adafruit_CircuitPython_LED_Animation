@@ -1,6 +1,7 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2019 Kattni Rembor for Adafruit Industries
+# Copyright (c) 2019-2020 Roy Hooper
+# Copyright (c) 2020 Kattni Rembor for Adafruit Industries
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,8 +24,7 @@
 `adafruit_led_animation.animation`
 ================================================================================
 
-CircuitPython helper library for LED animations.
-
+Animation base class, and basic animations for CircuitPython helper library for LED animations.
 
 * Author(s): Roy Hooper, Kattni Rembor
 
@@ -43,45 +43,45 @@ Implementation Notes
 
 """
 
-import random
 from math import ceil
-
-from . import NANOS_PER_SECOND
+from . import NANOS_PER_SECOND, monotonic_ns
 from .color import BLACK, RAINBOW
-
-try:
-    from time import monotonic_ns
-except ImportError:
-    import time
-
-    def monotonic_ns():
-        """
-        Implementation of monotonic_ns for platforms without time.monotonic_ns
-        """
-        return int(time.time() * NANOS_PER_SECOND)
-
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
 
 
 class Animation:
+    # pylint: disable=too-many-instance-attributes
     """
     Base class for animations.
     """
+    cycle_complete_supported = False
 
     # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, color, peers=None, paused=False):
+    def __init__(self, pixel_object, speed, color, peers=None, paused=False, name=None):
         self.pixel_object = pixel_object
         self.pixel_object.auto_write = False
         self.peers = peers if peers else []
+        """A sequence of animations to trigger .draw() on when this animation draws."""
         self._speed_ns = 0
         self._color = None
         self._paused = paused
         self._next_update = monotonic_ns()
         self._time_left_at_pause = 0
+        self._also_notify = []
         self.speed = speed  # sets _speed_ns
         self.color = color  # Triggers _recompute_color
+        self.name = name
+        self.notify_cycles = 1
+        """Number of cycles to trigger additional cycle_done notifications after"""
+        self.draw_count = 0
+        """Number of animation frames drawn."""
+        self.cycle_count = 0
+        """Number of animation cycles completed."""
+
+    def __str__(self):
+        return "<%s: %s>" % (self.__class__.__name__, self.name)
 
     def animate(self):
         """
@@ -98,12 +98,12 @@ class Animation:
             return False
 
         self.draw()
+        self.draw_count += 1
+
+        # Draw related animations together
         if self.peers:
             for peer in self.peers:
                 peer.draw()
-        self.show()
-        for peer in self.peers:
-            peer.show()
 
         self._next_update = now + self._speed_ns
         return True
@@ -111,6 +111,7 @@ class Animation:
     def draw(self):
         """
         Animation subclasses must implement draw() to render the animation sequence.
+        Draw must call show().
         """
         raise NotImplementedError()
 
@@ -140,7 +141,6 @@ class Animation:
         Fills the pixel object with a color.
         """
         self.pixel_object.fill(color)
-        self.show()
 
     @property
     def color(self):
@@ -175,26 +175,54 @@ class Animation:
         Override as needed.
         """
 
+    def cycle_complete(self):
+        """
+        Called by some animations when they complete an animation cycle.
+        Animations that support cycle complete notifications will have X property set to False.
+        Override as needed.
+        """
+        self.cycle_count += 1
+        if self.cycle_count % self.notify_cycles == 0:
+            for callback in self._also_notify:
+                callback(self)
+
+    def add_cycle_complete_receiver(self, callback):
+        """
+        Adds an additional callback when the cycle completes.
+
+        :param callback: Additional callback to trigger when a cycle completes.  The callback
+                         is passed the animation object instance.
+        """
+        self._also_notify.append(callback)
+
+    def reset(self):
+        """
+        Resets the animation sequence.
+        """
+
 
 class ColorCycle(Animation):
     """
     Animate a sequence of one or more colors, cycling at the specified speed.
 
     :param pixel_object: The initialised LED object.
-    :param int speed: Animation speed in seconds, e.g. ``0.1``.
+    :param float speed: Animation speed in seconds, e.g. ``0.1``.
     :param colors: A list of colors to cycle through in ``(r, g, b)`` tuple, or ``0x000000`` hex
                    format. Defaults to a rainbow color cycle.
     """
 
-    def __init__(self, pixel_object, speed, colors=RAINBOW):
+    def __init__(self, pixel_object, speed, colors=RAINBOW, name=None):
         self.colors = colors
-        super(ColorCycle, self).__init__(pixel_object, speed, colors[0])
+        super().__init__(pixel_object, speed, colors[0], name=name)
         self._generator = self._color_generator()
+        next(self._generator)
+
+    cycle_complete_supported = True
 
     def draw(self):
-        next(self._generator)
         self.pixel_object.fill(self.color)
         self.show()
+        next(self._generator)
 
     def _color_generator(self):
         index = 0
@@ -202,6 +230,14 @@ class ColorCycle(Animation):
             self._color = self.colors[index]
             yield
             index = (index + 1) % len(self.colors)
+            if index == 0:
+                self.cycle_complete()
+
+    def reset(self):
+        """
+        Resets to the first color.
+        """
+        self._generator = self._color_generator()
 
 
 class Blink(ColorCycle):
@@ -209,12 +245,12 @@ class Blink(ColorCycle):
     Blink a color on and off.
 
     :param pixel_object: The initialised LED object.
-    :param int speed: Animation speed in seconds, e.g. ``0.1``.
+    :param float speed: Animation speed in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     """
 
-    def __init__(self, pixel_object, speed, color):
-        super(Blink, self).__init__(pixel_object, speed, [color, BLACK])
+    def __init__(self, pixel_object, speed, color, name=None):
+        super().__init__(pixel_object, speed, [color, BLACK], name=name)
 
     def _recompute_color(self, color):
         self.colors = [color, BLACK]
@@ -228,8 +264,8 @@ class Solid(ColorCycle):
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     """
 
-    def __init__(self, pixel_object, color):
-        super(Solid, self).__init__(pixel_object, speed=1, colors=[color])
+    def __init__(self, pixel_object, color, name=None):
+        super().__init__(pixel_object, speed=1, colors=[color], name=name)
 
     def _recompute_color(self, color):
         self.colors = [color]
@@ -240,7 +276,7 @@ class Comet(Animation):
     A comet animation.
 
     :param pixel_object: The initialised LED object.
-    :param int speed: Animation speed in seconds, e.g. ``0.1``.
+    :param float speed: Animation speed in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     :param int tail_length: The length of the comet. Defaults to 10. Cannot exceed the number of
                             pixels present in the pixel object, e.g. if the strip is 30 pixels
@@ -251,22 +287,33 @@ class Comet(Animation):
 
     # pylint: disable=too-many-arguments
     def __init__(
-        self, pixel_object, speed, color, tail_length=10, reverse=False, bounce=False
+        self,
+        pixel_object,
+        speed,
+        color,
+        tail_length=10,
+        reverse=False,
+        bounce=False,
+        name=None,
     ):
         self._tail_length = tail_length + 1
         self._color_step = 0.9 / tail_length
         self._color_offset = 0.1
         self._comet_colors = None
         self._reverse_comet_colors = None
+        self._initial_reverse = reverse
         self.reverse = reverse
         self.bounce = bounce
-        # Super is called late because it needs ._color to be initialized.
-        super(Comet, self).__init__(pixel_object, speed, color)
-        # _recompute_color needs calling before creating the generator, so setup the generator
-        # afterwards
+        self._computed_color = color
         self._generator = self._comet_generator()
+        super().__init__(pixel_object, speed, color, name=name)
+
+    cycle_complete_supported = True
 
     def _recompute_color(self, color):
+        pass
+
+    def __recompute_color(self, color):
         self._comet_colors = [BLACK] + [
             [
                 int(color[rgb] * ((n * self._color_step) + self._color_offset))
@@ -275,6 +322,7 @@ class Comet(Animation):
             for n in range(self._tail_length - 1)
         ]
         self._reverse_comet_colors = list(reversed(self._comet_colors))
+        self._computed_color = color
 
     def _get_range(self, num_pixels):
         if self.reverse:
@@ -283,7 +331,10 @@ class Comet(Animation):
 
     def _comet_generator(self):
         num_pixels = len(self.pixel_object)
+        cycle_passes = 0
         while True:
+            if self._color != self._computed_color or not self._comet_colors:
+                self.__recompute_color(self._color)
             colors = self._reverse_comet_colors if self.reverse else self._comet_colors
             for start in self._get_range(num_pixels):
 
@@ -300,47 +351,22 @@ class Comet(Animation):
                     self.pixel_object[start : start + end] = colors[0:end]
                 self.show()
                 yield
+            cycle_passes += 1
             if self.bounce:
                 self.reverse = not self.reverse
+            if not self.bounce or cycle_passes == 2:
+                self.cycle_complete()
+                cycle_passes = 0
 
     def draw(self):
         next(self._generator)
 
-
-class Sparkle(Animation):
-    """
-    Sparkle animation of a single color.
-
-    :param pixel_object: The initialised LED object.
-    :param int speed: Animation speed in seconds, e.g. ``0.1``.
-    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
-    """
-
-    def __init__(self, pixel_object, speed, color):
-        if len(pixel_object) < 2:
-            raise ValueError("Sparkle needs at least 2 pixels")
-        self._half_color = None
-        self._dim_color = None
-        super(Sparkle, self).__init__(pixel_object, speed, color)
-
-    def _recompute_color(self, color):
-        half_color = tuple(color[rgb] // 4 for rgb in range(len(color)))
-        dim_color = tuple(color[rgb] // 10 for rgb in range(len(color)))
-        for pixel in range(len(self.pixel_object)):
-            if self.pixel_object[pixel] == self._half_color:
-                self.pixel_object[pixel] = half_color
-            elif self.pixel_object[pixel] == self._dim_color:
-                self.pixel_object[pixel] = dim_color
-        self._half_color = half_color
-        self._dim_color = dim_color
-
-    def draw(self):
-        pixel = random.randint(0, (len(self.pixel_object) - 2))
-        self.pixel_object[pixel] = self._color
-        self.show()
-        self.pixel_object[pixel] = self._half_color
-        self.pixel_object[pixel + 1] = self._dim_color
-        self.show()
+    def reset(self):
+        """
+        Resets to the first color.
+        """
+        self._generator = self._comet_generator()
+        self.reverse = self._initial_reverse
 
 
 class Pulse(Animation):
@@ -348,104 +374,37 @@ class Pulse(Animation):
     Pulse all pixels a single color.
 
     :param pixel_object: The initialised LED object.
-    :param int speed: Animation refresh rate in seconds, e.g. ``0.1``.
+    :param float speed: Animation refresh rate in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     :param period: Period to pulse the LEDs over.  Default 5.
-    :param max_intensity: The maximum intensity to pulse, between 0 and 1.0.  Default 1.
-    :param min_intensity: The minimum intensity to pulse, between 0 and 1.0.  Default 0.
     """
 
     # pylint: disable=too-many-arguments
-    def __init__(
-        self, pixel_object, speed, color, period=5, max_intensity=1, min_intensity=0
-    ):
-        self.max_intensity = max_intensity
-        self.min_intensity = min_intensity
+    def __init__(self, pixel_object, speed, color, period=5, name=None):
+        super().__init__(pixel_object, speed, color, name=name)
         self._period = period
-        self._intensity_delta = max_intensity - min_intensity
-        self._half_period = period / 2
-        self._position_factor = 1 / self._half_period
-        self._bpp = len(pixel_object[0])
-        self._last_update = monotonic_ns()
-        self._cycle_position = 0
-        super(Pulse, self).__init__(pixel_object, speed, color)
+        self._generator = None
+        self.reset()
+
+    cycle_complete_supported = True
 
     def draw(self):
-        now = monotonic_ns()
-        time_since_last_draw = (now - self._last_update) / NANOS_PER_SECOND
-        self._last_update = now
-        pos = self._cycle_position = (
-            self._cycle_position + time_since_last_draw
-        ) % self._period
-        if pos > self._half_period:
-            pos = self._period - pos
-        intensity = self.min_intensity + (
-            pos * self._intensity_delta * self._position_factor
-        )
-        color = [int(self.color[n] * intensity) for n in range(self._bpp)]
+        color = next(self._generator)
         self.fill(color)
         self.show()
 
-
-class SparklePulse(Animation):
-    """
-    Combination of the Spark and Pulse animations.
-
-    :param pixel_object: The initialised LED object.
-    :param int speed: Animation refresh rate in seconds, e.g. ``0.1``.
-    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
-    :param period: Period to pulse the LEDs over.  Default 5.
-    :param max_intensity: The maximum intensity to pulse, between 0 and 1.0.  Default 1.
-    :param min_intensity: The minimum intensity to pulse, between 0 and 1.0.  Default 0.
-    """
-
-    # pylint: disable=too-many-arguments
-    def __init__(
-        self, pixel_object, speed, color, period=5, max_intensity=1, min_intensity=0
-    ):
-        if len(pixel_object) < 2:
-            raise ValueError("Sparkle needs at least 2 pixels")
-        self.max_intensity = max_intensity
-        self.min_intensity = min_intensity
-        self._period = period
-        self._intensity_delta = max_intensity - min_intensity
-        self._half_period = period / 2
-        self._position_factor = 1 / self._half_period
-        self._bpp = len(pixel_object[0])
-        self._last_update = monotonic_ns()
-        self._cycle_position = 0
-        self._half_color = None
-        self._dim_color = None
-        super(SparklePulse, self).__init__(pixel_object, speed, color)
-
-    def _recompute_color(self, color):
-        half_color = tuple(color[rgb] // 4 for rgb in range(len(color)))
-        dim_color = tuple(color[rgb] // 10 for rgb in range(len(color)))
-        for pixel in range(len(self.pixel_object)):
-            if self.pixel_object[pixel] == self._half_color:
-                self.pixel_object[pixel] = half_color
-            elif self.pixel_object[pixel] == self._dim_color:
-                self.pixel_object[pixel] = dim_color
-        self._half_color = half_color
-        self._dim_color = dim_color
-
-    def draw(self):
-        pixel = random.randint(0, (len(self.pixel_object) - 2))
-
-        now = monotonic_ns()
-        time_since_last_draw = (now - self._last_update) / NANOS_PER_SECOND
-        self._last_update = now
-        pos = self._cycle_position = (
-            self._cycle_position + time_since_last_draw
-        ) % self._period
-        if pos > self._half_period:
-            pos = self._period - pos
-        intensity = self.min_intensity + (
-            pos * self._intensity_delta * self._position_factor
+    def reset(self):
+        """
+        Resets the animation.
+        """
+        white = len(self.pixel_object[0]) > 3 and isinstance(
+            self.pixel_object[0][-1], int
         )
-        color = [int(self.color[n] * intensity) for n in range(self._bpp)]
-        self.pixel_object[pixel] = color
-        self.show()
+        from adafruit_led_animation.helper import (  # pylint: disable=import-outside-toplevel
+            pulse_generator,
+        )
+
+        self._generator = pulse_generator(self._period, self, white)
 
 
 class Chase(Animation):
@@ -453,7 +412,7 @@ class Chase(Animation):
     Chase pixels in one direction in a single color, like a theater marquee sign.
 
     :param pixel_object: The initialised LED object.
-    :param int speed: Animation speed rate in seconds, e.g. ``0.1``.
+    :param float speed: Animation speed rate in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     :param size: Number of pixels to turn on in a row.
     :param spacing: Number of pixels to turn off in a row.
@@ -461,7 +420,9 @@ class Chase(Animation):
     """
 
     # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, color, size=2, spacing=3, reverse=False):
+    def __init__(
+        self, pixel_object, speed, color, size=2, spacing=3, reverse=False, name=None
+    ):
         self._size = size
         self._spacing = spacing
         self._repeat_width = size + spacing
@@ -469,8 +430,18 @@ class Chase(Animation):
         self._overflow = len(pixel_object) % self._repeat_width
         self._direction = 1 if not reverse else -1
         self._reverse = reverse
-        self._n = 0
-        super(Chase, self).__init__(pixel_object, speed, color)
+        self._offset = 0
+
+        def _resetter():
+            self._offset = 0
+            self._reverse = reverse
+            self._direction = 1 if not reverse else -1
+
+        self._reset = _resetter
+
+        super().__init__(pixel_object, speed, color, name=name)
+
+    cycle_complete_supported = True
 
     @property
     def reverse(self):
@@ -485,201 +456,49 @@ class Chase(Animation):
         self._direction = -1 if self._reverse else 1
 
     def draw(self):
-        self.pixel_object.fill((0, 0, 0))
-        for i in range(self._size):
-            n = (self._n + i) % self._repeat_width
-            num = len(self.pixel_object[n :: self._repeat_width])
-            self.pixel_object[n :: self._repeat_width] = [
-                self.group_color(n) for n in range(num)
-            ]
-        self._n = (self._n + self._direction) % self._repeat_width
+        def bar_colors():
+            bar_no = 0
+            for i in range(self._offset, 0, -1):
+                if i > self._spacing:
+                    yield self.bar_color(bar_no, i)
+                else:
+                    yield self.space_color(bar_no, i)
+                    bar_no = 1
+            while True:
+                for bar_pixel in range(self._size):
+                    yield self.bar_color(bar_no, bar_pixel)
+                for space_pixel in range(self._spacing):
+                    yield self.space_color(bar_no, space_pixel)
+                bar_no += 1
+
+        colorgen = bar_colors()
+        self.pixel_object[:] = [next(colorgen) for _ in self.pixel_object]
         self.show()
 
-    def group_color(self, n):  # pylint: disable=unused-argument
+        if self.draw_count % len(self.pixel_object) == 0:
+            self.cycle_complete()
+        self._offset = (self._offset + self._direction) % self._repeat_width
+
+    def bar_color(self, n, pixel_no=0):  # pylint: disable=unused-argument
         """
-        Generate the color for the n'th group
+        Generate the color for the n'th bar_color in the Chase
 
         :param n: The pixel group to get the color for
+        :param pixel_no: Which pixel in the group to get the color for
         """
         return self.color
 
-
-class AnimationSequence:
-    """
-    A sequence of Animations to run in sequence, looping forever.
-    Advances manually or at the specified interval.
-
-    :param members: The animation objects or groups.
-    :param int advance_interval: Time in seconds between animations if cycling
-                                 automatically. Defaults to ``None``.
-
-    .. code-block:: python
-
-        from adafruit_led_animation.animation import AnimationSequence, Blink, Comet, Sparkle
-        import adafruit_led_animation.color as color
-        import board
-        import neopixel
-
-        strip_pixels = neopixel.NeoPixel(board.A1, 30, brightness=1, auto_write=False)
-
-        blink = Blink(strip_pixels, 0.2, color.RED)
-        comet = Comet(strip_pixels, 0.1, color.BLUE)
-        sparkle = Sparkle(strip_pixels, 0.05, color.GREEN)
-
-        animations = AnimationSequence(blink, comet, sparkle, advance_interval=1)
-
-        while True:
-            animations.animate()
-    """
-
-    def __init__(self, *members, advance_interval=None, auto_clear=False):
-        self._members = members
-        self._advance_interval = (
-            advance_interval * NANOS_PER_SECOND if advance_interval else None
-        )
-        self._last_advance = monotonic_ns()
-        self._current = 0
-        self._auto_clear = auto_clear
-        self.clear_color = BLACK
-        self._paused = False
-        self._paused_at = 0
-
-    def _auto_advance(self):
-        if not self._advance_interval:
-            return
-        now = monotonic_ns()
-        if now - self._last_advance > self._advance_interval:
-            self._last_advance = now
-            self.next()
-
-    def next(self):
+    def space_color(self, n, pixel_no=0):  # pylint: disable=unused-argument,no-self-use
         """
-        Jump to the next animation.
-        """
-        if self._auto_clear:
-            self.fill(self.clear_color)
-        self._current = (self._current + 1) % len(self._members)
+        Generate the spacing color for the n'th bar_color in the Chase
 
-    def animate(self):
+        :param n: The pixel group to get the spacing color for
+        :param pixel_no: Which pixel in the group to get the spacing color for
         """
-        Call animate() from your code's main loop.  It will draw the current animation
-        or go to the next animation based on the advance_interval if set.
+        return 0
 
-        :return: True if the animation draw cycle was triggered, otherwise False.
+    def reset(self):
         """
-        if not self._paused:
-            self._auto_advance()
-        return self.current_animation.animate()
-
-    @property
-    def current_animation(self):
+        Reset the animation.
         """
-        Returns the current animation in the sequence.
-        """
-        return self._members[self._current]
-
-    @property
-    def color(self):
-        """
-        Use this property to change the color of all members of the animation.
-        """
-        return None
-
-    @color.setter
-    def color(self, color):
-        for item in self._members:
-            item.color = color
-
-    def fill(self, color):
-        """
-        Fills the current animation with a color.
-        """
-        self.current_animation.fill(color)
-
-    def freeze(self):
-        """
-        Freeze the current animation in the sequence.
-        Also stops auto_advance.
-        """
-        if self._paused:
-            return
-        self._paused = True
-        self._paused_at = monotonic_ns()
-        self.current_animation.freeze()
-
-    def resume(self):
-        """
-        Resume the current animation in the sequence, and resumes auto advance if enabled.
-        """
-        if not self._paused:
-            return
-        self._paused = False
-        now = monotonic_ns()
-        self._last_advance += now - self._paused_at
-        self._paused_at = 0
-        self.current_animation.resume()
-
-
-class AnimationGroup:
-    """
-    A group of animations that are active together. An example would be grouping a strip of
-    pixels connected to a board and the onboard LED.
-
-    :param members: The animation objects or groups.
-    :param bool sync: Synchronises the timing of all members of the group to the settings of the
-                      first member of the group. Defaults to ``False``.
-
-    """
-
-    def __init__(self, *members, sync=False):
-        self._members = members
-        self._sync = sync
-        if sync:
-            main = members[0]
-            main.peers = members[1:]
-
-    def animate(self):
-        """
-        Call animate() from your code's main loop.  It will draw all of the animations
-        in the group.
-
-        :return: True if any animation draw cycle was triggered, otherwise False.
-        """
-        if self._sync:
-            return self._members[0].animate()
-
-        return any([item.animate() for item in self._members])
-
-    def _for_all(self, method, *args, **kwargs):
-        for item in self._members:
-            getattr(item, method)(*args, **kwargs)
-
-    @property
-    def color(self):
-        """
-        Use this property to change the color of all members of the animation group.
-        """
-        return None
-
-    @color.setter
-    def color(self, color):
-        for item in self._members:
-            item.color = color
-
-    def fill(self, color):
-        """
-        Fills all pixel objects in the group with a color.
-        """
-        self._for_all("fill", color)
-
-    def freeze(self):
-        """
-        Freeze all animations in the group.
-        """
-        self._for_all("freeze")
-
-    def resume(self):
-        """
-        Resume all animations in the group.
-        """
-        self._for_all("resume")
+        self._reset()

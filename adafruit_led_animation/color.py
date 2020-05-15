@@ -1,4 +1,25 @@
-"""Color variables made available for import.
+# The MIT License (MIT)
+#
+# Copyright (c) 2019 Kattni Rembor for Adafruit Industries
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+"""Color variables made available for import for CircuitPython LED animations library.
 
 RAINBOW is a list of colors to use for cycling through.
 """
@@ -21,3 +42,21 @@ JADE = (0, 255, 40)
 AMBER = (255, 100, 0)
 
 RAINBOW = (RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE)
+
+
+try:
+    from _pixelbuf import colorwheel  # pylint: disable=unused-import
+except ImportError:
+    # Ensure we have a wheel if not built in
+    def colorwheel(pos):
+        """Input a value 0 to 255 to get a color value.
+        The colours are a transition r - g - b - back to r."""
+        if pos < 0 or pos > 255:
+            return 0, 0, 0
+        if pos < 85:
+            return int(255 - pos * 3), int(pos * 3), 0
+        if pos < 170:
+            pos -= 85
+            return 0, int(255 - pos * 3), int(pos * 3)
+        pos -= 170
+        return int(pos * 3), 0, int(255 - (pos * 3))

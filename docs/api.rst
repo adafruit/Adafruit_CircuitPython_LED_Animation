@@ -1,10 +1,26 @@
-API Reference
-*************
 
 .. If you created a package, create one automodule per module in the package.
 
 .. If your library file(s) are nested in a directory (e.g. /adafruit_foo/foo.py)
 .. use this format as the module name: "adafruit_foo.foo"
 
-.. automodule:: led_animation
+.. automodule:: adafruit_led_animation.animation
+   :members:
+
+.. automodule:: adafruit_led_animation.color
+   :members:
+
+.. automodule:: adafruit_led_animation.helper
+   :members:
+
+.. automodule:: adafruit_led_animation.group
+   :members:
+
+.. automodule:: adafruit_led_animation.sequence
+   :members:
+
+.. automodule:: adafruit_led_animation.rainbow
+   :members:
+
+.. automodule:: adafruit_led_animation.sparkle
    :members:
