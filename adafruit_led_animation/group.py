@@ -47,6 +47,7 @@ Implementation Notes
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
 
+
 class AnimationGroup:
     """
     A group of animations that are active together. An example would be grouping a strip of

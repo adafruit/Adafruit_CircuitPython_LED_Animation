@@ -50,6 +50,7 @@ from . import NANOS_PER_SECOND, monotonic_ns
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
 
+
 class Rainbow(Animation):
     """
     The classic rainbow color wheel.
