@@ -7,6 +7,9 @@ a different form of NeoPixels.
 """
 import board
 import neopixel
+
+import adafruit_led_animation.rainbow
+import adafruit_led_animation.sequence
 from adafruit_led_animation import animation
 from adafruit_led_animation import helper
 from adafruit_led_animation.color import PURPLE, JADE, AMBER
@@ -30,18 +33,18 @@ comet_v = animation.Comet(
 chase_h = animation.Chase(
     pixel_wing_horizontal, speed=0.1, size=3, spacing=6, color=JADE
 )
-rainbow_chase_v = animation.RainbowChase(
+rainbow_chase_v = adafruit_led_animation.rainbow.RainbowChase(
     pixel_wing_vertical, speed=0.1, size=3, spacing=2, wheel_step=8
 )
-rainbow_comet_v = animation.RainbowComet(
+rainbow_comet_v = adafruit_led_animation.rainbow.RainbowComet(
     pixel_wing_vertical, speed=0.1, tail_length=7, bounce=True
 )
-rainbow_v = animation.Rainbow(pixel_wing_vertical, speed=0.1, period=2)
-rainbow_chase_h = animation.RainbowChase(
+rainbow_v = adafruit_led_animation.rainbow.Rainbow(pixel_wing_vertical, speed=0.1, period=2)
+rainbow_chase_h = adafruit_led_animation.rainbow.RainbowChase(
     pixel_wing_horizontal, speed=0.1, size=3, spacing=3
 )
 
-animations = helper.AnimationSequence(
+animations = adafruit_led_animation.sequence.AnimationSequence(
     rainbow_v,
     comet_h,
     rainbow_comet_v,

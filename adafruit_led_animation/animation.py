@@ -44,11 +44,9 @@ Implementation Notes
 
 """
 
-import random
 from math import ceil
-import adafruit_led_animation.helper
 from . import NANOS_PER_SECOND, monotonic_ns
-from .color import BLACK, RAINBOW, colorwheel
+from .color import BLACK, RAINBOW
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
@@ -372,103 +370,6 @@ class Comet(Animation):
         self.reverse = self._initial_reverse
 
 
-class RainbowComet(Comet):
-    """
-    A rainbow comet animation.
-
-    :param pixel_object: The initialised LED object.
-    :param float speed: Animation speed in seconds, e.g. ``0.1``.
-    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
-    :param int tail_length: The length of the comet. Defaults to 10. Cannot exceed the number of
-                            pixels present in the pixel object, e.g. if the strip is 30 pixels
-                            long, the ``tail_length`` cannot exceed 30 pixels.
-    :param bool reverse: Animates the comet in the reverse order. Defaults to ``False``.
-    :param bool bounce: Comet will bounce back and forth. Defaults to ``True``.
-    :param int colorwheel_offset: Offset from start of colorwheel (0-255).
-    """
-
-    # pylint: disable=too-many-arguments
-    def __init__(
-        self,
-        pixel_object,
-        speed,
-        tail_length=10,
-        reverse=False,
-        bounce=False,
-        colorwheel_offset=0,
-        name=None,
-    ):
-        self._colorwheel_is_tuple = isinstance(colorwheel(0), tuple)
-        self._colorwheel_offset = colorwheel_offset
-
-        super().__init__(pixel_object, speed, 0, tail_length, reverse, bounce, name)
-
-    def _calc_brightness(self, n, color):
-        brightness = (n * self._color_step) + self._color_offset
-        if not self._colorwheel_is_tuple:
-            color = (color & 0xFF, ((color & 0xFF00) >> 8), (color >> 16))
-        return [int(i * brightness) for i in color]
-
-    def __recompute_color(self, color):
-        factor = int(256 / self._tail_length)
-        self._comet_colors = [BLACK] + [
-            self._calc_brightness(
-                n,
-                colorwheel(
-                    int((n * factor) + self._color_offset + self._colorwheel_offset)
-                    % 256
-                ),
-            )
-            for n in range(self._tail_length - 1)
-        ]
-        self._reverse_comet_colors = list(reversed(self._comet_colors))
-        self._computed_color = color
-
-
-class Sparkle(Animation):
-    """
-    Sparkle animation of a single color.
-
-    :param pixel_object: The initialised LED object.
-    :param float speed: Animation speed in seconds, e.g. ``0.1``.
-    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
-    :param num_sparkles: Number of sparkles to generate per animation cycle.
-    """
-
-    # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, color, num_sparkles=1, name=None):
-        if len(pixel_object) < 2:
-            raise ValueError("Sparkle needs at least 2 pixels")
-        self._half_color = None
-        self._dim_color = None
-        self._num_sparkles = num_sparkles
-        super().__init__(pixel_object, speed, color, name=name)
-
-    def _recompute_color(self, color):
-        half_color = tuple(color[rgb] // 4 for rgb in range(len(color)))
-        dim_color = tuple(color[rgb] // 10 for rgb in range(len(color)))
-        for pixel in range(len(self.pixel_object)):
-            if self.pixel_object[pixel] == self._half_color:
-                self.pixel_object[pixel] = half_color
-            elif self.pixel_object[pixel] == self._dim_color:
-                self.pixel_object[pixel] = dim_color
-        self._half_color = half_color
-        self._dim_color = dim_color
-
-    def draw(self):
-        pixels = [
-            random.randint(0, (len(self.pixel_object) - 2))
-            for n in range(self._num_sparkles)
-        ]
-        for pixel in pixels:
-            self.pixel_object[pixel] = self._color
-        self.show()
-        for pixel in pixels:
-            self.pixel_object[pixel] = self._half_color
-            self.pixel_object[pixel + 1] = self._dim_color
-        self.show()
-
-
 class Pulse(Animation):
     """
     Pulse all pixels a single color.
@@ -500,122 +401,9 @@ class Pulse(Animation):
         white = len(self.pixel_object[0]) > 3 and isinstance(
             self.pixel_object[0][-1], int
         )
-        self._generator = adafruit_led_animation.helper.pulse_generator(
-            self._period, self, white
-        )
+        from adafruit_led_animation.helper import pulse_generator  # pylint: disable=import-outside-toplevel
 
-
-class Rainbow(Animation):
-    """
-    The classic rainbow color wheel.
-
-    :param pixel_object: The initialised LED object.
-    :param float speed: Animation refresh rate in seconds, e.g. ``0.1``.
-    :param period: Period to cycle the rainbow over.  Default 5.
-    """
-
-    # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, period=5, name=None):
-        super().__init__(pixel_object, speed, BLACK, name=name)
-        self._period = period
-        self._generator = self._color_wheel_generator()
-
-    cycle_complete_supported = True
-
-    def _color_wheel_generator(self):
-        period = int(self._period * NANOS_PER_SECOND)
-
-        last_update = monotonic_ns()
-        cycle_position = 0
-        last_pos = 0
-        while True:
-            cycle_completed = False
-            now = monotonic_ns()
-            time_since_last_draw = now - last_update
-            last_update = now
-            pos = cycle_position = (cycle_position + time_since_last_draw) % period
-            if pos < last_pos:
-                cycle_completed = True
-            last_pos = pos
-            wheel_index = int((pos / period) * 256)
-            self.pixel_object[:] = [
-                colorwheel((i + wheel_index) % 255)
-                for i, _ in enumerate(self.pixel_object)
-            ]
-            self.show()
-            if cycle_completed:
-                self.cycle_complete()
-            yield
-
-    def draw(self):
-        next(self._generator)
-
-    def reset(self):
-        """
-        Resets the animation.
-        """
-        self._generator = self._color_wheel_generator()
-
-
-class SparklePulse(Animation):
-    """
-    Combination of the Spark and Pulse animations.
-
-    :param pixel_object: The initialised LED object.
-    :param int speed: Animation refresh rate in seconds, e.g. ``0.1``.
-    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
-    :param period: Period to pulse the LEDs over.  Default 5.
-    :param max_intensity: The maximum intensity to pulse, between 0 and 1.0.  Default 1.
-    :param min_intensity: The minimum intensity to pulse, between 0 and 1.0.  Default 0.
-    """
-
-    # pylint: disable=too-many-arguments
-    def __init__(
-        self, pixel_object, speed, color, period=5, max_intensity=1, min_intensity=0
-    ):
-        if len(pixel_object) < 2:
-            raise ValueError("Sparkle needs at least 2 pixels")
-        self.max_intensity = max_intensity
-        self.min_intensity = min_intensity
-        self._period = period
-        self._intensity_delta = max_intensity - min_intensity
-        self._half_period = period / 2
-        self._position_factor = 1 / self._half_period
-        self._bpp = len(pixel_object[0])
-        self._last_update = monotonic_ns()
-        self._cycle_position = 0
-        self._half_color = None
-        self._dim_color = None
-        super().__init__(pixel_object, speed, color)
-
-    def _recompute_color(self, color):
-        half_color = tuple(color[rgb] // 4 for rgb in range(len(color)))
-        dim_color = tuple(color[rgb] // 10 for rgb in range(len(color)))
-        for pixel in range(len(self.pixel_object)):
-            if self.pixel_object[pixel] == self._half_color:
-                self.pixel_object[pixel] = half_color
-            elif self.pixel_object[pixel] == self._dim_color:
-                self.pixel_object[pixel] = dim_color
-        self._half_color = half_color
-        self._dim_color = dim_color
-
-    def draw(self):
-        pixel = random.randint(0, (len(self.pixel_object) - 2))
-
-        now = monotonic_ns()
-        time_since_last_draw = (now - self._last_update) / NANOS_PER_SECOND
-        self._last_update = now
-        pos = self._cycle_position = (
-            self._cycle_position + time_since_last_draw
-        ) % self._period
-        if pos > self._half_period:
-            pos = self._period - pos
-        intensity = self.min_intensity + (
-            pos * self._intensity_delta * self._position_factor
-        )
-        color = [int(self.color[n] * intensity) for n in range(self._bpp)]
-        self.pixel_object[pixel] = color
-        self.show()
+        self._generator = pulse_generator(self._period, self, white)
 
 
 class Chase(Animation):
@@ -713,40 +501,3 @@ class Chase(Animation):
         Reset the animation.
         """
         self._reset()
-
-
-class RainbowChase(Chase):
-    """
-    Chase pixels in one direction, like a theater marquee but with rainbows!
-
-    :param pixel_object: The initialised LED object.
-    :param float speed: Animation speed rate in seconds, e.g. ``0.1``.
-    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
-    :param size: Number of pixels to turn on in a row.
-    :param spacing: Number of pixels to turn off in a row.
-    :param reverse: Reverse direction of movement.
-    :param wheel_step: How many colors to skip in `colorwheel` per bar (default 8)
-    """
-
-    # pylint: disable=too-many-arguments
-    def __init__(
-        self,
-        pixel_object,
-        speed,
-        size=2,
-        spacing=3,
-        reverse=False,
-        name=None,
-        wheel_step=8,
-    ):
-        self._num_colors = 256 // wheel_step
-        self._colors = [colorwheel(n % 256) for n in range(0, 512, wheel_step)]
-        self._color_idx = 0
-        super().__init__(pixel_object, speed, 0, size, spacing, reverse, name)
-
-    def bar_color(self, n, pixel_no=0):
-        return self._colors[self._color_idx - n]
-
-    def cycle_complete(self):
-        self._color_idx = (self._color_idx + self._direction) % len(self._colors)
-        super().cycle_complete()
