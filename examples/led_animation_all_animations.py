@@ -22,7 +22,7 @@ pixel_num = 32
 
 pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.2, auto_write=False)
 
-blink = animation.Blink(pixels, speed=0.1, color=JADE)
+blink = animation.Blink(pixels, speed=0.5, color=JADE)
 comet = animation.Comet(pixels, speed=0.01, color=PURPLE, tail_length=10, bounce=True)
 chase = animation.Chase(pixels, speed=0.1, size=3, spacing=6, color=WHITE)
 pulse = animation.Pulse(pixels, speed=0.1, period=3, color=AMBER)
@@ -43,8 +43,8 @@ rainbow_chase = adafruit_led_animation.rainbow.RainbowChase(
 
 
 animations = AnimationSequence(
-    blink,
     comet,
+    blink,
     chase,
     pulse,
     sparkle,
