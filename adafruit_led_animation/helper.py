@@ -143,10 +143,6 @@ class PixelMap:
     def __len__(self):
         return len(self._ranges)
 
-    def __add__(self, other):
-        if not isinstance(other, PixelMap):
-            raise TypeError("Cannot add PixelMap and %s" % type(other).__name__)
-
     @property
     def brightness(self):
         """
