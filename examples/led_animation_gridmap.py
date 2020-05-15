@@ -4,6 +4,8 @@ vertical grid for animation purposes.
 
 For NeoPixel FeatherWing. Update pixel_pin and pixel_num to match your wiring if using
 a different form of NeoPixels.
+
+This example does not work on SAMD21 (M0) boards.
 """
 import board
 import neopixel

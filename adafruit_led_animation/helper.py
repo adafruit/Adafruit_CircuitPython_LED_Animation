@@ -23,8 +23,7 @@
 `adafruit_led_animation.helper`
 ================================================================================
 
-Helper classes for making complex animations using LED Animation library.
-
+Helper classes for making complex animations using CircuitPython LED animations library.
 
 * Author(s): Roy Hooper, Kattni Rembor
 

@@ -12,3 +12,15 @@
 
 .. automodule:: adafruit_led_animation.helper
    :members:
+
+.. automodule:: adafruit_led_animation.group
+   :members:
+
+.. automodule:: adafruit_led_animation.sequence
+   :members:
+
+.. automodule:: adafruit_led_animation.rainbow
+   :members:
+
+.. automodule:: adafruit_led_animation.sparkle
+   :members:

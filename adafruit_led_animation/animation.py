@@ -24,8 +24,7 @@
 `adafruit_led_animation.animation`
 ================================================================================
 
-CircuitPython helper library for LED animations.
-
+Animation base class, and basic animations for CircuitPython helper library for LED animations.
 
 * Author(s): Roy Hooper, Kattni Rembor
 
