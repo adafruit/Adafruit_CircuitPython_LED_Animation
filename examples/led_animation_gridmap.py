@@ -7,35 +7,41 @@ a different form of NeoPixels.
 """
 import board
 import neopixel
-from adafruit_led_animation.animation import *
-from adafruit_led_animation.helper import *
+from adafruit_led_animation import animation
+from adafruit_led_animation import helper
 from adafruit_led_animation.color import PURPLE, JADE, AMBER
 
 
 pixels = neopixel.NeoPixel(board.D6, 32, brightness=0.2, auto_write=False)
 
-pixel_wing_vertical = PixelMap.vertical_lines(
-    pixels, 8, 4, horizontal_strip_gridmap(8, alternating=False)
+pixel_wing_vertical = helper.PixelMap.vertical_lines(
+    pixels, 8, 4, helper.horizontal_strip_gridmap(8, alternating=False)
 )
-pixel_wing_horizontal = PixelMap.horizontal_lines(
-    pixels, 8, 4, horizontal_strip_gridmap(8, alternating=False)
+pixel_wing_horizontal = helper.PixelMap.horizontal_lines(
+    pixels, 8, 4, helper.horizontal_strip_gridmap(8, alternating=False)
 )
 
-comet_h = Comet(
+comet_h = animation.Comet(
     pixel_wing_horizontal, speed=0.1, color=PURPLE, tail_length=3, bounce=True
 )
-comet_v = Comet(pixel_wing_vertical, speed=0.1, color=AMBER, tail_length=6, bounce=True)
-chase_h = Chase(pixel_wing_horizontal, speed=0.1, size=3, spacing=6, color=JADE)
-rainbow_chase_v = RainbowChase(
+comet_v = animation.Comet(
+    pixel_wing_vertical, speed=0.1, color=AMBER, tail_length=6, bounce=True
+)
+chase_h = animation.Chase(
+    pixel_wing_horizontal, speed=0.1, size=3, spacing=6, color=JADE
+)
+rainbow_chase_v = animation.RainbowChase(
     pixel_wing_vertical, speed=0.1, size=3, spacing=2, wheel_step=8
 )
-rainbow_comet_v = RainbowComet(
+rainbow_comet_v = animation.RainbowComet(
     pixel_wing_vertical, speed=0.1, tail_length=7, bounce=True
 )
-rainbow_v = Rainbow(pixel_wing_vertical, speed=0.1, period=2)
-rainbow_chase_h = RainbowChase(pixel_wing_horizontal, speed=0.1, size=3, spacing=3)
+rainbow_v = animation.Rainbow(pixel_wing_vertical, speed=0.1, period=2)
+rainbow_chase_h = animation.RainbowChase(
+    pixel_wing_horizontal, speed=0.1, size=3, spacing=3
+)
 
-animations = AnimationSequence(
+animations = helper.AnimationSequence(
     rainbow_v,
     comet_h,
     rainbow_comet_v,

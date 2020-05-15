@@ -6,7 +6,7 @@ a different form of NeoPixels.
 """
 import board
 import neopixel
-from adafruit_led_animation.animation import *
+from adafruit_led_animation import animation
 from adafruit_led_animation.helper import AnimationSequence
 from adafruit_led_animation.color import PURPLE, WHITE, AMBER, JADE
 
@@ -17,16 +17,18 @@ pixel_num = 32
 
 pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.2, auto_write=False)
 
-blink = Blink(pixels, speed=0.1, color=JADE)
-comet = Comet(pixels, speed=0.01, color=PURPLE, tail_length=10, bounce=True)
-chase = Chase(pixels, speed=0.1, size=3, spacing=6, color=WHITE)
-pulse = Pulse(pixels, speed=0.1, period=3, color=AMBER)
-sparkle = Sparkle(pixels, speed=0.1, color=PURPLE, num_sparkles=10)
-solid = Solid(pixels, color=JADE)
-rainbow = Rainbow(pixels, speed=0.1, period=2)
-sparkle_pulse = SparklePulse(pixels, speed=0.1, period=3, color=JADE)
-rainbow_comet = RainbowComet(pixels, speed=0.1, tail_length=7, bounce=True)
-rainbow_chase = RainbowChase(pixels, speed=0.1, size=3, spacing=2, wheel_step=8)
+blink = animation.Blink(pixels, speed=0.1, color=JADE)
+comet = animation.Comet(pixels, speed=0.01, color=PURPLE, tail_length=10, bounce=True)
+chase = animation.Chase(pixels, speed=0.1, size=3, spacing=6, color=WHITE)
+pulse = animation.Pulse(pixels, speed=0.1, period=3, color=AMBER)
+sparkle = animation.Sparkle(pixels, speed=0.1, color=PURPLE, num_sparkles=10)
+solid = animation.Solid(pixels, color=JADE)
+rainbow = animation.Rainbow(pixels, speed=0.1, period=2)
+sparkle_pulse = animation.SparklePulse(pixels, speed=0.1, period=3, color=JADE)
+rainbow_comet = animation.RainbowComet(pixels, speed=0.1, tail_length=7, bounce=True)
+rainbow_chase = animation.RainbowChase(
+    pixels, speed=0.1, size=3, spacing=2, wheel_step=8
+)
 
 
 animations = AnimationSequence(
