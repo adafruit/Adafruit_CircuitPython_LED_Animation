@@ -401,7 +401,9 @@ class Pulse(Animation):
         white = len(self.pixel_object[0]) > 3 and isinstance(
             self.pixel_object[0][-1], int
         )
-        from adafruit_led_animation.helper import pulse_generator  # pylint: disable=import-outside-toplevel
+        from adafruit_led_animation.helper import (  # pylint: disable=import-outside-toplevel
+            pulse_generator,
+        )
 
         self._generator = pulse_generator(self._period, self, white)
 

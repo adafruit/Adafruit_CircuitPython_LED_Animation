@@ -39,7 +39,9 @@ rainbow_chase_v = adafruit_led_animation.rainbow.RainbowChase(
 rainbow_comet_v = adafruit_led_animation.rainbow.RainbowComet(
     pixel_wing_vertical, speed=0.1, tail_length=7, bounce=True
 )
-rainbow_v = adafruit_led_animation.rainbow.Rainbow(pixel_wing_vertical, speed=0.1, period=2)
+rainbow_v = adafruit_led_animation.rainbow.Rainbow(
+    pixel_wing_vertical, speed=0.1, period=2
+)
 rainbow_chase_h = adafruit_led_animation.rainbow.RainbowChase(
     pixel_wing_horizontal, speed=0.1, size=3, spacing=3
 )

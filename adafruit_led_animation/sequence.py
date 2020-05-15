@@ -1,8 +1,6 @@
 import random
-from time import monotonic_ns
-
-from adafruit_led_animation import NANOS_PER_SECOND
 from adafruit_led_animation.color import BLACK
+from . import NANOS_PER_SECOND, monotonic_ns
 
 
 class AnimationSequence:

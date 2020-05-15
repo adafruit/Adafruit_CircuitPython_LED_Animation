@@ -1,8 +1,6 @@
-from time import monotonic_ns
-
-from adafruit_led_animation import NANOS_PER_SECOND
 from adafruit_led_animation.animation import Animation, Chase, Comet
 from adafruit_led_animation.color import BLACK, colorwheel
+from . import NANOS_PER_SECOND, monotonic_ns
 
 
 class Rainbow(Animation):
