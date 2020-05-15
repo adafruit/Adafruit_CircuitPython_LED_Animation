@@ -1,7 +1,8 @@
 """
-This example repeatedly displays two animations, Comet and Chase, at a five second interval.
+This simpletest example repeatedly displays two animations, Comet and Chase, at a five second
+interval.
 
-Designed for NeoPixel FeatherWing. Update pixel_pin and pixel_num to match your wiring if using
+For NeoPixel FeatherWing. Update pixel_pin and pixel_num to match your wiring if using
 a different form of NeoPixels.
 """
 import board

@@ -58,20 +58,42 @@ class PixelMap:
     :param iterable pixel_ranges: Pixel ranges (or individual pixels).
     :param bool individual_pixels: Whether pixel_ranges are individual pixels.
 
+    To use with ranges of pixels:
+
     .. code-block:: python
 
         import board
         import neopixel
         from adafruit_led_animation.helper import PixelMap
-        pixels = neopixel.NeoPixel(board.D12, 307, auto_write=False)
+        pixels = neopixel.NeoPixel(board.D6, 32, auto_write=False)
 
-        tree = PixelMap(pixels, [
-            (0, 21), (21, 48), (48, 71), (71, 93),(93, 115), (115, 135), (135, 153),
-            (153, 170), (170, 188), (188, 203), (203, 217), (217, 228), (228, 240),
-            (240, 247), (247, 253), (253, 256), (256, 260), (260, 307)]
-        )
-        tree[0] = (255, 255, 0)
-        tree.show()
+        pixel_wing_horizontal = PixelMap(pixels, [(0, 8), (8, 16), (16, 24), (24, 32)])
+
+        pixel_wing_horizontal[0] = (255, 255, 0)
+        pixel_wing_horizontal.show()
+
+    To use with individual pixels:
+
+    .. code-block:: python
+
+        import board
+        import neopixel
+        from adafruit_led_animation.helper import PixelMap
+        pixels = neopixel.NeoPixel(board.D6, 32, auto_write=False)
+
+        pixel_wing_vertical = PixelMap(pixels, [
+            (0, 8, 16, 24),
+            (1, 9, 17, 25),
+            (2, 10, 18, 26),
+            (3, 11, 19, 27),
+            (4, 12, 20, 28),
+            (5, 13, 21, 29),
+            (6, 14, 22, 30),
+            (7, 15, 23, 31),
+        ], individual_pixels=True)
+
+        pixel_wing_vertical[0] = (255, 255, 0)
+        pixel_wing_vertical.show()
 
     """
 
@@ -138,6 +160,7 @@ class PixelMap:
     def fill(self, color):
         """
         Fill the used pixel ranges with color.
+
         :param color: Color to fill all pixels referenced by this PixelMap definition with.
         """
         if self._individual_pixels:
@@ -222,6 +245,7 @@ class PixelMap:
 def vertical_strip_gridmap(height, alternating=True):
     """
     Returns a function that determines the pixel number for a grid with strips arranged vertically.
+
     :param height: strip height in pixels
     :param alternating: strips alternate directions in a zigzag
     :return: mapper(x, y)
@@ -238,6 +262,7 @@ def vertical_strip_gridmap(height, alternating=True):
 def horizontal_strip_gridmap(width, alternating=True):
     """
     Determines the pixel number for a grid with strips arranged horizontally.
+
     :param width: strip width in pixels
     :param alternating: strips alternate directions in a zigzag
     :return: mapper(x, y)
