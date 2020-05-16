@@ -21,10 +21,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_led_animation.rainbow`
+`adafruit_led_animation.animation.rainbow`
 ================================================================================
 
 Rainbow animations for CircuitPython helper library for LED animations.
+TODO
 
 * Author(s): Roy Hooper, Kattni Rembor
 
@@ -43,9 +44,9 @@ Implementation Notes
 
 """
 
-from adafruit_led_animation.animation import Animation, Chase, Comet
+from adafruit_led_animation.animation import Animation
 from adafruit_led_animation.color import BLACK, colorwheel
-from . import NANOS_PER_SECOND, monotonic_ns
+from adafruit_led_animation import NANOS_PER_SECOND, monotonic_ns
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
@@ -101,93 +102,3 @@ class Rainbow(Animation):
         Resets the animation.
         """
         self._generator = self._color_wheel_generator()
-
-
-class RainbowChase(Chase):
-    """
-    Chase pixels in one direction, like a theater marquee but with rainbows!
-
-    :param pixel_object: The initialised LED object.
-    :param float speed: Animation speed rate in seconds, e.g. ``0.1``.
-    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
-    :param size: Number of pixels to turn on in a row.
-    :param spacing: Number of pixels to turn off in a row.
-    :param reverse: Reverse direction of movement.
-    :param wheel_step: How many colors to skip in `colorwheel` per bar (default 8)
-    """
-
-    # pylint: disable=too-many-arguments
-    def __init__(
-        self,
-        pixel_object,
-        speed,
-        size=2,
-        spacing=3,
-        reverse=False,
-        name=None,
-        wheel_step=8,
-    ):
-        self._num_colors = 256 // wheel_step
-        self._colors = [colorwheel(n % 256) for n in range(0, 512, wheel_step)]
-        self._color_idx = 0
-        super().__init__(pixel_object, speed, 0, size, spacing, reverse, name)
-
-    def bar_color(self, n, pixel_no=0):
-        return self._colors[self._color_idx - n]
-
-    def cycle_complete(self):
-        self._color_idx = (self._color_idx + self._direction) % len(self._colors)
-        super().cycle_complete()
-
-
-class RainbowComet(Comet):
-    """
-    A rainbow comet animation.
-
-    :param pixel_object: The initialised LED object.
-    :param float speed: Animation speed in seconds, e.g. ``0.1``.
-    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
-    :param int tail_length: The length of the comet. Defaults to 10. Cannot exceed the number of
-                            pixels present in the pixel object, e.g. if the strip is 30 pixels
-                            long, the ``tail_length`` cannot exceed 30 pixels.
-    :param bool reverse: Animates the comet in the reverse order. Defaults to ``False``.
-    :param bool bounce: Comet will bounce back and forth. Defaults to ``True``.
-    :param int colorwheel_offset: Offset from start of colorwheel (0-255).
-    """
-
-    # pylint: disable=too-many-arguments
-    def __init__(
-        self,
-        pixel_object,
-        speed,
-        tail_length=10,
-        reverse=False,
-        bounce=False,
-        colorwheel_offset=0,
-        name=None,
-    ):
-        self._colorwheel_is_tuple = isinstance(colorwheel(0), tuple)
-        self._colorwheel_offset = colorwheel_offset
-
-        super().__init__(pixel_object, speed, 0, tail_length, reverse, bounce, name)
-
-    def _calc_brightness(self, n, color):
-        brightness = (n * self._color_step) + self._color_offset
-        if not self._colorwheel_is_tuple:
-            color = (color & 0xFF, ((color & 0xFF00) >> 8), (color >> 16))
-        return [int(i * brightness) for i in color]
-
-    def __recompute_color(self, color):
-        factor = int(256 / self._tail_length)
-        self._comet_colors = [BLACK] + [
-            self._calc_brightness(
-                n,
-                colorwheel(
-                    int((n * factor) + self._color_offset + self._colorwheel_offset)
-                    % 256
-                ),
-            )
-            for n in range(self._tail_length - 1)
-        ]
-        self._reverse_comet_colors = list(reversed(self._comet_colors))
-        self._computed_color = color

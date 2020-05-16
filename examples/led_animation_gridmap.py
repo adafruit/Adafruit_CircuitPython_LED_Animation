@@ -10,7 +10,7 @@ This example does not work on SAMD21 (M0) boards.
 import board
 import neopixel
 
-import adafruit_led_animation.rainbow
+import adafruit_led_animation.animation.rainbow
 import adafruit_led_animation.sequence
 from adafruit_led_animation import animation
 from adafruit_led_animation import helper
@@ -35,16 +35,16 @@ comet_v = animation.Comet(
 chase_h = animation.Chase(
     pixel_wing_horizontal, speed=0.1, size=3, spacing=6, color=JADE
 )
-rainbow_chase_v = adafruit_led_animation.rainbow.RainbowChase(
+rainbow_chase_v = adafruit_led_animation.animation.animation.rainbowchase.RainbowChase(
     pixel_wing_vertical, speed=0.1, size=3, spacing=2, wheel_step=8
 )
-rainbow_comet_v = adafruit_led_animation.rainbow.RainbowComet(
+rainbow_comet_v = adafruit_led_animation.animation.animation.rainbowcomet.RainbowComet(
     pixel_wing_vertical, speed=0.1, tail_length=7, bounce=True
 )
-rainbow_v = adafruit_led_animation.rainbow.Rainbow(
+rainbow_v = adafruit_led_animation.animation.animation.rainbow.Rainbow(
     pixel_wing_vertical, speed=0.1, period=2
 )
-rainbow_chase_h = adafruit_led_animation.rainbow.RainbowChase(
+rainbow_chase_h = adafruit_led_animation.animation.animation.rainbowchase.RainbowChase(
     pixel_wing_horizontal, speed=0.1, size=3, spacing=3
 )
 
