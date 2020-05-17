@@ -44,9 +44,7 @@ rainbow_chase_v = rainbowchase_animation.RainbowChase(
 rainbow_comet_v = rainbowcomet_animation.RainbowComet(
     pixel_wing_vertical, speed=0.1, tail_length=7, bounce=True
 )
-rainbow_v = rainbow_animation.Rainbow(
-    pixel_wing_vertical, speed=0.1, period=2
-)
+rainbow_v = rainbow_animation.Rainbow(pixel_wing_vertical, speed=0.1, period=2)
 rainbow_chase_h = rainbowchase_animation.RainbowChase(
     pixel_wing_horizontal, speed=0.1, size=3, spacing=3
 )

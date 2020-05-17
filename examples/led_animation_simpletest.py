@@ -21,7 +21,9 @@ pixel_num = 32
 
 pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.2, auto_write=False)
 
-comet = comet_animation.Comet(pixels, speed=0.01, color=PURPLE, tail_length=10, bounce=True)
+comet = comet_animation.Comet(
+    pixels, speed=0.01, color=PURPLE, tail_length=10, bounce=True
+)
 chase = chase_animation.Chase(pixels, speed=0.1, size=3, spacing=6, color=WHITE)
 
 animations = AnimationSequence(comet, chase, advance_interval=5)
