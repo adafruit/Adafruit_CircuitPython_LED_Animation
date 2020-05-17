@@ -73,16 +73,19 @@ class AnimationSequence:
 
         import board
         import neopixel
-        from adafruit_led_animation.animation import AnimationSequence, Blink, Comet, Sparkle
+        from adafruit_led_animation.sequence import AnimationSequence
+        import adafruit_led_animation.animation.comet as comet_animation
+        import adafruit_led_animation.animation.sparkle as sparkle_animation
+        import adafruit_led_animation.animation.blink as blink_animation
         import adafruit_led_animation.color as color
 
         strip_pixels = neopixel.NeoPixel(board.A1, 30, brightness=1, auto_write=False)
 
-        blink = Blink(strip_pixels, 0.2, color.RED)
-        comet = Comet(strip_pixels, 0.1, color.BLUE)
-        sparkle = Sparkle(strip_pixels, 0.05, color.GREEN)
+        blink = blink_animation.Blink(strip_pixels, 0.2, color.RED)
+        comet = comet_animation.Comet(strip_pixels, 0.1, color.BLUE)
+        sparkle = sparkle_animation.Sparkle(strip_pixels, 0.05, color.GREEN)
 
-        animations = AnimationSequence(blink, comet, sparkle, advance_interval=1)
+        animations = AnimationSequence(blink, comet, sparkle, advance_interval=5)
 
         while True:
             animations.animate()
