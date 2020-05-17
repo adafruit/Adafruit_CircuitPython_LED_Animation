@@ -45,7 +45,11 @@ RAINBOW = (RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE)
 
 
 try:
-    from _pixelbuf import colorwheel  # pylint: disable=unused-import
+    try:
+        # Backwards compat for 5.3.0 and prior
+        from _pixelbuf import colorwheel  # pylint: disable=unused-import
+    except ImportError:
+        from _pixelbuf import wheel as colorwheel  # pylint: disable=unused-import
 except ImportError:
     # Ensure we have a wheel if not built in
     def colorwheel(pos):

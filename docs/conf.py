@@ -21,7 +21,7 @@ extensions = [
 # Uncomment the below if you use native CircuitPython modules such as
 # digitalio, micropython and busio. List the modules you use. Without it, the
 # autodoc module docs will fail to generate with a warning.
-autodoc_mock_imports = ["led_animation"]
+autodoc_mock_imports = []
 
 
 intersphinx_mapping = {
@@ -39,8 +39,8 @@ master_doc = "index"
 
 # General information about the project.
 project = "LED_Animation Library"
-copyright = "2017 Adam Patt"
-author = "Adam Patt"
+copyright = "2018 Roy Hoopert"
+author = "Roy Hooper"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

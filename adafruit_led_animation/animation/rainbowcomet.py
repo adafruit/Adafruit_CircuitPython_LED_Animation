@@ -21,10 +21,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_led_animation.rainbow`
+`adafruit_led_animation.animation.rainbowcomet`
 ================================================================================
 
-Rainbow animations for CircuitPython helper library for LED animations.
+Rainbow comet for CircuitPython helper library for LED animations.
 
 * Author(s): Roy Hooper, Kattni Rembor
 
@@ -41,103 +41,11 @@ Implementation Notes
 * Adafruit CircuitPython firmware for the supported boards:
   https://circuitpython.org/downloads
 
+
 """
 
-from adafruit_led_animation.animation import Animation, Chase, Comet
-from adafruit_led_animation.color import BLACK, colorwheel
-from . import NANOS_PER_SECOND, monotonic_ns
-
-__version__ = "0.0.0-auto.0"
-__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
-
-
-class Rainbow(Animation):
-    """
-    The classic rainbow color wheel.
-
-    :param pixel_object: The initialised LED object.
-    :param float speed: Animation refresh rate in seconds, e.g. ``0.1``.
-    :param period: Period to cycle the rainbow over.  Default 5.
-    """
-
-    # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, period=5, name=None):
-        super().__init__(pixel_object, speed, BLACK, name=name)
-        self._period = period
-        self._generator = self._color_wheel_generator()
-
-    cycle_complete_supported = True
-
-    def _color_wheel_generator(self):
-        period = int(self._period * NANOS_PER_SECOND)
-
-        last_update = monotonic_ns()
-        cycle_position = 0
-        last_pos = 0
-        while True:
-            cycle_completed = False
-            now = monotonic_ns()
-            time_since_last_draw = now - last_update
-            last_update = now
-            pos = cycle_position = (cycle_position + time_since_last_draw) % period
-            if pos < last_pos:
-                cycle_completed = True
-            last_pos = pos
-            wheel_index = int((pos / period) * 256)
-            self.pixel_object[:] = [
-                colorwheel((i + wheel_index) % 255)
-                for i, _ in enumerate(self.pixel_object)
-            ]
-            self.show()
-            if cycle_completed:
-                self.cycle_complete()
-            yield
-
-    def draw(self):
-        next(self._generator)
-
-    def reset(self):
-        """
-        Resets the animation.
-        """
-        self._generator = self._color_wheel_generator()
-
-
-class RainbowChase(Chase):
-    """
-    Chase pixels in one direction, like a theater marquee but with rainbows!
-
-    :param pixel_object: The initialised LED object.
-    :param float speed: Animation speed rate in seconds, e.g. ``0.1``.
-    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
-    :param size: Number of pixels to turn on in a row.
-    :param spacing: Number of pixels to turn off in a row.
-    :param reverse: Reverse direction of movement.
-    :param wheel_step: How many colors to skip in `colorwheel` per bar (default 8)
-    """
-
-    # pylint: disable=too-many-arguments
-    def __init__(
-        self,
-        pixel_object,
-        speed,
-        size=2,
-        spacing=3,
-        reverse=False,
-        name=None,
-        wheel_step=8,
-    ):
-        self._num_colors = 256 // wheel_step
-        self._colors = [colorwheel(n % 256) for n in range(0, 512, wheel_step)]
-        self._color_idx = 0
-        super().__init__(pixel_object, speed, 0, size, spacing, reverse, name)
-
-    def bar_color(self, n, pixel_no=0):
-        return self._colors[self._color_idx - n]
-
-    def cycle_complete(self):
-        self._color_idx = (self._color_idx + self._direction) % len(self._colors)
-        super().cycle_complete()
+from adafruit_led_animation.animation.comet import Comet
+from adafruit_led_animation.color import colorwheel, BLACK
 
 
 class RainbowComet(Comet):

@@ -9,7 +9,8 @@ This example does not work on SAMD21 (M0) boards.
 """
 import board
 import neopixel
-from adafruit_led_animation.animation import Comet, Chase
+import adafruit_led_animation.animation.comet as comet_animation
+import adafruit_led_animation.animation.chase as chase_animation
 from adafruit_led_animation.sequence import AnimationSequence
 from adafruit_led_animation.color import PURPLE, WHITE
 
@@ -20,8 +21,10 @@ pixel_num = 32
 
 pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.2, auto_write=False)
 
-comet = Comet(pixels, speed=0.01, color=PURPLE, tail_length=10, bounce=True)
-chase = Chase(pixels, speed=0.1, size=3, spacing=6, color=WHITE)
+comet = comet_animation.Comet(
+    pixels, speed=0.01, color=PURPLE, tail_length=10, bounce=True
+)
+chase = chase_animation.Chase(pixels, speed=0.1, size=3, spacing=6, color=WHITE)
 
 animations = AnimationSequence(comet, chase, advance_interval=5)
 

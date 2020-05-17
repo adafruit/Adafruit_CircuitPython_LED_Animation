@@ -21,13 +21,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_led_animation.sparkle`
+`adafruit_led_animation.animation.sparklepulse`
 ================================================================================
 
-Sparkle animations for CircuitPython helper library for LED animations.
+Sparkle-pulse animation for CircuitPython helper library for LED animations.
 
-
-* Author(s): Roy Hooper, Kattni Rembor
+* Author(s): Roy Hooper, dmolavi
 
 Implementation Notes
 --------------------
@@ -42,58 +41,12 @@ Implementation Notes
 * Adafruit CircuitPython firmware for the supported boards:
   https://circuitpython.org/downloads
 
+
 """
 
 import random
+from adafruit_led_animation import NANOS_PER_SECOND, monotonic_ns
 from adafruit_led_animation.animation import Animation
-from . import NANOS_PER_SECOND, monotonic_ns
-
-__version__ = "0.0.0-auto.0"
-__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
-
-
-class Sparkle(Animation):
-    """
-    Sparkle animation of a single color.
-
-    :param pixel_object: The initialised LED object.
-    :param float speed: Animation speed in seconds, e.g. ``0.1``.
-    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
-    :param num_sparkles: Number of sparkles to generate per animation cycle.
-    """
-
-    # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, color, num_sparkles=1, name=None):
-        if len(pixel_object) < 2:
-            raise ValueError("Sparkle needs at least 2 pixels")
-        self._half_color = None
-        self._dim_color = None
-        self._num_sparkles = num_sparkles
-        super().__init__(pixel_object, speed, color, name=name)
-
-    def _recompute_color(self, color):
-        half_color = tuple(color[rgb] // 4 for rgb in range(len(color)))
-        dim_color = tuple(color[rgb] // 10 for rgb in range(len(color)))
-        for pixel in range(len(self.pixel_object)):
-            if self.pixel_object[pixel] == self._half_color:
-                self.pixel_object[pixel] = half_color
-            elif self.pixel_object[pixel] == self._dim_color:
-                self.pixel_object[pixel] = dim_color
-        self._half_color = half_color
-        self._dim_color = dim_color
-
-    def draw(self):
-        pixels = [
-            random.randint(0, (len(self.pixel_object) - 2))
-            for n in range(self._num_sparkles)
-        ]
-        for pixel in pixels:
-            self.pixel_object[pixel] = self._color
-        self.show()
-        for pixel in pixels:
-            self.pixel_object[pixel] = self._half_color
-            self.pixel_object[pixel + 1] = self._dim_color
-        self.show()
 
 
 class SparklePulse(Animation):

@@ -1,0 +1,199 @@
+# The MIT License (MIT)
+#
+# Copyright (c) 2019-2020 Roy Hooper
+# Copyright (c) 2020 Kattni Rembor for Adafruit Industries
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+"""
+`adafruit_led_animation.animation`
+================================================================================
+
+Animation base class for CircuitPython helper library for LED animations.
+
+* Author(s): Roy Hooper, Kattni Rembor
+
+Implementation Notes
+--------------------
+
+**Hardware:**
+
+* `Adafruit NeoPixels <https://www.adafruit.com/category/168>`_
+* `Adafruit DotStars <https://www.adafruit.com/category/885>`_
+
+**Software and Dependencies:**
+
+* Adafruit CircuitPython firmware for the supported boards:
+  https://circuitpython.org/downloads
+
+"""
+
+__version__ = "0.0.0-auto.0"
+__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
+
+from adafruit_led_animation import NANOS_PER_SECOND, monotonic_ns
+
+
+class Animation:
+    # pylint: disable=too-many-instance-attributes
+    """
+    Base class for animations.
+    """
+    cycle_complete_supported = False
+
+    # pylint: disable=too-many-arguments
+    def __init__(self, pixel_object, speed, color, peers=None, paused=False, name=None):
+        self.pixel_object = pixel_object
+        self.pixel_object.auto_write = False
+        self.peers = peers if peers else []
+        """A sequence of animations to trigger .draw() on when this animation draws."""
+        self._speed_ns = 0
+        self._color = None
+        self._paused = paused
+        self._next_update = monotonic_ns()
+        self._time_left_at_pause = 0
+        self._also_notify = []
+        self.speed = speed  # sets _speed_ns
+        self.color = color  # Triggers _recompute_color
+        self.name = name
+        self.notify_cycles = 1
+        """Number of cycles to trigger additional cycle_done notifications after"""
+        self.draw_count = 0
+        """Number of animation frames drawn."""
+        self.cycle_count = 0
+        """Number of animation cycles completed."""
+
+    def __str__(self):
+        return "<%s: %s>" % (self.__class__.__name__, self.name)
+
+    def animate(self):
+        """
+        Call animate() from your code's main loop.  It will draw the animation draw() at intervals
+        configured by the speed property (set from init).
+
+        :return: True if the animation draw cycle was triggered, otherwise False.
+        """
+        if self._paused:
+            return False
+
+        now = monotonic_ns()
+        if now < self._next_update:
+            return False
+
+        self.draw()
+        self.draw_count += 1
+
+        # Draw related animations together
+        if self.peers:
+            for peer in self.peers:
+                peer.draw()
+
+        self._next_update = now + self._speed_ns
+        return True
+
+    def draw(self):
+        """
+        Animation subclasses must implement draw() to render the animation sequence.
+        Draw must call show().
+        """
+        raise NotImplementedError()
+
+    def show(self):
+        """
+        Displays the updated pixels.  Called during animates with changes.
+        """
+        self.pixel_object.show()
+
+    def freeze(self):
+        """
+        Stops the animation until resumed.
+        """
+        self._paused = True
+        self._time_left_at_pause = max(0, monotonic_ns() - self._next_update)
+
+    def resume(self):
+        """
+        Resumes the animation.
+        """
+        self._next_update = monotonic_ns() + self._time_left_at_pause
+        self._time_left_at_pause = 0
+        self._paused = False
+
+    def fill(self, color):
+        """
+        Fills the pixel object with a color.
+        """
+        self.pixel_object.fill(color)
+
+    @property
+    def color(self):
+        """
+        The current color.
+        """
+        return self._color
+
+    @color.setter
+    def color(self, color):
+        if self._color == color:
+            return
+        if isinstance(color, int):
+            color = (color >> 16 & 0xFF, color >> 8 & 0xFF, color & 0xFF)
+        self._color = color
+        self._recompute_color(color)
+
+    @property
+    def speed(self):
+        """
+        The animation speed in fractional seconds.
+        """
+        return self._speed_ns / NANOS_PER_SECOND
+
+    @speed.setter
+    def speed(self, seconds):
+        self._speed_ns = int(seconds * NANOS_PER_SECOND)
+
+    def _recompute_color(self, color):
+        """
+        Called if the color is changed, which includes at initialization.
+        Override as needed.
+        """
+
+    def cycle_complete(self):
+        """
+        Called by some animations when they complete an animation cycle.
+        Animations that support cycle complete notifications will have X property set to False.
+        Override as needed.
+        """
+        self.cycle_count += 1
+        if self.cycle_count % self.notify_cycles == 0:
+            for callback in self._also_notify:
+                callback(self)
+
+    def add_cycle_complete_receiver(self, callback):
+        """
+        Adds an additional callback when the cycle completes.
+
+        :param callback: Additional callback to trigger when a cycle completes.  The callback
+                         is passed the animation object instance.
+        """
+        self._also_notify.append(callback)
+
+    def reset(self):
+        """
+        Resets the animation sequence.
+        """
