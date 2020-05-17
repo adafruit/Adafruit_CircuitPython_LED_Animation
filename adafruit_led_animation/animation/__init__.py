@@ -24,7 +24,7 @@
 `adafruit_led_animation.animation`
 ================================================================================
 
-Animation base class, and basic animations for CircuitPython helper library for LED animations.
+Animation base class for CircuitPython helper library for LED animations.
 
 * Author(s): Roy Hooper, Kattni Rembor
 
@@ -46,9 +46,7 @@ Implementation Notes
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
 
-from time import monotonic_ns
-
-from adafruit_led_animation import NANOS_PER_SECOND
+from adafruit_led_animation import NANOS_PER_SECOND, monotonic_ns
 
 
 class Animation:

@@ -24,9 +24,23 @@
 `adafruit_led_animation.animation.blink`
 ================================================================================
 
-TODO
+Blink animation for CircuitPython helper library for LED animations.
 
 * Author(s): Roy Hooper, Kattni Rembor
+
+Implementation Notes
+--------------------
+
+**Hardware:**
+
+* `Adafruit NeoPixels <https://www.adafruit.com/category/168>`_
+* `Adafruit DotStars <https://www.adafruit.com/category/885>`_
+
+**Software and Dependencies:**
+
+* Adafruit CircuitPython firmware for the supported boards:
+  https://circuitpython.org/downloads
+
 
 """
 

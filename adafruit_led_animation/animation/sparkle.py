@@ -24,8 +24,7 @@
 `adafruit_led_animation.animation.sparkle`
 ================================================================================
 
-Sparkle animations for CircuitPython helper library for LED animations.
-TODO
+Sparkle animation for CircuitPython helper library for LED animations.
 
 * Author(s): Roy Hooper, Kattni Rembor
 

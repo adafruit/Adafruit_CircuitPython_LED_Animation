@@ -22,7 +22,9 @@ pixel_num = 32
 
 pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.2, auto_write=False)
 
-blink = adafruit_led_animation.animation.animation.blink.Blink(pixels, speed=0.5, color=JADE)
+blink = adafruit_led_animation.animation.animation.blink.Blink(
+    pixels, speed=0.5, color=JADE
+)
 comet = animation.Comet(pixels, speed=0.01, color=PURPLE, tail_length=10, bounce=True)
 chase = animation.Chase(pixels, speed=0.1, size=3, spacing=6, color=WHITE)
 pulse = animation.Pulse(pixels, speed=0.1, period=3, color=AMBER)
@@ -30,7 +32,9 @@ sparkle = adafruit_led_animation.animation.animation.sparkle.Sparkle(
     pixels, speed=0.1, color=PURPLE, num_sparkles=10
 )
 solid = adafruit_led_animation.animation.animation.solid.Solid(pixels, color=JADE)
-rainbow = adafruit_led_animation.animation.animation.rainbow.Rainbow(pixels, speed=0.1, period=2)
+rainbow = adafruit_led_animation.animation.animation.rainbow.Rainbow(
+    pixels, speed=0.1, period=2
+)
 sparkle_pulse = adafruit_led_animation.animation.animation.sparklepulse.SparklePulse(
     pixels, speed=0.1, period=3, color=JADE
 )

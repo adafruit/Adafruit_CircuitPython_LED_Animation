@@ -24,16 +24,28 @@
 `adafruit_led_animation.animation.sparklepluse`
 ================================================================================
 
-TODO
+Sparklepulse animation for CircuitPython helper library for LED animations.
 
-* Author(s): TODO
+* Author(s): Roy Hooper, dmolavi
+
+Implementation Notes
+--------------------
+
+**Hardware:**
+
+* `Adafruit NeoPixels <https://www.adafruit.com/category/168>`_
+* `Adafruit DotStars <https://www.adafruit.com/category/885>`_
+
+**Software and Dependencies:**
+
+* Adafruit CircuitPython firmware for the supported boards:
+  https://circuitpython.org/downloads
+
 
 """
 
 import random
-from time import monotonic_ns
-
-from adafruit_led_animation import NANOS_PER_SECOND
+from adafruit_led_animation import NANOS_PER_SECOND, monotonic_ns
 from adafruit_led_animation.animation import Animation
 
 
