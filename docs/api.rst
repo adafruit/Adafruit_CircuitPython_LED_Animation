@@ -4,7 +4,7 @@
 .. If your library file(s) are nested in a directory (e.g. /adafruit_foo/foo.py)
 .. use this format as the module name: "adafruit_foo.foo"
 
-.. automodule:: adafruit_led_animation.animation.animation
+.. automodule:: adafruit_led_animation.animation
    :members:
 
 .. automodule:: adafruit_led_animation.color
@@ -19,25 +19,28 @@
 .. automodule:: adafruit_led_animation.sequence
    :members:
 
-.. automodule:: adafruit_led_animation.animation.rainbow
-   :members:
-
-.. automodule:: adafruit_led_animation.animation.sparkle
-   :members:
-
 .. automodule:: adafruit_led_animation.animation.blink
    :members:
 
-.. automodule:: adafruit_led_animation.animation.chase
+.. automodule:: adafruit_led_animation.animation.solid
    :members:
 
 .. automodule:: adafruit_led_animation.animation.colorcycle
+   :members:
+
+.. automodule:: adafruit_led_animation.animation.chase
    :members:
 
 .. automodule:: adafruit_led_animation.animation.comet
    :members:
 
 .. automodule:: adafruit_led_animation.animation.pulse
+   :members:
+
+.. automodule:: adafruit_led_animation.animation.rainbow
+   :members:
+
+.. automodule:: adafruit_led_animation.animation.sparkle
    :members:
 
 .. automodule:: adafruit_led_animation.animation.rainbowchase
@@ -47,12 +50,6 @@
    :members:
 
 .. automodule:: adafruit_led_animation.animation.rainbowsparkle
-   :members:
-
-.. automodule:: adafruit_led_animation.animation.solid
-   :members:
-
-.. automodule:: adafruit_led_animation.animation.sparkle
    :members:
 
 .. automodule:: adafruit_led_animation.animation.sparklepulse

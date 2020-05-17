@@ -53,6 +53,8 @@ class RainbowSparkle(Rainbow):
     :param pixel_object: The initialised LED object.
     :param float speed: Animation refresh rate in seconds, e.g. ``0.1``.
     :param float period: Period to cycle the rainbow over in seconds.  Default 5.
+    :param int num_sparkles: The number of sparkles to display. Defaults to 1/20 of the pixel
+                             object length.
     :param float step: Color wheel step.  Default 1.
     :param str name: Name of animation (optional, useful for sequences and debugging).
     :param float background_brightness: The brightness of the background rainbow. Defaults to

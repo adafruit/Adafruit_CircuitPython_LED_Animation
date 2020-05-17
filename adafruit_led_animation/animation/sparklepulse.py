@@ -21,10 +21,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_led_animation.animation.sparklepluse`
+`adafruit_led_animation.animation.sparklepulse`
 ================================================================================
 
-Sparklepulse animation for CircuitPython helper library for LED animations.
+Sparkle-pulse animation for CircuitPython helper library for LED animations.
 
 * Author(s): Roy Hooper, dmolavi
 
