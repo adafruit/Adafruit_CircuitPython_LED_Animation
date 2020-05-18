@@ -55,14 +55,9 @@ class Comet(Animation):
     :param pixel_object: The initialised LED object.
     :param float speed: Animation speed in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
-    :param int tail_length: The length of the comet. Defaults to 10. Cannot exceed the number of
-                            pixels present in the pixel object, e.g. if the strip is 30 pixels
-                            long, the ``tail_length`` cannot exceed 30 pixels, or, in the case of a
-                            pixel mapped grid, if the width of the grid is 13 pixels, a horizontal
-                            comet tail cannot exceed 13 pixels. To find the lenth of the
-                            ``pixel_object``, include a ``print(len(PIXEL_OBJECT_NAME))`` in your
-                            code anywhere after the object creation, where ``PIXEL_OBJECT_NAME`` is
-                            the name assigned to the object, such as ``pixels``.
+    :param int tail_length: The length of the comet. Defaults to 25% of the length of the
+                            ``pixel_object``. Automatically compensates for a minimum of 2 and a
+                            maximum of the length of the ``pixel_object``.
     :param bool reverse: Animates the comet in the reverse order. Defaults to ``False``.
     :param bool bounce: Comet will bounce back and forth. Defaults to ``True``.
     """
