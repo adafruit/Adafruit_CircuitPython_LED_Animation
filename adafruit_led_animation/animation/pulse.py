@@ -64,12 +64,11 @@ class Pulse(Animation):
         self._generator = None
         self.reset()
 
-    cycle_complete_supported = True
+    on_cycle_complete_supported = True
 
     def draw(self):
         color = next(self._generator)
         self.fill(color)
-        self.show()
 
     def reset(self):
         """

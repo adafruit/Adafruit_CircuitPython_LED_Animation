@@ -91,4 +91,3 @@ class Sparkle(Animation):
         for pixel in pixels:
             self.pixel_object[pixel] = self._half_color
             self.pixel_object[pixel + 1] = self._dim_color
-        self.show()

@@ -381,7 +381,7 @@ def pulse_generator(period: float, animation_object, white=False):
         last_update = now
         pos = cycle_position = (cycle_position + time_since_last_draw) % period
         if pos < last_pos:
-            animation_object.cycle_complete()
+            animation_object.on_cycle_complete()
         last_pos = pos
         if pos > half_period:
             pos = period - pos

@@ -79,15 +79,15 @@ class AnimationGroup:
 
         # Catch cycle_complete on the last animation.
         self._members[-1].add_cycle_complete_receiver(self._group_done)
-        self.cycle_complete_supported = self._members[-1].cycle_complete_supported
+        self.on_cycle_complete_supported = self._members[-1].on_cycle_complete_supported
 
     def __str__(self):
         return "<AnimationGroup %s: %s>" % (self.__class__.__name__, self.name)
 
     def _group_done(self, animation):  # pylint: disable=unused-argument
-        self.cycle_complete()
+        self.on_cycle_complete()
 
-    def cycle_complete(self):
+    def on_cycle_complete(self):
         """
         Called by some animations when they complete an animation cycle.
         Animations that support cycle complete notifications will have X property set to False.
