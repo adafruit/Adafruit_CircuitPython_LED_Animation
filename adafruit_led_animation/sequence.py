@@ -96,7 +96,7 @@ class AnimationSequence:
         self,
         *members,
         advance_interval=None,
-        auto_clear=False,
+        auto_clear=True,
         random_order=False,
         auto_reset=False,
         advance_on_cycle_complete=False,
