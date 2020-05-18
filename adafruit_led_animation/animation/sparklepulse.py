@@ -74,6 +74,7 @@ class SparklePulse(Animation):
         self._half_period = period / 2
         self._position_factor = 1 / self._half_period
         self._bpp = len(pixel_object[0])
+        # Handle dotstars
         if self._bpp == 4 and isinstance(pixel_object[0][3], float):
             self._bpp = 3
         self._last_update = monotonic_ns()
