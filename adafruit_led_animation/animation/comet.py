@@ -73,16 +73,16 @@ class Comet(Animation):
         pixel_object,
         speed,
         color,
-        tail_length=10,
+        tail_length=None,
         reverse=False,
         bounce=False,
         name=None,
     ):
-        if tail_length > len(pixel_object):
-            raise ValueError(
-                "Tail length must be less than the length of the pixel_object."
-            )
-        self._tail_length = tail_length + 1
+        if tail_length is None:
+            tail_length = int(len(pixel_object) / 4)
+        else:
+            tail_length = max(2, min(tail_length, len(pixel_object)))
+        self._tail_length = tail_length
         self._color_step = 0.9 / tail_length
         self._color_offset = 0.1
         self._comet_colors = None
