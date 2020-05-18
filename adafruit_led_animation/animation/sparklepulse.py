@@ -74,6 +74,8 @@ class SparklePulse(Animation):
         self._half_period = period / 2
         self._position_factor = 1 / self._half_period
         self._bpp = len(pixel_object[0])
+        if isinstance(pixel_object[-1], float):
+            self._bpp = 3
         self._last_update = monotonic_ns()
         self._cycle_position = 0
         self._half_color = None
@@ -107,4 +109,3 @@ class SparklePulse(Animation):
         )
         color = [int(self.color[n] * intensity) for n in range(self._bpp)]
         self.pixel_object[pixel] = color
-        self.show()
