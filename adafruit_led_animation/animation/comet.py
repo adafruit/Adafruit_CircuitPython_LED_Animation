@@ -79,7 +79,7 @@ class Comet(Animation):
         name=None,
     ):
         if tail_length is None:
-            tail_length = int(len(pixel_object) / 4)
+            tail_length = len(pixel_object) // 4
         else:
             tail_length = max(2, min(tail_length, len(pixel_object)))
         self._tail_length = tail_length
