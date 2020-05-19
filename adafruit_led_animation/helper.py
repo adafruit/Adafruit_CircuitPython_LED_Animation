@@ -361,12 +361,13 @@ class PixelSubset:
         self._pixels.auto_write = value
 
 
-def pulse_generator(period: float, animation_object, white=False):
+def pulse_generator(period: float, animation_object, white=False, dotstar_pwm=False):
     """
     Generates a sequence of colors for a pulse, based on the time period specified.
     :param period: Pulse duration in seconds.
     :param animation_object: An animation object to interact with.
     :param white: Whether the pixel strip has a white pixel.
+    :param dotstar_pwm: Whether to use the dostar per pixel PWM value for brightness control.
     """
     period = int(period * NANOS_PER_SECOND)
     half_period = period // 2
@@ -386,6 +387,10 @@ def pulse_generator(period: float, animation_object, white=False):
         if pos > half_period:
             pos = period - pos
         intensity = pos / half_period
+        if dotstar_pwm:
+            fill_color = (fill_color[0], fill_color[1], fill_color[2], intensity)
+            yield fill_color
+            continue
         if white:
             fill_color[3] = int(fill_color[3] * intensity)
         fill_color[0] = int(fill_color[0] * intensity)

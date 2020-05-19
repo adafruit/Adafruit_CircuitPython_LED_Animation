@@ -44,14 +44,13 @@ Implementation Notes
 
 """
 
-import random
-from adafruit_led_animation import NANOS_PER_SECOND, monotonic_ns
-from adafruit_led_animation.animation import Animation
+from adafruit_led_animation.animation.sparkle import Sparkle
+from adafruit_led_animation.helper import pulse_generator
 
 
-class SparklePulse(Animation):
+class SparklePulse(Sparkle):
     """
-    Combination of the Spark and Pulse animations.
+    Combination of the Sparkle and Pulse animations.
 
     :param pixel_object: The initialised LED object.
     :param int speed: Animation refresh rate in seconds, e.g. ``0.1``.
@@ -63,50 +62,30 @@ class SparklePulse(Animation):
 
     # pylint: disable=too-many-arguments
     def __init__(
-        self, pixel_object, speed, color, period=5, max_intensity=1, min_intensity=0
+        self,
+        pixel_object,
+        speed,
+        color,
+        period=5,
+        max_intensity=1,
+        min_intensity=0,
+        name=None,
     ):
-        if len(pixel_object) < 2:
-            raise ValueError("Sparkle needs at least 2 pixels")
-        self.max_intensity = max_intensity
-        self.min_intensity = min_intensity
+        self._max_intensity = max_intensity
+        self._min_intensity = min_intensity
         self._period = period
-        self._intensity_delta = max_intensity - min_intensity
-        self._half_period = period / 2
-        self._position_factor = 1 / self._half_period
-        self._bpp = len(pixel_object[0])
-        # Handle dotstars
-        if self._bpp == 4 and isinstance(pixel_object[0][3], float):
-            self._bpp = 3
-        self._last_update = monotonic_ns()
-        self._cycle_position = 0
-        self._half_color = None
-        self._dim_color = None
-        super().__init__(pixel_object, speed, color)
-
-    def _recompute_color(self, color):
-        half_color = tuple(color[rgb] // 4 for rgb in range(len(color)))
-        dim_color = tuple(color[rgb] // 10 for rgb in range(len(color)))
-        for pixel in range(len(self.pixel_object)):
-            if self.pixel_object[pixel] == self._half_color:
-                self.pixel_object[pixel] = half_color
-            elif self.pixel_object[pixel] == self._dim_color:
-                self.pixel_object[pixel] = dim_color
-        self._half_color = half_color
-        self._dim_color = dim_color
+        white = len(pixel_object) == 4 and isinstance(pixel_object[0][-1], int)
+        dotstar = len(pixel_object) == 4 and isinstance(pixel_object[0][-1], float)
+        super().__init__(
+            pixel_object, speed=speed, color=color, num_sparkles=1, name=name
+        )
+        self._generator = pulse_generator(
+            self._period, self, white, dotstar_pwm=dotstar
+        )
 
     def draw(self):
-        pixel = random.randint(0, (len(self.pixel_object) - 2))
+        self._sparkle_color = next(self._generator)
+        super().draw()
 
-        now = monotonic_ns()
-        time_since_last_draw = (now - self._last_update) / NANOS_PER_SECOND
-        self._last_update = now
-        pos = self._cycle_position = (
-            self._cycle_position + time_since_last_draw
-        ) % self._period
-        if pos > self._half_period:
-            pos = self._period - pos
-        intensity = self.min_intensity + (
-            pos * self._intensity_delta * self._position_factor
-        )
-        color = [int(self.color[n] * intensity) for n in range(self._bpp)]
-        self.pixel_object[pixel] = color
+    def after_draw(self):
+        self.show()

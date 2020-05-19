@@ -68,7 +68,7 @@ class Pulse(Animation):
 
     def draw(self):
         color = next(self._generator)
-        self.fill(color)
+        self.pixel_object.fill(color)
 
     def reset(self):
         """
@@ -77,8 +77,13 @@ class Pulse(Animation):
         white = len(self.pixel_object[0]) > 3 and isinstance(
             self.pixel_object[0][-1], int
         )
+        dotstar = len(self.pixel_object[0]) == 4 and isinstance(
+            self.pixel_object[0][-1], float
+        )
         from adafruit_led_animation.helper import (  # pylint: disable=import-outside-toplevel
             pulse_generator,
         )
 
-        self._generator = pulse_generator(self._period, self, white)
+        self._generator = pulse_generator(
+            self._period, self, white, dotstar_pwm=dotstar
+        )
