@@ -73,6 +73,7 @@ class RainbowSparkle(Rainbow):
         step=1,
         name=None,
         background_brightness=0.2,
+        precompute_rainbow=True
     ):
         self._num_sparkles = num_sparkles
         if num_sparkles is None:
@@ -86,7 +87,7 @@ class RainbowSparkle(Rainbow):
             period=period,
             step=step,
             name=name,
-            precompute_rainbow=True,
+            precompute_rainbow=precompute_rainbow,
         )
 
     def generate_rainbow(self):
