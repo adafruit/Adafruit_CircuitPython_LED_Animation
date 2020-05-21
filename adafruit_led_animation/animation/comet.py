@@ -89,7 +89,7 @@ class Comet(Animation):
         self._generator = self._comet_generator()
         super().__init__(pixel_object, speed, color, name=name)
 
-    cycle_complete_supported = True
+    on_cycle_complete_supported = True
 
     def _recompute_color(self, color):
         pass
@@ -130,13 +130,12 @@ class Comet(Animation):
                     ]
                 else:
                     self.pixel_object[start : start + end] = colors[0:end]
-                self.show()
                 yield
             cycle_passes += 1
             if self.bounce:
                 self.reverse = not self.reverse
             if not self.bounce or cycle_passes == 2:
-                self.cycle_complete()
+                self.cycle_complete = True
                 cycle_passes = 0
 
     def draw(self):

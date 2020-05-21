@@ -106,7 +106,8 @@ class RainbowSparkle(Rainbow):
                     int(self._background_brightness * color[2]),
                 )
 
-    def show(self):
+    def after_draw(self):
+        self.show()
         pixels = [
             random.randint(0, len(self.pixel_object) - 1)
             for n in range(self._num_sparkles)
@@ -115,4 +116,3 @@ class RainbowSparkle(Rainbow):
             self.pixel_object[pixel] = self._bright_colors[
                 (self._wheel_index + pixel) % len(self._bright_colors)
             ]
-        super().show()

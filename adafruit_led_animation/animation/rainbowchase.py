@@ -78,8 +78,8 @@ class RainbowChase(Chase):
         super().__init__(pixel_object, speed, 0, size, spacing, reverse, name)
 
     def bar_color(self, n, pixel_no=0):
-        return self._colors[self._color_idx - n]
+        return self._colors[self._color_idx - (n % len(self._colors))]
 
-    def cycle_complete(self):
+    def on_cycle_complete(self):
         self._color_idx = (self._color_idx + self._direction) % len(self._colors)
-        super().cycle_complete()
+        super().on_cycle_complete()

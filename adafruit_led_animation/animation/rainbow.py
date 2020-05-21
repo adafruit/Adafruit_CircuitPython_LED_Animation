@@ -85,7 +85,7 @@ class Rainbow(Animation):
             self.colors.append(colorwheel(int(i)))
             i += self._step
 
-    cycle_complete_supported = True
+    on_cycle_complete_supported = True
 
     def _color_wheel_generator(self):
         period = int(self._period * NANOS_PER_SECOND)
@@ -113,9 +113,8 @@ class Rainbow(Animation):
                     colorwheel((i + wheel_index) % 255) for i in range(num_pixels)
                 ]
             self._wheel_index = wheel_index
-            self.show()
             if cycle_completed:
-                self.cycle_complete()
+                self.cycle_complete = True
             yield
 
     def _draw_precomputed(self, num_pixels, wheel_index):

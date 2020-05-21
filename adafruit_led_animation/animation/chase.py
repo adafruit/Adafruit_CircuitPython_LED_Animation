@@ -83,7 +83,7 @@ class Chase(Animation):
 
         super().__init__(pixel_object, speed, color, name=name)
 
-    cycle_complete_supported = True
+    on_cycle_complete_supported = True
 
     @property
     def reverse(self):
@@ -115,10 +115,9 @@ class Chase(Animation):
 
         colorgen = bar_colors()
         self.pixel_object[:] = [next(colorgen) for _ in self.pixel_object]
-        self.show()
 
         if self.draw_count % len(self.pixel_object) == 0:
-            self.cycle_complete()
+            self.cycle_complete = True
         self._offset = (self._offset + self._direction) % self._repeat_width
 
     def bar_color(self, n, pixel_no=0):  # pylint: disable=unused-argument

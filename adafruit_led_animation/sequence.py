@@ -65,9 +65,9 @@ class AnimationSequence:
                             Defaults to ``False``.
     :param bool random_order: Activate the animations in a random order. Defaults to ``False``.
     :param bool auto_reset: Automatically call reset() on animations when changing animations.
-    :param bool advance_on_cycle_complete: Automatically advance when `cycle_complete` is triggered
-                                           on member animations. All Animations must support
-                                           cycle_complete to use this.
+    :param bool advance_on_cycle_complete: Automatically advance when `on_cycle_complete` is
+                                           triggered on member animations. All Animations must
+                                           support on_cycle_complete to use this.
 
     .. code-block:: python
 
@@ -126,14 +126,14 @@ class AnimationSequence:
         self._color = None
         for member in self._members:
             member.add_cycle_complete_receiver(self._sequence_complete)
-        self.cycle_complete_supported = self._members[-1].cycle_complete_supported
+        self.on_cycle_complete_supported = self._members[-1].on_cycle_complete_supported
 
-    cycle_complete_supported = True
+    on_cycle_complete_supported = True
 
     def __str__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.name)
 
-    def cycle_complete(self):
+    def on_cycle_complete(self):
         """
         Called by some animations when they complete an animation cycle.
         Animations that support cycle complete notifications will have X property set to False.
@@ -145,7 +145,7 @@ class AnimationSequence:
                 callback(self)
 
     def _sequence_complete(self, animation):  # pylint: disable=unused-argument
-        self.cycle_complete()
+        self.on_cycle_complete()
         if self.advance_on_cycle_complete:
             self._advance()
 
@@ -194,7 +194,7 @@ class AnimationSequence:
         """
         current = self._current
         if current > self._current:
-            self.cycle_complete()
+            self.on_cycle_complete()
         self.activate((self._current + 1) % len(self._members))
 
     def random(self):

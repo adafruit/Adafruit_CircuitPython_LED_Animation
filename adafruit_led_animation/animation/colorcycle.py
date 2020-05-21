@@ -64,11 +64,10 @@ class ColorCycle(Animation):
         self._generator = self._color_generator()
         next(self._generator)
 
-    cycle_complete_supported = True
+    on_cycle_complete_supported = True
 
     def draw(self):
         self.pixel_object.fill(self.color)
-        self.show()
         next(self._generator)
 
     def _color_generator(self):
@@ -78,7 +77,7 @@ class ColorCycle(Animation):
             yield
             index = (index + 1) % len(self.colors)
             if index == 0:
-                self.cycle_complete()
+                self.cycle_complete = True
 
     def reset(self):
         """

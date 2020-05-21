@@ -64,9 +64,11 @@ class Sparkle(Animation):
     def __init__(self, pixel_object, speed, color, num_sparkles=1, name=None):
         if len(pixel_object) < 2:
             raise ValueError("Sparkle needs at least 2 pixels")
-        self._half_color = None
-        self._dim_color = None
+        self._half_color = color
+        self._dim_color = color
+        self._sparkle_color = color
         self._num_sparkles = num_sparkles
+        self._pixels = []
         super().__init__(pixel_object, speed, color, name=name)
 
     def _recompute_color(self, color):
@@ -79,16 +81,18 @@ class Sparkle(Animation):
                 self.pixel_object[pixel] = dim_color
         self._half_color = half_color
         self._dim_color = dim_color
+        self._sparkle_color = color
 
     def draw(self):
-        pixels = [
+        self._pixels = [
             random.randint(0, (len(self.pixel_object) - 2))
-            for n in range(self._num_sparkles)
+            for _ in range(self._num_sparkles)
         ]
-        for pixel in pixels:
-            self.pixel_object[pixel] = self._color
+        for pixel in self._pixels:
+            self.pixel_object[pixel] = self._sparkle_color
+
+    def after_draw(self):
         self.show()
-        for pixel in pixels:
+        for pixel in self._pixels:
             self.pixel_object[pixel] = self._half_color
             self.pixel_object[pixel + 1] = self._dim_color
-        self.show()

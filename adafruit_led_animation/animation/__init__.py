@@ -54,14 +54,13 @@ class Animation:
     """
     Base class for animations.
     """
-    cycle_complete_supported = False
+    on_cycle_complete_supported = False
 
     # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, color, peers=None, paused=False, name=None):
         self.pixel_object = pixel_object
         self.pixel_object.auto_write = False
-        self.peers = peers if peers else []
-        """A sequence of animations to trigger .draw() on when this animation draws."""
+        self._peers = [self] + peers if peers is not None else [self]
         self._speed_ns = 0
         self._color = None
         self._paused = paused
@@ -71,6 +70,7 @@ class Animation:
         self.speed = speed  # sets _speed_ns
         self.color = color  # Triggers _recompute_color
         self.name = name
+        self.cycle_complete = False
         self.notify_cycles = 1
         """Number of cycles to trigger additional cycle_done notifications after"""
         self.draw_count = 0
@@ -95,13 +95,19 @@ class Animation:
         if now < self._next_update:
             return False
 
-        self.draw()
-        self.draw_count += 1
-
         # Draw related animations together
-        if self.peers:
-            for peer in self.peers:
-                peer.draw()
+        for anim in self._peers:
+            anim.draw()
+            anim.after_draw()
+
+        for anim in self._peers:
+            anim.show()
+
+        # Note that the main animation cycle_complete flag is used, not the peer flag.
+        for anim in self._peers:
+            if self.cycle_complete:
+                anim.on_cycle_complete()
+                anim.cycle_complete = False
 
         self._next_update = now + self._speed_ns
         return True
@@ -109,15 +115,38 @@ class Animation:
     def draw(self):
         """
         Animation subclasses must implement draw() to render the animation sequence.
-        Draw must call show().
+        Animations should not call show(), as animate() will do so, after after_draw().
+        Animations should set .cycle_done = True when an animation cycle is completed.
         """
         raise NotImplementedError()
+
+    def after_draw(self):
+        """
+        Animation subclasses may implement after_draw() to do operations after the main draw()
+        is called.
+        """
 
     def show(self):
         """
         Displays the updated pixels.  Called during animates with changes.
         """
         self.pixel_object.show()
+
+    @property
+    def peers(self):
+        """
+        Get the animation's peers.  Peers are drawn, then shown together.
+        """
+        return self._peers[1:]
+
+    @peers.setter
+    def peers(self, peer_list):
+        """
+        Set the animation's peers.
+        :param list peer_list: List of peer animations.
+        """
+        if peer_list is not None:
+            self._peers = [self] + peer_list
 
     def freeze(self):
         """
@@ -173,7 +202,7 @@ class Animation:
         Override as needed.
         """
 
-    def cycle_complete(self):
+    def on_cycle_complete(self):
         """
         Called by some animations when they complete an animation cycle.
         Animations that support cycle complete notifications will have X property set to False.
