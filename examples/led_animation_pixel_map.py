@@ -1,9 +1,10 @@
 """
-This example shows usage of the gridmap helper to easily treat a single strip as a horizontal or
+This example shows usage of the PixelMap helper to easily treat a single strip as a horizontal or
 vertical grid for animation purposes.
 
 For NeoPixel FeatherWing. Update pixel_pin and pixel_num to match your wiring if using
-a different form of NeoPixels.
+a different form of NeoPixels. Note that if you are using a number of pixels other than 32, you
+will need to alter the PixelMap values as well for this example to work.
 
 This example does not work on SAMD21 (M0) boards.
 """
@@ -19,8 +20,12 @@ from adafruit_led_animation.sequence import AnimationSequence
 from adafruit_led_animation import helper
 from adafruit_led_animation.color import PURPLE, JADE, AMBER
 
+# Update to match the pin connected to your NeoPixels
+pixel_pin = board.D6
+# Update to match the number of NeoPixels you have connected
+pixel_num = 32
 
-pixels = neopixel.NeoPixel(board.D6, 32, brightness=0.2, auto_write=False)
+pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.2, auto_write=False)
 
 pixel_wing_vertical = helper.PixelMap.vertical_lines(
     pixels, 8, 4, helper.horizontal_strip_gridmap(8, alternating=False)

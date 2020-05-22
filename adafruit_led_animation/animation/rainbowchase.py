@@ -58,22 +58,15 @@ class RainbowChase(Chase):
     :param size: Number of pixels to turn on in a row.
     :param spacing: Number of pixels to turn off in a row.
     :param reverse: Reverse direction of movement.
-    :param wheel_step: How many colors to skip in `colorwheel` per bar (default 8)
+    :param step: How many colors to skip in `colorwheel` per bar (default 8)
     """
 
     # pylint: disable=too-many-arguments
     def __init__(
-        self,
-        pixel_object,
-        speed,
-        size=2,
-        spacing=3,
-        reverse=False,
-        name=None,
-        wheel_step=8,
+        self, pixel_object, speed, size=2, spacing=3, reverse=False, name=None, step=8,
     ):
-        self._num_colors = 256 // wheel_step
-        self._colors = [colorwheel(n % 256) for n in range(0, 512, wheel_step)]
+        self._num_colors = 256 // step
+        self._colors = [colorwheel(n % 256) for n in range(0, 512, step)]
         self._color_idx = 0
         super().__init__(pixel_object, speed, 0, size, spacing, reverse, name)
 
