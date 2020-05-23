@@ -146,7 +146,7 @@ class Animation:
         :param list peer_list: List of peer animations.
         """
         if peer_list is not None:
-            self._peers = [self] + peer_list
+            self._peers = [self] + list(peer_list)
 
     def freeze(self):
         """
