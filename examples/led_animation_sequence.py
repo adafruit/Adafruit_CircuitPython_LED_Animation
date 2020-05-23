@@ -19,16 +19,14 @@ pixel_pin = board.D6
 # Update to match the number of NeoPixels you have connected
 pixel_num = 32
 
-pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.2, auto_write=False)
+pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.1, auto_write=False)
 
 blink = Blink(pixels, speed=0.5, color=JADE)
 comet = Comet(pixels, speed=0.01, color=PURPLE, tail_length=10, bounce=True)
 chase = Chase(pixels, speed=0.1, size=3, spacing=6, color=AMBER)
 
 
-animations = AnimationSequence(
-    comet, blink, chase, advance_interval=5, auto_clear=True, random_order=True,
-)
+animations = AnimationSequence(blink, comet, chase, advance_interval=3, auto_clear=True)
 
 while True:
     animations.animate()

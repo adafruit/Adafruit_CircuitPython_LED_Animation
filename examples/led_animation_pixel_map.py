@@ -40,7 +40,7 @@ comet_h = Comet(
 comet_v = Comet(pixel_wing_vertical, speed=0.1, color=AMBER, tail_length=6, bounce=True)
 chase_h = Chase(pixel_wing_horizontal, speed=0.1, size=3, spacing=6, color=JADE)
 rainbow_chase_v = RainbowChase(
-    pixel_wing_vertical, speed=0.1, size=3, spacing=2, wheel_step=8
+    pixel_wing_vertical, speed=0.1, size=3, spacing=2, step=8
 )
 rainbow_comet_v = RainbowComet(
     pixel_wing_vertical, speed=0.1, tail_length=7, bounce=True

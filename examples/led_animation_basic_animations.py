@@ -35,15 +35,15 @@ pixel_num = 32
 pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.2, auto_write=False)
 
 solid = Solid(pixels, color=PINK)
-colorcycle = ColorCycle(pixels, speed=0.4, colors=[MAGENTA, ORANGE, TEAL])
 blink = Blink(pixels, speed=0.5, color=JADE)
-comet = Comet(pixels, speed=0.01, color=PURPLE, tail_length=10, bounce=True)
+colorcycle = ColorCycle(pixels, speed=0.4, colors=[MAGENTA, ORANGE, TEAL])
 chase = Chase(pixels, speed=0.1, color=WHITE, size=3, spacing=6)
+comet = Comet(pixels, speed=0.01, color=PURPLE, tail_length=10, bounce=True)
 pulse = Pulse(pixels, speed=0.1, color=AMBER, period=3)
 
 
 animations = AnimationSequence(
-    solid, comet, blink, chase, colorcycle, pulse, advance_interval=5, auto_clear=True,
+    solid, blink, colorcycle, chase, comet, pulse, advance_interval=5, auto_clear=True,
 )
 
 while True:
