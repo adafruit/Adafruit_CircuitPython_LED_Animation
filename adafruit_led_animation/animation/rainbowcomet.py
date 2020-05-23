@@ -54,7 +54,6 @@ class RainbowComet(Comet):
 
     :param pixel_object: The initialised LED object.
     :param float speed: Animation speed in seconds, e.g. ``0.1``.
-    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     :param int tail_length: The length of the comet. Defaults to 10. Cannot exceed the number of
                             pixels present in the pixel object, e.g. if the strip is 30 pixels
                             long, the ``tail_length`` cannot exceed 30 pixels.

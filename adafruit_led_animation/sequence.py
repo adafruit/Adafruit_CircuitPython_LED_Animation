@@ -103,7 +103,9 @@ class AnimationSequence:
         name=None
     ):
         if advance_interval and advance_on_cycle_complete:
-            raise ValueError("Cannot use both advance_interval and auto_clear")
+            raise ValueError(
+                "Cannot use both advance_interval and advance_on_cycle_complete."
+            )
         self._members = members
         self._advance_interval = (
             advance_interval * NANOS_PER_SECOND if advance_interval else None

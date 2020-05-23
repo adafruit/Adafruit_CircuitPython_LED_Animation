@@ -186,14 +186,14 @@ class PixelMap:
         self._pixels.auto_write = value
 
     @classmethod
-    def vertical_lines(cls, pixels, width, height, gridmapper):
+    def vertical_lines(cls, pixel_object, width, height, gridmap):
         """
         Generate a PixelMap of horizontal lines on a strip arranged in a grid.
 
-        :param pixels: pixel object
+        :param pixel_object: pixel object
         :param width: width of grid
         :param height: height of grid
-        :param gridmapper: a function to map x and y coordinates to the grid
+        :param gridmap: a function to map x and y coordinates to the grid
                            see vertical_strip_gridmap and horizontal_strip_gridmap
         :return: PixelMap
 
@@ -205,22 +205,22 @@ class PixelMap:
             PixelMap.vertical_lines(pixels, 32, 8, vertical_strip_gridmap(8))
 
         """
-        if len(pixels) < width * height:
+        if len(pixel_object) < width * height:
             raise ValueError("number of pixels is less than width x height")
         mapping = []
         for x in range(width):
-            mapping.append([gridmapper(x, y) for y in range(height)])
-        return cls(pixels, mapping, individual_pixels=True)
+            mapping.append([gridmap(x, y) for y in range(height)])
+        return cls(pixel_object, mapping, individual_pixels=True)
 
     @classmethod
-    def horizontal_lines(cls, pixels, width, height, gridmapper):
+    def horizontal_lines(cls, pixel_object, width, height, gridmap):
         """
         Generate a PixelMap of horizontal lines on a strip arranged in a grid.
 
-        :param pixels: pixel object
+        :param pixel_object: pixel object
         :param width: width of grid
         :param height: height of grid
-        :param gridmapper: a function to map x and y coordinates to the grid
+        :param gridmap: a function to map x and y coordinates to the grid
                            see vertical_strip_gridmap and horizontal_strip_gridmap
         :return: PixelMap
 
@@ -231,20 +231,20 @@ class PixelMap:
 
             PixelMap.horizontal_lines(pixels, 16, 16, vertical_strip_gridmap(16))
         """
-        if len(pixels) < width * height:
+        if len(pixel_object) < width * height:
             raise ValueError("number of pixels is less than width x height")
         mapping = []
         for y in range(height):
-            mapping.append([gridmapper(x, y) for x in range(width)])
-        return cls(pixels, mapping, individual_pixels=True)
+            mapping.append([gridmap(x, y) for x in range(width)])
+        return cls(pixel_object, mapping, individual_pixels=True)
 
 
 def vertical_strip_gridmap(height, alternating=True):
     """
     Returns a function that determines the pixel number for a grid with strips arranged vertically.
 
-    :param height: strip height in pixels
-    :param alternating: strips alternate directions in a zigzag
+    :param height: grid height in pixels
+    :param alternating: Whether or not the lines in the grid run alternate directions in a zigzag
     :return: mapper(x, y)
     """
 
@@ -260,8 +260,8 @@ def horizontal_strip_gridmap(width, alternating=True):
     """
     Determines the pixel number for a grid with strips arranged horizontally.
 
-    :param width: strip width in pixels
-    :param alternating: strips alternate directions in a zigzag
+    :param width: grid width in pixels
+    :param alternating: Whether or not the lines in the grid run alternate directions in a zigzag
     :return: mapper(x, y)
     """
 
@@ -277,7 +277,7 @@ class PixelSubset:
     """
     PixelSubset lets you work with a subset of a pixel object.
 
-    :param strip: An object that implements the Neopixel or Dotstar protocol.
+    :param pixel_object: An object that implements the Neopixel or Dotstar protocol.
     :param int start: Starting pixel number.
     :param int end: Ending pixel number.
 
@@ -294,8 +294,8 @@ class PixelSubset:
         pixels.show()
     """
 
-    def __init__(self, strip, start, end):
-        self._pixels = strip
+    def __init__(self, pixel_object, start, end):
+        self._pixels = pixel_object
         self._start = start
         self._end = end
         self.n = self._end - self._start
