@@ -25,7 +25,7 @@ pixel_pin = board.D6
 # Update to match the number of NeoPixels you have connected
 pixel_num = 32
 
-pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.2, auto_write=False)
+pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.5, auto_write=False)
 
 pixel_wing_vertical = helper.PixelMap.vertical_lines(
     pixels, 8, 4, helper.horizontal_strip_gridmap(8, alternating=False)

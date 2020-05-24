@@ -29,7 +29,7 @@ pixel_pin = board.D6
 # Update to match the number of NeoPixels you have connected
 pixel_num = 32
 
-pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.2, auto_write=False)
+pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.5, auto_write=False)
 
 blink = Blink(pixels, speed=0.5, color=JADE)
 colorcycle = ColorCycle(pixels, speed=0.4, colors=[MAGENTA, ORANGE])
@@ -41,7 +41,7 @@ solid = Solid(pixels, color=JADE)
 rainbow = Rainbow(pixels, speed=0.1, period=2)
 sparkle_pulse = SparklePulse(pixels, speed=0.1, period=3, color=JADE)
 rainbow_comet = RainbowComet(pixels, speed=0.1, tail_length=7, bounce=True)
-rainbow_chase = RainbowChase(pixels, speed=0.1, size=3, spacing=2, wheel_step=8)
+rainbow_chase = RainbowChase(pixels, speed=0.1, size=3, spacing=2, step=8)
 rainbow_sparkle = RainbowSparkle(pixels, speed=0.1, num_sparkles=15)
 
 
