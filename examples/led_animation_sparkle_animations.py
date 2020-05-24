@@ -18,7 +18,7 @@ pixel_pin = board.D6
 # Update to match the number of NeoPixels you have connected
 pixel_num = 32
 
-pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.2, auto_write=False)
+pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.5, auto_write=False)
 
 sparkle = Sparkle(pixels, speed=0.05, color=AMBER, num_sparkles=10)
 sparkle_pulse = SparklePulse(pixels, speed=0.05, period=3, color=JADE)

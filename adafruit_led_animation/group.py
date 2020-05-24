@@ -50,13 +50,54 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git
 
 class AnimationGroup:
     """
-    A group of animations that are active together. An example would be grouping a strip of
-    pixels connected to a board and the onboard LED.
+    AnimationGroup synchronizes multiple animations.  Allows for multiple animations to be kept in
+    sync, whether or not the same animation or pixel object is in use.
 
     :param members: The animation objects or groups.
-    :param bool sync: Synchronises the timing of all members of the group to the settings of the
-                      first member of the group. Defaults to ``False``.
+    :param bool sync: Synchronises when draw is called for all members of the group to the settings
+                      of the first member of the group. Defaults to ``False``.
 
+
+    Example:
+
+        .. code-block::
+
+            import board
+            import neopixel
+            from adafruit_circuitplayground import cp
+            from adafruit_led_animation.animation.blink import Blink
+            from adafruit_led_animation.animation.comet import Comet
+            from adafruit_led_animation.animation.chase import Chase
+            from adafruit_led_animation.group import AnimationGroup
+            from adafruit_led_animation.sequence import AnimationSequence
+
+            import adafruit_led_animation.color as color
+
+            strip_pixels = neopixel.NeoPixel(board.A1, 30, brightness=0.5, auto_write=False)
+            cp.pixels.brightness = 0.5
+
+            animations = AnimationSequence(
+                # Synchronized to 0.5 seconds. Ignores the second animation setting of 3 seconds.
+                AnimationGroup(
+                    Blink(cp.pixels, 0.5, color.CYAN),
+                    Blink(strip_pixels, 3.0, color.AMBER),
+                    sync=True,
+                ),
+                # Different speeds
+                AnimationGroup(
+                    Comet(cp.pixels, 0.1, color.MAGENTA, tail_length=5),
+                    Comet(strip_pixels, 0.01, color.MAGENTA, tail_length=15),
+                ),
+                # Sequential animations on the built-in NeoPixels then the NeoPixel strip
+                Chase(cp.pixels, 0.05, size=2, spacing=3, color=color.PURPLE),
+                Chase(strip_pixels, 0.05, size=2, spacing=3, color=color.PURPLE),
+                advance_interval=3.0,
+                auto_clear=True,
+                auto_reset=True,
+            )
+
+            while True:
+                animations.animate()
     """
 
     def __init__(self, *members, sync=False, name=None):
