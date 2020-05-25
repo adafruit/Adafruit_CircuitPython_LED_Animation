@@ -391,7 +391,7 @@ def pulse_generator(period: float, animation_object, white=False, dotstar_pwm=Fa
             fill_color = (fill_color[0], fill_color[1], fill_color[2], intensity)
             yield fill_color
             continue
-        if white:
+        if white and len(fill_color) == 4:
             fill_color[3] = int(fill_color[3] * intensity)
         fill_color[0] = int(fill_color[0] * intensity)
         fill_color[1] = int(fill_color[1] * intensity)
