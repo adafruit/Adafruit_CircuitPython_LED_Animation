@@ -49,5 +49,5 @@ setup(
     # simple. Or you can use find_packages().
     # TODO: IF LIBRARY FILES ARE A PACKAGE FOLDER,
     #       CHANGE `py_modules=['...']` TO `packages=['...']`
-    py_modules=["adafruit_led_animation"],
+    packages=["adafruit_led_animation", "adafruit_led_animation.animation"],
 )
