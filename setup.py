@@ -18,14 +18,14 @@ with open(path.join(here, "README.rst"), encoding="utf-8") as f:
     long_description = f.read()
 
 setup(
-    name="adafruit-circuitpython-led animation",
+    name="adafruit-circuitpython-led-animation",
     use_scm_version=True,
     setup_requires=["setuptools_scm"],
     description="CircuitPython helper for LED colors and animations.",
     long_description=long_description,
     long_description_content_type="text/x-rst",
     # The project's main homepage.
-    url="https://github.com/adafruit/Adafruit_CircuitPython_LED Animation",
+    url="https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation",
     # Author details
     author="Adafruit Industries",
     author_email="circuitpython@adafruit.com",
@@ -49,5 +49,5 @@ setup(
     # simple. Or you can use find_packages().
     # TODO: IF LIBRARY FILES ARE A PACKAGE FOLDER,
     #       CHANGE `py_modules=['...']` TO `packages=['...']`
-    py_modules=["adafruit_led animation"],
+    py_modules=["adafruit_led_animation"],
 )
