@@ -25,7 +25,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/x-rst",
     # The project's main homepage.
-    url="https://github.com/adafruit/Adafruit_CircuitPython_LED Animation",
+    url="https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation",
     # Author details
     author="Adafruit Industries",
     author_email="circuitpython@adafruit.com",
