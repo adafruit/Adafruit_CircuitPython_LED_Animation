@@ -126,7 +126,7 @@ class Comet(Animation):
                 if start <= 0:
                     num_visible = self._tail_length + start
                     self.pixel_object[0:num_visible] = colors[
-                        self._tail_length - num_visible:
+                        self._tail_length - num_visible :
                     ]
                 else:
                     self.pixel_object[start : start + end] = colors[0:end]
