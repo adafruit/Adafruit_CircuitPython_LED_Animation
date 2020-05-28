@@ -94,7 +94,7 @@ class Comet(Animation):
     def _recompute_color(self, color):
         pass
 
-    def __recompute_color(self, color):
+    def _comet_recompute_color(self, color):
         self._comet_colors = [BLACK] + [
             [
                 int(color[rgb] * ((n * self._color_step) + self._color_offset))
@@ -115,7 +115,7 @@ class Comet(Animation):
         cycle_passes = 0
         while True:
             if self._color != self._computed_color or not self._comet_colors:
-                self.__recompute_color(self._color)
+                self._comet_recompute_color(self._color)
             colors = self._reverse_comet_colors if self.reverse else self._comet_colors
             for start in self._get_range(num_pixels):
 
@@ -126,7 +126,7 @@ class Comet(Animation):
                 if start <= 0:
                     num_visible = self._tail_length + start
                     self.pixel_object[0:num_visible] = colors[
-                        self._tail_length - num_visible :
+                        self._tail_length - num_visible:
                     ]
                 else:
                     self.pixel_object[start : start + end] = colors[0:end]

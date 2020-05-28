@@ -84,7 +84,7 @@ class RainbowComet(Comet):
             color = (color & 0xFF, ((color & 0xFF00) >> 8), (color >> 16))
         return [int(i * brightness) for i in color]
 
-    def __recompute_color(self, color):
+    def _comet_recompute_color(self, color):
         factor = int(256 / self._tail_length)
         self._comet_colors = [BLACK] + [
             self._calc_brightness(
