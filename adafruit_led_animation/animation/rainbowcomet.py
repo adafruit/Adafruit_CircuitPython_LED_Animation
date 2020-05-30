@@ -45,7 +45,7 @@ Implementation Notes
 """
 
 from adafruit_led_animation.animation.comet import Comet
-from adafruit_led_animation.color import colorwheel, BLACK
+from adafruit_led_animation.color import colorwheel, BLACK, calculate_intensity
 
 
 class RainbowComet(Comet):
@@ -60,6 +60,7 @@ class RainbowComet(Comet):
     :param bool reverse: Animates the comet in the reverse order. Defaults to ``False``.
     :param bool bounce: Comet will bounce back and forth. Defaults to ``True``.
     :param int colorwheel_offset: Offset from start of colorwheel (0-255).
+    :param int step: Colorwheel step (defaults to automatic).
     """
 
     # pylint: disable=too-many-arguments
@@ -71,30 +72,27 @@ class RainbowComet(Comet):
         reverse=False,
         bounce=False,
         colorwheel_offset=0,
+        step=0,
         name=None,
     ):
-        self._colorwheel_is_tuple = isinstance(colorwheel(0), tuple)
+        if step == 0:
+            self._colorwheel_step = int(256 / tail_length)
+        else:
+            self._colorwheel_step = step
         self._colorwheel_offset = colorwheel_offset
-
         super().__init__(pixel_object, speed, 0, tail_length, reverse, bounce, name)
 
-    def _calc_brightness(self, n, color):
-        brightness = (n * self._color_step) + self._color_offset
-        if not self._colorwheel_is_tuple:
-            color = (color & 0xFF, ((color & 0xFF00) >> 8), (color >> 16))
-        return [int(i * brightness) for i in color]
-
     def _comet_recompute_color(self, color):
-        factor = int(256 / self._tail_length)
-        self._comet_colors = [BLACK] + [
-            self._calc_brightness(
-                n,
-                colorwheel(
-                    int((n * factor) + self._color_offset + self._colorwheel_offset)
-                    % 256
-                ),
+        self._comet_colors = [BLACK]
+        for n in range(self._tail_length):
+            invert = self._tail_length - n - 1
+            self._comet_colors.append(
+                calculate_intensity(
+                    colorwheel(
+                        int((invert * self._colorwheel_step) + self._colorwheel_offset)
+                        % 256
+                    ),
+                    n * self._color_step + 0.05,
+                )
             )
-            for n in range(self._tail_length - 1)
-        ]
-        self._reverse_comet_colors = list(reversed(self._comet_colors))
         self._computed_color = color

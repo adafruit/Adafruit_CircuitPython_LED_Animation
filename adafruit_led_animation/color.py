@@ -74,12 +74,28 @@ def calculate_intensity(color, intensity=1.0):
     :return: color
     """
     if isinstance(color, int):
-        return ((int((color & 0xff0000) * intensity) & 0xff0000) |
-                (int((color & 0xff00) * intensity) & 0xff00) |
-                (int((color & 0xff) * intensity) & 0xff))
+        return (
+            (int((color & 0xFF0000) * intensity) & 0xFF0000)
+            | (int((color & 0xFF00) * intensity) & 0xFF00)
+            | (int((color & 0xFF) * intensity) & 0xFF)
+        )
 
     if len(color) == 3:
-        return int(color[0] * intensity), int(color[1] * intensity), int(color[2] * intensity)
+        return (
+            int(color[0] * intensity),
+            int(color[1] * intensity),
+            int(color[2] * intensity),
+        )
     elif len(color) == 4 and isinstance(color[3], float):
-        return int(color[0] * intensity), int(color[1] * intensity), int(color[2] * intensity), color[3]
-    return int(color[0] * intensity), int(color[1] * intensity), int(color[2] * intensity), int(color[3] * intensity)
+        return (
+            int(color[0] * intensity),
+            int(color[1] * intensity),
+            int(color[2] * intensity),
+            color[3],
+        )
+    return (
+        int(color[0] * intensity),
+        int(color[1] * intensity),
+        int(color[2] * intensity),
+        int(color[3] * intensity),
+    )

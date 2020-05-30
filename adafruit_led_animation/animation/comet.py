@@ -64,14 +64,14 @@ class Comet(Animation):
 
     # pylint: disable=too-many-arguments
     def __init__(
-            self,
-            pixel_object,
-            speed,
-            color,
-            tail_length=0,
-            reverse=False,
-            bounce=False,
-            name=None,
+        self,
+        pixel_object,
+        speed,
+        color,
+        tail_length=0,
+        reverse=False,
+        bounce=False,
+        name=None,
     ):
         if tail_length == 0:
             tail_length = len(pixel_object) // 4
@@ -98,9 +98,10 @@ class Comet(Animation):
     def _comet_recompute_color(self, color):
         self._comet_colors = [BLACK]
         for n in range(self._tail_length):
-            self._comet_colors.append(calculate_intensity(color, n * self._color_step + 0.05))
+            self._comet_colors.append(
+                calculate_intensity(color, n * self._color_step + 0.05)
+            )
         self._computed_color = color
-        print(self._comet_colors)
 
     def draw(self):
         for pixel_no in range(self._tail_length + 1):
@@ -113,8 +114,10 @@ class Comet(Animation):
 
         if self._tail_start < self._left_side or self._tail_start > self._right_side:
             self.reverse = not self.reverse
-            self._direction = - self._direction
+            self._direction = -self._direction
             self._tail_start += self._direction
+            if self.reverse == self._initial_reverse:
+                self.cycle_complete = True
 
     def reset(self):
         """
