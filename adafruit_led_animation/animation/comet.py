@@ -104,17 +104,21 @@ class Comet(Animation):
         self._computed_color = color
 
     def draw(self):
-        for pixel_no in range(self._tail_length + 1):
+        colors = self._comet_colors
+        if self.reverse:
+            colors = reversed(colors)
+        for pixel_no, color in enumerate(colors):
             draw_at = self._tail_start + pixel_no
             if draw_at < 0 or draw_at >= self._num_pixels:
                 continue
-            self.pixel_object[draw_at] = self._comet_colors[pixel_no * self._direction]
+            self.pixel_object[draw_at] = color
 
         self._tail_start += self._direction
 
         if self._tail_start < self._left_side or self._tail_start >= self._right_side:
-            self.reverse = not self.reverse
-            self._direction = -self._direction
+            if self.bounce:
+                self.reverse = not self.reverse
+                self._direction = -self._direction
             if self.reverse == self._initial_reverse:
                 self.cycle_complete = True
 
