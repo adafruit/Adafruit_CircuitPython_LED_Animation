@@ -64,3 +64,40 @@ except ImportError:
             return 0, int(255 - pos * 3), int(pos * 3)
         pos -= 170
         return int(pos * 3), 0, int(255 - (pos * 3))
+
+
+def calculate_intensity(color, intensity=1.0):
+    """
+    Takes a RGB[W] color tuple and adjusts the intensity.
+    :param float intensity:
+    :param color: color value (tuple, list or int)
+    :return: color
+    """
+    # Note: This code intentionally avoids list comprehensions and intermediate variables
+    # for an approximately 2x performance gain.
+    if isinstance(color, int):
+        return (
+            (int((color & 0xFF0000) * intensity) & 0xFF0000)
+            | (int((color & 0xFF00) * intensity) & 0xFF00)
+            | (int((color & 0xFF) * intensity) & 0xFF)
+        )
+
+    if len(color) == 3:
+        return (
+            int(color[0] * intensity),
+            int(color[1] * intensity),
+            int(color[2] * intensity),
+        )
+    if len(color) == 4 and isinstance(color[3], float):
+        return (
+            int(color[0] * intensity),
+            int(color[1] * intensity),
+            int(color[2] * intensity),
+            color[3],
+        )
+    return (
+        int(color[0] * intensity),
+        int(color[1] * intensity),
+        int(color[2] * intensity),
+        int(color[3] * intensity),
+    )

@@ -45,7 +45,7 @@ Implementation Notes
 """
 
 from adafruit_led_animation.animation import Animation
-from adafruit_led_animation.color import BLACK
+from adafruit_led_animation.color import BLACK, calculate_intensity
 
 
 class Comet(Animation):
@@ -62,7 +62,7 @@ class Comet(Animation):
     :param bool bounce: Comet will bounce back and forth. Defaults to ``True``.
     """
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments,too-many-instance-attributes
     def __init__(
         self,
         pixel_object,
@@ -75,75 +75,59 @@ class Comet(Animation):
     ):
         if tail_length == 0:
             tail_length = len(pixel_object) // 4
-        else:
-            tail_length = max(2, min(tail_length, len(pixel_object)))
-        self._tail_length = tail_length
-        self._color_step = 0.9 / tail_length
-        self._color_offset = 0.1
-        self._comet_colors = None
-        self._reverse_comet_colors = None
-        self._initial_reverse = reverse
         self.reverse = reverse
         self.bounce = bounce
+        self._initial_reverse = reverse
+        self._tail_length = tail_length
+        self._color_step = 0.95 / tail_length
+        self._comet_colors = None
         self._computed_color = color
-        self._generator = self._comet_generator()
+        self._num_pixels = len(pixel_object)
+        self._direction = -1 if reverse else 1
+        self._left_side = -self._tail_length
+        self._right_side = self._num_pixels
+        self._tail_start = 0
+        self.reset()
         super().__init__(pixel_object, speed, color, name=name)
 
     on_cycle_complete_supported = True
 
     def _recompute_color(self, color):
-        pass
+        self._comet_recompute_color(color)
 
     def _comet_recompute_color(self, color):
-        self._comet_colors = [BLACK] + [
-            [
-                int(color[rgb] * ((n * self._color_step) + self._color_offset))
-                for rgb in range(len(color))
-            ]
-            for n in range(self._tail_length - 1)
-        ]
-        self._reverse_comet_colors = list(reversed(self._comet_colors))
+        self._comet_colors = [BLACK]
+        for n in range(self._tail_length):
+            self._comet_colors.append(
+                calculate_intensity(color, n * self._color_step + 0.05)
+            )
         self._computed_color = color
 
-    def _get_range(self, num_pixels):
+    def draw(self):
+        colors = self._comet_colors
         if self.reverse:
-            return range(num_pixels, -self._tail_length - 1, -1)
-        return range(-self._tail_length, num_pixels + 1)
+            colors = reversed(colors)
+        for pixel_no, color in enumerate(colors):
+            draw_at = self._tail_start + pixel_no
+            if draw_at < 0 or draw_at >= self._num_pixels:
+                continue
+            self.pixel_object[draw_at] = color
 
-    def _comet_generator(self):
-        num_pixels = len(self.pixel_object)
-        cycle_passes = 0
-        while True:
-            if self._color != self._computed_color or not self._comet_colors:
-                self._comet_recompute_color(self._color)
-            colors = self._reverse_comet_colors if self.reverse else self._comet_colors
-            for start in self._get_range(num_pixels):
+        self._tail_start += self._direction
 
-                if start + self._tail_length < num_pixels:
-                    end = self._tail_length
-                else:
-                    end = num_pixels - start
-                if start <= 0:
-                    num_visible = self._tail_length + start
-                    self.pixel_object[0:num_visible] = colors[
-                        self._tail_length - num_visible :
-                    ]
-                else:
-                    self.pixel_object[start : start + end] = colors[0:end]
-                yield
-            cycle_passes += 1
+        if self._tail_start < self._left_side or self._tail_start >= self._right_side:
             if self.bounce:
                 self.reverse = not self.reverse
-            if not self.bounce or cycle_passes == 2:
+                self._direction = -self._direction
+            if self.reverse == self._initial_reverse:
                 self.cycle_complete = True
-                cycle_passes = 0
-
-    def draw(self):
-        next(self._generator)
 
     def reset(self):
         """
         Resets to the first color.
         """
-        self._generator = self._comet_generator()
         self.reverse = self._initial_reverse
+        if self.reverse:
+            self._tail_start = self._num_pixels + self._tail_length + 1
+        else:
+            self._tail_start = -self._tail_length - 1
