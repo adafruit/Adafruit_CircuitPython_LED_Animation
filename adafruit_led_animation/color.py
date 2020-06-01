@@ -73,6 +73,8 @@ def calculate_intensity(color, intensity=1.0):
     :param color: color value (tuple, list or int)
     :return: color
     """
+    # Note: This code intentionally avoids list comprehensions and intermediate variables
+    # for an approximately 2x performance gain.
     if isinstance(color, int):
         return (
             (int((color & 0xFF0000) * intensity) & 0xFF0000)
