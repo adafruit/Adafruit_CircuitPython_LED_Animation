@@ -147,7 +147,6 @@ class AnimationSequence:
                 callback(self)
 
     def _sequence_complete(self, animation):  # pylint: disable=unused-argument
-        self.on_cycle_complete()
         if self.advance_on_cycle_complete:
             self._advance()
 
@@ -194,10 +193,10 @@ class AnimationSequence:
         """
         Jump to the next animation.
         """
-        current = self._current
-        if current > self._current:
+        current = self._current + 1
+        if current >= len(self._members):
             self.on_cycle_complete()
-        self.activate((self._current + 1) % len(self._members))
+        self.activate(current % len(self._members))
 
     def random(self):
         """
@@ -275,3 +274,49 @@ class AnimationSequence:
         Draws the current animation group members.
         """
         self.current_animation.show()
+
+
+class OneShot(AnimationSequence):
+    """
+    Wrapper around AnimationSequence that returns False to animate() until a sequence has completed.
+    Takes the same arguments as AnimationSequence, but overrides
+    advance_on_cycle_complete=True and advance_interval=0
+
+    Example:
+
+    This example animates a comet in one direction then pulses red momentarily
+
+    .. code-block:: python
+
+        import board
+        import neopixel
+        from adafruit_led_animation.animation.comet import Comet
+        from adafruit_led_animation.animation.pulse import Pulse
+        from adafruit_led_animation.color import BLUE, RED
+        from adafruit_led_animation.sequence import OneShot
+
+        strip_pixels = neopixel.NeoPixel(board.A1, 30, brightness=0.5, auto_write=False)
+
+        comet = Comet(strip_pixels, 0.01, color=BLUE, bounce=False)
+        pulse = Pulse(strip_pixels, 0.01, color=RED, period=2)
+
+        animations = OneShot(comet, pulse)
+
+        while animations.animate():
+            pass
+
+    """
+
+    def __init__(self, *members, **kwargs):
+        kwargs["advance_on_cycle_complete"] = True
+        kwargs["advance_interval"] = 0
+        super().__init__(*members, **kwargs)
+        self._running = True
+
+    def on_cycle_complete(self):
+        super().on_cycle_complete()
+        self._running = False
+
+    def animate(self):
+        super().animate()
+        return self._running

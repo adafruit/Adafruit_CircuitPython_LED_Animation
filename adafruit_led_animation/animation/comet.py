@@ -119,12 +119,14 @@ class Comet(Animation):
             if self.bounce:
                 self.reverse = not self.reverse
                 self._direction = -self._direction
-            if self.reverse == self._initial_reverse:
+            else:
+                self.reset()
+            if self.reverse == self._initial_reverse and self.draw_count > 0:
                 self.cycle_complete = True
 
     def reset(self):
         """
-        Resets to the first color.
+        Resets to the first state.
         """
         self.reverse = self._initial_reverse
         if self.reverse:
