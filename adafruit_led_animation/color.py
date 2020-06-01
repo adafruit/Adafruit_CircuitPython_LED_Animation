@@ -88,7 +88,7 @@ def calculate_intensity(color, intensity=1.0):
             int(color[1] * intensity),
             int(color[2] * intensity),
         )
-    elif len(color) == 4 and isinstance(color[3], float):
+    if len(color) == 4 and isinstance(color[3], float):
         return (
             int(color[0] * intensity),
             int(color[1] * intensity),
