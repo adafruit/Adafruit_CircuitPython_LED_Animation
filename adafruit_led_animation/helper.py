@@ -124,7 +124,7 @@ class PixelMap:
         else:
             self._set_pixels(index, val)
 
-        if not self._pixels.auto_write:
+        if self.auto_write:
             self.show()
 
     def __getitem__(self, index):
@@ -310,7 +310,7 @@ class PixelSubset:
         else:
             self._pixels[index + self._start] = val
 
-        if not self._pixels.auto_write:
+        if self.auto_write:
             self.show()
 
     def __getitem__(self, index):
