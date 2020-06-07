@@ -127,15 +127,13 @@ class PixelMap:
 
         self.n = len(self._ranges)
         if self.n == 0:
-            raise (ValueError("A PixelMap must have at least one pixel defined"))
+            raise ValueError("A PixelMap must have at least one pixel defined")
         self._individual_pixels = individual_pixels
         self._expand_ranges()
 
     def _expand_ranges(self):
         if not self._individual_pixels:
-            self._ranges = [
-                [n for n in range(start, end)] for start, end in self._ranges
-            ]
+            self._ranges = [list(range(start, end)) for start, end in self._ranges]
             return
         if isinstance(self._ranges[0], int):
             self._ranges = [[n] for n in self._ranges]
