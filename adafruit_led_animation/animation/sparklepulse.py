@@ -74,14 +74,11 @@ class SparklePulse(Sparkle):
         self._max_intensity = max_intensity
         self._min_intensity = min_intensity
         self._period = period
-        white = len(pixel_object) == 4 and isinstance(pixel_object[0][-1], int)
         dotstar = len(pixel_object) == 4 and isinstance(pixel_object[0][-1], float)
         super().__init__(
             pixel_object, speed=speed, color=color, num_sparkles=1, name=name
         )
-        self._generator = pulse_generator(
-            self._period, self, white, dotstar_pwm=dotstar
-        )
+        self._generator = pulse_generator(self._period, self, dotstar_pwm=dotstar)
 
     def draw(self):
         self._sparkle_color = next(self._generator)

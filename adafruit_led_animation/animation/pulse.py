@@ -74,9 +74,6 @@ class Pulse(Animation):
         """
         Resets the animation.
         """
-        white = len(self.pixel_object[0]) > 3 and isinstance(
-            self.pixel_object[0][-1], int
-        )
         dotstar = len(self.pixel_object[0]) == 4 and isinstance(
             self.pixel_object[0][-1], float
         )
@@ -84,6 +81,4 @@ class Pulse(Animation):
             pulse_generator,
         )
 
-        self._generator = pulse_generator(
-            self._period, self, white, dotstar_pwm=dotstar
-        )
+        self._generator = pulse_generator(self._period, self, dotstar_pwm=dotstar)
