@@ -73,7 +73,6 @@ class Rain(Animation):
         self._background = background
         self._raindrops = []
         super().__init__(grid_object, speed, color, name=name)
-        self.fill(background)
 
     def draw(self):
 
@@ -135,8 +134,8 @@ class MatrixRain(Rain):
         speed,
         color=GREEN,
         count=1,
-        length=3,
-        background=(0, 64, 0),
+        length=6,
+        background=(0, 32, 0),
         name=None,
     ):
         super().__init__(grid_object, speed, color, count, length, background, name)
