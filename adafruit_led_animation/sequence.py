@@ -276,7 +276,7 @@ class AnimationSequence:
         self.current_animation.show()
 
 
-class OneShot(AnimationSequence):
+class AnimateOnce(AnimationSequence):
     """
     Wrapper around AnimationSequence that returns False to animate() until a sequence has completed.
     Takes the same arguments as AnimationSequence, but overrides
@@ -293,14 +293,14 @@ class OneShot(AnimationSequence):
         from adafruit_led_animation.animation.comet import Comet
         from adafruit_led_animation.animation.pulse import Pulse
         from adafruit_led_animation.color import BLUE, RED
-        from adafruit_led_animation.sequence import OneShot
+        from adafruit_led_animation.sequence import AnimateOnce
 
         strip_pixels = neopixel.NeoPixel(board.A1, 30, brightness=0.5, auto_write=False)
 
         comet = Comet(strip_pixels, 0.01, color=BLUE, bounce=False)
         pulse = Pulse(strip_pixels, 0.01, color=RED, period=2)
 
-        animations = OneShot(comet, pulse)
+        animations = AnimateOnce(comet, pulse)
 
         while animations.animate():
             pass
