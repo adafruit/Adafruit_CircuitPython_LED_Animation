@@ -111,12 +111,17 @@ class RainbowRain(Rain):
     Rainbow Rain animation.
     """
 
-    def __init__(self, grid_object, speed, count=1, length=3, background=BLACK, name=None):
+    def __init__(  # pylint: disable=too-many-arguments
+        self, grid_object, speed, count=1, length=3, background=BLACK, name=None
+    ):
         super().__init__(grid_object, speed, BLACK, count, length, background, name)
 
     def _generate_droplet(self, x, length):
         color = colorwheel(random.randint(0, 255))
-        return [[n, calculate_intensity(color, 1.0 - -((n+1)/(length+1)))] for n in range(-length, 0)]
+        return [
+            [n, calculate_intensity(color, 1.0 - -((n + 1) / (length + 1)))]
+            for n in range(-length, 0)
+        ]
 
 
 class MatrixRain(Rain):
@@ -124,8 +129,20 @@ class MatrixRain(Rain):
     The Matrix style animation.
     """
 
-    def __init__(self, grid_object, speed, color=GREEN, count=1, length=3, background=(0, 64, 0), name=None):
+    def __init__(  # pylint: disable=too-many-arguments
+        self,
+        grid_object,
+        speed,
+        color=GREEN,
+        count=1,
+        length=3,
+        background=(0, 64, 0),
+        name=None,
+    ):
         super().__init__(grid_object, speed, color, count, length, background, name)
 
     def _generate_droplet(self, x, length):
-        return [[n, calculate_intensity(self.color, random.randint(10, 100) * 1.0)] for n in range(-length, 0)]
+        return [
+            [n, calculate_intensity(self.color, random.randint(10, 100) * 1.0)]
+            for n in range(-length, 0)
+        ]
