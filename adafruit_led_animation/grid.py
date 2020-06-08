@@ -122,10 +122,15 @@ class PixelGrid:
         if bottom:
             x_end, y_end = bottom
 
+        self.height = y_end - y_start
+        self.width = x_end - x_start
+
         for x in range(x_start, x_end):
             self._x.append(
                 PixelMap(
-                    strip, [mapper(x, y) for y in range(y_start, y_end)], individual_pixels=True
+                    strip,
+                    [mapper(x, y) for y in range(y_start, y_end)],
+                    individual_pixels=True,
                 )
             )
         self.n = len(self._x)
