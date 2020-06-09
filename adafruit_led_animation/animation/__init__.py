@@ -99,15 +99,16 @@ class Animation:
         for anim in self._peers:
             anim.draw()
             anim.after_draw()
+            anim.draw_count += 1
 
         for anim in self._peers:
             anim.show()
 
         # Note that the main animation cycle_complete flag is used, not the peer flag.
         for anim in self._peers:
-            if self.cycle_complete:
-                anim.on_cycle_complete()
+            if anim.cycle_complete:
                 anim.cycle_complete = False
+                anim.on_cycle_complete()
 
         self._next_update = now + self._speed_ns
         return True
