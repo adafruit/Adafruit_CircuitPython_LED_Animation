@@ -45,6 +45,7 @@ Implementation Notes
 import math
 
 from . import NANOS_PER_SECOND, monotonic_ns
+from .color import calculate_intensity
 
 
 class PixelMap:
@@ -69,7 +70,7 @@ class PixelMap:
         pixel_wing_horizontal[0] = (255, 255, 0)
         pixel_wing_horizontal.show()
 
-    To use with individual pixels:
+    To use with groups of individual pixels:
 
     .. code-block:: python
 
@@ -92,24 +93,57 @@ class PixelMap:
         pixel_wing_vertical[0] = (255, 255, 0)
         pixel_wing_vertical.show()
 
+    To use with individual pixels:
+
+    .. code-block:: python
+
+        import board
+        import neopixel
+        import time
+        from adafruit_led_animation.helper import PixelMap
+
+        pixels = neopixel.NeoPixel(board.D6, 8, auto_write=False)
+
+        pixel_map = PixelMap(pixels, [
+            0, 7, 1, 6, 2, 5, 3, 4
+        ], individual_pixels=True)
+
+        n = 0
+        while True:
+            pixel_map[n] = AMBER
+            pixel_map.show()
+            n = n + 1
+            if n > 7:
+                n = 0
+                pixel_map.fill(0)
+            time.sleep(0.25)
+
+
     """
 
     def __init__(self, strip, pixel_ranges, individual_pixels=False):
         self._pixels = strip
         self._ranges = pixel_ranges
+
         self.n = len(self._ranges)
+        if self.n == 0:
+            raise ValueError("A PixelMap must have at least one pixel defined")
         self._individual_pixels = individual_pixels
+        self._expand_ranges()
+
+    def _expand_ranges(self):
+        if not self._individual_pixels:
+            self._ranges = [list(range(start, end)) for start, end in self._ranges]
+            return
+        if isinstance(self._ranges[0], int):
+            self._ranges = [[n] for n in self._ranges]
 
     def __repr__(self):
-        return "[" + ", ".join([str(x) for x in self]) + "]"
+        return "[" + ", ".join([str(self[x]) for x in range(self.n)]) + "]"
 
     def _set_pixels(self, index, val):
-        if self._individual_pixels:
-            for pixel in self._ranges[index]:
-                self._pixels[pixel] = val
-        else:
-            range_start, range_stop = self._ranges[index]
-            self._pixels[range_start:range_stop] = [val] * (range_stop - range_start)
+        for pixel in self._ranges[index]:
+            self._pixels[pixel] = val
 
     def __setitem__(self, index, val):
         if isinstance(index, slice):
@@ -124,7 +158,7 @@ class PixelMap:
         else:
             self._set_pixels(index, val)
 
-        if self.auto_write:
+        if self._pixels.auto_write:
             self.show()
 
     def __getitem__(self, index):
@@ -160,13 +194,9 @@ class PixelMap:
 
         :param color: Color to fill all pixels referenced by this PixelMap definition with.
         """
-        if self._individual_pixels:
-            for pixels in self._ranges:
-                for pixel in pixels:
-                    self._pixels[pixel] = color
-        else:
-            for start, stop in self._ranges:
-                self._pixels[start:stop] = [color] * (stop - start)
+        for pixels in self._ranges:
+            for pixel in pixels:
+                self._pixels[pixel] = color
 
     def show(self):
         """
@@ -273,7 +303,7 @@ def horizontal_strip_gridmap(width, alternating=True):
     return mapper
 
 
-class PixelSubset:
+class PixelSubset(PixelMap):
     """
     PixelSubset lets you work with a subset of a pixel object.
 
@@ -295,78 +325,18 @@ class PixelSubset:
     """
 
     def __init__(self, pixel_object, start, end):
-        self._pixels = pixel_object
-        self._start = start
-        self._end = end
-        self.n = self._end - self._start
-
-    def __repr__(self):
-        return "[" + ", ".join([str(x) for x in self]) + "]"
-
-    def __setitem__(self, index, val):
-        if isinstance(index, slice):
-            start, stop, step = index.indices(self.n)
-            self._pixels[start + self._start : stop + self._start : step] = val
-        else:
-            self._pixels[index + self._start] = val
-
-        if self.auto_write:
-            self.show()
-
-    def __getitem__(self, index):
-        if isinstance(index, slice):
-            start, stop, step = index.indices(self.n)
-            return self._pixels[start + self._start : stop + self._start : step]
-        if index < 0:
-            index += len(self)
-        if index >= self.n or index < 0:
-            raise IndexError
-        return self._pixels[index]
-
-    def __len__(self):
-        return self.n
-
-    @property
-    def brightness(self):
-        """
-        brightness from the underlying strip.
-        """
-        return self._pixels.brightness
-
-    @brightness.setter
-    def brightness(self, brightness):
-        self._pixels.brightness = min(max(brightness, 0.0), 1.0)
-
-    def fill(self, color):
-        """
-        Fill the used pixel ranges with color.
-        """
-        self._pixels[self._start : self._end] = [color] * (self.n)
-
-    def show(self):
-        """
-        Shows the pixels on the underlying strip.
-        """
-        self._pixels.show()
-
-    @property
-    def auto_write(self):
-        """
-        auto_write from the underlying strip.
-        """
-        return self._pixels.auto_write
-
-    @auto_write.setter
-    def auto_write(self, value):
-        self._pixels.auto_write = value
+        super().__init__(
+            pixel_object,
+            pixel_ranges=[[n] for n in range(start, end)],
+            individual_pixels=True,
+        )
 
 
-def pulse_generator(period: float, animation_object, white=False, dotstar_pwm=False):
+def pulse_generator(period: float, animation_object, dotstar_pwm=False):
     """
     Generates a sequence of colors for a pulse, based on the time period specified.
     :param period: Pulse duration in seconds.
     :param animation_object: An animation object to interact with.
-    :param white: Whether the pixel strip has a white pixel.
     :param dotstar_pwm: Whether to use the dostar per pixel PWM value for brightness control.
     """
     period = int(period * NANOS_PER_SECOND)
@@ -376,7 +346,6 @@ def pulse_generator(period: float, animation_object, white=False, dotstar_pwm=Fa
     cycle_position = 0
     last_pos = 0
     while True:
-        fill_color = list(animation_object.color)
         now = monotonic_ns()
         time_since_last_draw = now - last_update
         last_update = now
@@ -388,12 +357,12 @@ def pulse_generator(period: float, animation_object, white=False, dotstar_pwm=Fa
             pos = period - pos
         intensity = pos / half_period
         if dotstar_pwm:
-            fill_color = (fill_color[0], fill_color[1], fill_color[2], intensity)
+            fill_color = (
+                animation_object.color[0],
+                animation_object.color[1],
+                animation_object.color[2],
+                intensity,
+            )
             yield fill_color
             continue
-        if white and len(fill_color) == 4:
-            fill_color[3] = int(fill_color[3] * intensity)
-        fill_color[0] = int(fill_color[0] * intensity)
-        fill_color[1] = int(fill_color[1] * intensity)
-        fill_color[2] = int(fill_color[2] * intensity)
-        yield fill_color
+        yield calculate_intensity(animation_object.color, intensity)
