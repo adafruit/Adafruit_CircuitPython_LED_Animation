@@ -148,7 +148,7 @@ class AnimationGroup:
         """
         self._also_notify.append(callback)
 
-    def animate(self):
+    def animate(self, show=True):
         """
         Call animate() from your code's main loop.  It will draw all of the animations
         in the group.
@@ -156,9 +156,12 @@ class AnimationGroup:
         :return: True if any animation draw cycle was triggered, otherwise False.
         """
         if self._sync:
-            return self._members[0].animate()
+            result = self._members[0].animate(show=False)
+            if result and show:
+                self._members[0].show()
+            return result
 
-        return any([item.animate() for item in self._members])
+        return any([item.animate(show) for item in self._members])
 
     @property
     def color(self):

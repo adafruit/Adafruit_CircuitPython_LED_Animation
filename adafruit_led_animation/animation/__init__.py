@@ -81,11 +81,13 @@ class Animation:
     def __str__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.name)
 
-    def animate(self):
+    def animate(self, show=True):
         """
         Call animate() from your code's main loop.  It will draw the animation draw() at intervals
         configured by the speed property (set from init).
 
+        :param bool show: Whether to automatically call show on the pixel object when an animation
+                          fires.  Default True.
         :return: True if the animation draw cycle was triggered, otherwise False.
         """
         if self._paused:
@@ -97,12 +99,14 @@ class Animation:
 
         # Draw related animations together
         for anim in self._peers:
+            anim.draw_count += 1
             anim.draw()
             anim.after_draw()
             anim.draw_count += 1
 
-        for anim in self._peers:
-            anim.show()
+        if show:
+            for anim in self._peers:
+                anim.show()
 
         # Note that the main animation cycle_complete flag is used, not the peer flag.
         for anim in self._peers:

@@ -204,7 +204,7 @@ class AnimationSequence:
         """
         self.activate(random.randint(0, len(self._members) - 1))
 
-    def animate(self):
+    def animate(self, show=True):
         """
         Call animate() from your code's main loop.  It will draw the current animation
         or go to the next animation based on the advance_interval if set.
@@ -213,7 +213,7 @@ class AnimationSequence:
         """
         if not self._paused and self._advance_interval:
             self._auto_advance()
-        return self.current_animation.animate()
+        return self.current_animation.animate(show)
 
     @property
     def current_animation(self):
