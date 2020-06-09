@@ -21,10 +21,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_led_animation.animation.sparkle`
+`adafruit_led_animation.animation.grid_rain`
 ================================================================================
 
-Sparkle animation for CircuitPython helper library for LED animations.
+Rain animations for CircuitPython helper library for LED animations.
 
 * Author(s): Roy Hooper, Kattni Rembor
 
