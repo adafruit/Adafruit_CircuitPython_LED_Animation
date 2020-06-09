@@ -279,8 +279,8 @@ class AnimationSequence:
 class AnimateOnce(AnimationSequence):
     """
     Wrapper around AnimationSequence that returns False to animate() until a sequence has completed.
-    Takes the same arguments as AnimationSequence, but overrides
-    advance_on_cycle_complete=True and advance_interval=0
+    Takes the same arguments as AnimationSequence, but overrides advance_on_cycle_complete=True
+    and advance_interval=0
 
     Example:
 
