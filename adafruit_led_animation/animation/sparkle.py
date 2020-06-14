@@ -68,6 +68,7 @@ class Sparkle(Animation):
         self._dim_color = color
         self._sparkle_color = color
         self._num_sparkles = num_sparkles
+        self._num_pixels = len(pixel_object)
         self._pixels = []
         super().__init__(pixel_object, speed, color, name=name)
 
@@ -85,7 +86,7 @@ class Sparkle(Animation):
 
     def draw(self):
         self._pixels = [
-            random.randint(0, (len(self.pixel_object) - 2))
+            random.randint(0, (len(self.pixel_object) - 1))
             for _ in range(self._num_sparkles)
         ]
         for pixel in self._pixels:
@@ -94,5 +95,5 @@ class Sparkle(Animation):
     def after_draw(self):
         self.show()
         for pixel in self._pixels:
-            self.pixel_object[pixel] = self._half_color
-            self.pixel_object[pixel + 1] = self._dim_color
+            self.pixel_object[pixel % self._num_pixels] = self._half_color
+            self.pixel_object[(pixel + 1) % self._num_pixels] = self._dim_color
