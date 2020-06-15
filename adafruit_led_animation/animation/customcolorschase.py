@@ -63,7 +63,15 @@ class CustomColorsChase(Chase):
 
     # pylint: disable=too-many-arguments
     def __init__(
-        self, pixel_object, speed, size=2, spacing=3, reverse=False, name=None, colors=RAINBOW):
+        self,
+        pixel_object,
+        speed,
+        size=2,
+        spacing=3,
+        reverse=False,
+        name=None,
+        colors=RAINBOW,
+    ):
         self._num_colors = len(colors)
         self._colors = colors
         self._color_idx = 0
