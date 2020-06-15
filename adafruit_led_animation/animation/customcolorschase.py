@@ -55,7 +55,7 @@ class CustomColorsChase(Chase):
 
     :param pixel_object: The initialised LED object.
     :param float speed: Animation speed rate in seconds, e.g. ``0.1``.
-    :param colors: Animation color in list of `(r, g, b)`` tuple, or ``0x000000`` hex format, default is RAINBOW.
+    :param colors: Animation colors in list of `(r, g, b)`` tuple, or ``0x000000`` hex format
     :param size: Number of pixels to turn on in a row.
     :param spacing: Number of pixels to turn off in a row.
     :param reverse: Reverse direction of movement.
