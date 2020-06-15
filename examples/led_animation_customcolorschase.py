@@ -38,7 +38,7 @@ custom_colors_chase_gw = CustomColorsChase(pixels, speed=0.1, colors=[GREEN, WHI
 custom_colors_chase_rg = CustomColorsChase(pixels, speed=0.1, colors=[RED, GREEN], size=2, spacing=3)
 custom_colors_chase_rg_r = CustomColorsChase(pixels, speed=0.1, colors=[RED, GREEN], size=1, spacing=2, reverse=True)
 # Valentines Day
-custom_colors_chase_rp = CustomColorsChase(pixels, speed=0.1, colors=[RED , PINK], size=2, spacing=3)
+custom_colors_chase_rp = CustomColorsChase(pixels, speed=0.1, colors=[RED, PINK], size=2, spacing=3)
 
 
 animations = AnimationSequence(

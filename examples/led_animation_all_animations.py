@@ -44,7 +44,7 @@ sparkle_pulse = SparklePulse(pixels, speed=0.1, period=3, color=JADE)
 rainbow_comet = RainbowComet(pixels, speed=0.1, tail_length=7, bounce=True)
 rainbow_chase = RainbowChase(pixels, speed=0.1, size=3, spacing=2, step=8)
 rainbow_sparkle = RainbowSparkle(pixels, speed=0.1, num_sparkles=15)
-custom_colors_chase = CustomColorsChase(pixels, speed=0.1, size=2, spacing=3,colors=[ORANGE, WHITE, JADE])
+custom_colors_chase = CustomColorsChase(pixels, speed=0.1, size=2, spacing=3, colors=[ORANGE, WHITE, JADE])
 
 
 animations = AnimationSequence(
