@@ -317,6 +317,6 @@ class AnimateOnce(AnimationSequence):
         super().on_cycle_complete()
         self._running = False
 
-    def animate(self):
-        super().animate()
+    def animate(self, show=True):
+        super().animate(show)
         return self._running
