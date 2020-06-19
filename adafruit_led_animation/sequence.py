@@ -318,5 +318,5 @@ class AnimateOnce(AnimationSequence):
         self._running = False
 
     def animate(self, show=True):
-        super().animate()
+        super().animate(show)
         return self._running
