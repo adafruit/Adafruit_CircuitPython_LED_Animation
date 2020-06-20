@@ -1,5 +1,5 @@
 """
-This example displays the basic animations in sequence, at a five second interval.
+This example displays custom color chase animations in sequence, at a six second interval.
 
 For NeoPixel FeatherWing. Update pixel_pin and pixel_num to match your wiring if using
 a different form of NeoPixels.
@@ -59,7 +59,6 @@ animations = AnimationSequence(
     custom_color_chase_bgp,
     custom_color_chase_br,
     advance_interval=6,
-    # advance_on_cycle_complete=True,
     auto_clear=True,
 )
 
