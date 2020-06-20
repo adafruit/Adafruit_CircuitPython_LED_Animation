@@ -11,8 +11,10 @@ import neopixel
 
 from adafruit_led_animation.animation.customcolorchase import CustomColorChase
 from adafruit_led_animation.sequence import AnimationSequence
+
 # colorwheel only needed for rainbowchase example
 from adafruit_led_animation.color import colorwheel
+
 # Colors for customcolorchase examples
 from adafruit_led_animation.color import PINK, GREEN, RED, BLUE
 
@@ -28,14 +30,18 @@ pixels = neopixel.NeoPixel(
 
 # colors default to RAINBOW as defined in color.py
 custom_color_chase_rainbow = CustomColorChase(pixels, speed=0.1, size=2, spacing=3)
-custom_color_chase_rainbow_r = CustomColorChase(pixels, speed=0.1, size=3, spacing=3,reverse=True)
+custom_color_chase_rainbow_r = CustomColorChase(
+    pixels, speed=0.1, size=3, spacing=3, reverse=True
+)
 
 # Example with same colors as RainbowChase
-steps=30
-#This was taken from rainbowchase.py
+steps = 30
+# This was taken from rainbowchase.py
 rainbow_colors = [colorwheel(n % 256) for n in range(0, 512, steps)]
-#Now use rainbow_colors with CustomColorChase
-custom_color_chase_rainbowchase = CustomColorChase(pixels, speed=0.1, colors=rainbow_colors, size=2, spacing=3)
+# Now use rainbow_colors with CustomColorChase
+custom_color_chase_rainbowchase = CustomColorChase(
+    pixels, speed=0.1, colors=rainbow_colors, size=2, spacing=3
+)
 
 custom_color_chase_bgp = CustomColorChase(
     pixels, speed=0.1, colors=[BLUE, GREEN, PINK], size=3, spacing=2
@@ -43,7 +49,8 @@ custom_color_chase_bgp = CustomColorChase(
 
 # Can use integer values for color, 0 is black
 custom_color_chase_br = CustomColorChase(
-    pixels, speed=0.1, colors=[BLUE, 0, RED, 0], size=2, spacing=0 )
+    pixels, speed=0.1, colors=[BLUE, 0, RED, 0], size=2, spacing=0
+)
 
 animations = AnimationSequence(
     custom_color_chase_rainbow,
@@ -52,7 +59,7 @@ animations = AnimationSequence(
     custom_color_chase_bgp,
     custom_color_chase_br,
     advance_interval=6,
-    #advance_on_cycle_complete=True,
+    # advance_on_cycle_complete=True,
     auto_clear=True,
 )
 
