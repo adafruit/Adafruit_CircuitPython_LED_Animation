@@ -92,10 +92,7 @@ class Comet(Animation):
 
     on_cycle_complete_supported = True
 
-    def _recompute_color(self, color):
-        self._comet_recompute_color(color)
-
-    def _comet_recompute_color(self, color):
+    def _set_color(self, color):
         self._comet_colors = [BLACK]
         for n in range(self._tail_length):
             self._comet_colors.append(
