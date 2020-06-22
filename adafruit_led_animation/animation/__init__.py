@@ -173,6 +173,7 @@ class Animation:
         Fills the pixel object with a color.
         """
         self.pixel_object.fill(color)
+        self.pixel_object.show()
 
     @property
     def color(self):
