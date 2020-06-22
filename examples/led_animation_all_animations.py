@@ -21,6 +21,7 @@ from adafruit_led_animation.animation.rainbowcomet import RainbowComet
 from adafruit_led_animation.animation.solid import Solid
 from adafruit_led_animation.animation.colorcycle import ColorCycle
 from adafruit_led_animation.animation.rainbow import Rainbow
+from adafruit_led_animation.animation.customcolorchase import CustomColorChase
 from adafruit_led_animation.sequence import AnimationSequence
 from adafruit_led_animation.color import PURPLE, WHITE, AMBER, JADE, MAGENTA, ORANGE
 
@@ -43,6 +44,9 @@ sparkle_pulse = SparklePulse(pixels, speed=0.1, period=3, color=JADE)
 rainbow_comet = RainbowComet(pixels, speed=0.1, tail_length=7, bounce=True)
 rainbow_chase = RainbowChase(pixels, speed=0.1, size=3, spacing=2, step=8)
 rainbow_sparkle = RainbowSparkle(pixels, speed=0.1, num_sparkles=15)
+custom_color_chase = CustomColorChase(
+    pixels, speed=0.1, size=2, spacing=3, colors=[ORANGE, WHITE, JADE]
+)
 
 
 animations = AnimationSequence(
@@ -57,6 +61,7 @@ animations = AnimationSequence(
     rainbow_comet,
     sparkle_pulse,
     rainbow_chase,
+    custom_color_chase,
     advance_interval=5,
     auto_clear=True,
 )
