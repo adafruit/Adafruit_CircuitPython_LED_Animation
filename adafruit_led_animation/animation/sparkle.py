@@ -71,7 +71,7 @@ class Sparkle(Animation):
         self._pixels = []
         super().__init__(pixel_object, speed, color, name=name)
 
-    def _recompute_color(self, color):
+    def _set_color(self, color):
         half_color = tuple(color[rgb] // 4 for rgb in range(len(color)))
         dim_color = tuple(color[rgb] // 10 for rgb in range(len(color)))
         for pixel in range(len(self.pixel_object)):

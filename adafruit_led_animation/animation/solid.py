@@ -58,5 +58,5 @@ class Solid(ColorCycle):
     def __init__(self, pixel_object, color, name=None):
         super().__init__(pixel_object, speed=1, colors=[color], name=name)
 
-    def _recompute_color(self, color):
+    def _set_color(self, color):
         self.colors = [color]

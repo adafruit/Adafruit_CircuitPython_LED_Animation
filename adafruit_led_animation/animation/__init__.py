@@ -68,7 +68,7 @@ class Animation:
         self._time_left_at_pause = 0
         self._also_notify = []
         self.speed = speed  # sets _speed_ns
-        self.color = color  # Triggers _recompute_color
+        self.color = color  # Triggers _set_color
         self.name = name
         self.cycle_complete = False
         self.notify_cycles = 1
@@ -187,8 +187,14 @@ class Animation:
             return
         if isinstance(color, int):
             color = (color >> 16 & 0xFF, color >> 8 & 0xFF, color & 0xFF)
+        self._set_color(color)
+
+    def _set_color(self, color):
+        """
+        Called after the color is changed, which includes at initialization.
+        Override as needed.
+        """
         self._color = color
-        self._recompute_color(color)
 
     @property
     def speed(self):
@@ -200,12 +206,6 @@ class Animation:
     @speed.setter
     def speed(self, seconds):
         self._speed_ns = int(seconds * NANOS_PER_SECOND)
-
-    def _recompute_color(self, color):
-        """
-        Called if the color is changed, which includes at initialization.
-        Override as needed.
-        """
 
     def on_cycle_complete(self):
         """
