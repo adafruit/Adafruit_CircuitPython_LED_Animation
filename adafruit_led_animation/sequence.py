@@ -172,7 +172,6 @@ class AnimationSequence:
             self.current_animation.reset()
         if self.auto_clear:
             self.current_animation.fill(self.clear_color)
-            self.current_animation.show()
         if self._random:
             self.random()
         else:
