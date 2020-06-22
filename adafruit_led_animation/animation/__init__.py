@@ -185,6 +185,8 @@ class Animation:
     def color(self, color):
         if self._color == color:
             return
+        if isinstance(color, int):
+            color = (color >> 16 & 0xFF, color >> 8 & 0xFF, color & 0xFF)
         self._set_color(color)
 
     def _set_color(self, color):
@@ -192,8 +194,6 @@ class Animation:
         Called after the color is changed, which includes at initialization.
         Override as needed.
         """
-        if isinstance(color, int):
-            color = (color >> 16 & 0xFF, color >> 8 & 0xFF, color & 0xFF)
         self._color = color
 
     @property
