@@ -102,7 +102,6 @@ class Animation:
             anim.draw_count += 1
             anim.draw()
             anim.after_draw()
-            anim.draw_count += 1
 
         if show:
             for anim in self._peers:
