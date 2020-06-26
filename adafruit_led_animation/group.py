@@ -47,6 +47,8 @@ Implementation Notes
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
 
+from adafruit_led_animation.animation import Animation
+
 
 class AnimationGroup:
     """
@@ -158,7 +160,14 @@ class AnimationGroup:
         if self._sync:
             result = self._members[0].animate(show=False)
             if result and show:
-                self._members[0].show()
+                last_strip = None
+                for member in self._members:
+                    if isinstance(member, Animation):
+                        if last_strip != member.pixel_object:
+                            member.pixel_object.show()
+                            last_strip = member.pixel_object
+                    else:
+                        member.show()
             return result
 
         return any([item.animate(show) for item in self._members])

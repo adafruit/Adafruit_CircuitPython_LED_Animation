@@ -80,6 +80,9 @@ class SparklePulse(Sparkle):
         )
         self._generator = pulse_generator(self._period, self, dotstar_pwm=dotstar)
 
+    def _set_color(self, color):
+        self._color = color
+
     def draw(self):
         self._sparkle_color = next(self._generator)
         super().draw()

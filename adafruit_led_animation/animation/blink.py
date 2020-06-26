@@ -60,5 +60,5 @@ class Blink(ColorCycle):
     def __init__(self, pixel_object, speed, color, name=None):
         super().__init__(pixel_object, speed, [color, BLACK], name=name)
 
-    def _recompute_color(self, color):
+    def _set_color(self, color):
         self.colors = [color, BLACK]

@@ -82,7 +82,7 @@ class RainbowComet(Comet):
         self._colorwheel_offset = colorwheel_offset
         super().__init__(pixel_object, speed, 0, tail_length, reverse, bounce, name)
 
-    def _comet_recompute_color(self, color):
+    def _set_color(self, color):
         self._comet_colors = [BLACK]
         for n in range(self._tail_length):
             invert = self._tail_length - n - 1

@@ -2,6 +2,7 @@
 #
 # Copyright (c) 2019-2020 Roy Hooper
 # Copyright (c) 2020 Kattni Rembor for Adafruit Industries
+# Copyright (c) 2020 Connie Sieh
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,12 +22,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`adafruit_led_animation.animation.solid`
+`adafruit_led_animation.animation.customcolorchase`
 ================================================================================
 
-Solid animation for CircuitPython helper library for LED animations.
+Custom color chase animation for CircuitPython helper library for LED animations.
 
-* Author(s): Roy Hooper, Kattni Rembor
+* Author(s): Roy Hooper, Kattni Rembor, Connie Sieh
 
 Implementation Notes
 --------------------
@@ -44,19 +45,41 @@ Implementation Notes
 
 """
 
-from adafruit_led_animation.animation.colorcycle import ColorCycle
+from adafruit_led_animation.animation.chase import Chase
+from adafruit_led_animation.color import RAINBOW
 
 
-class Solid(ColorCycle):
+class CustomColorChase(Chase):
     """
-    A solid color.
+    Chase pixels in one direction, like a theater marquee with Custom Colors
 
     :param pixel_object: The initialised LED object.
-    :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
+    :param float speed: Animation speed rate in seconds, e.g. ``0.1``.
+    :param colors: Animation colors in list of `(r, g, b)`` tuple, or ``0x000000`` hex format
+    :param size: Number of pixels to turn on in a row.
+    :param spacing: Number of pixels to turn off in a row.
+    :param reverse: Reverse direction of movement.
     """
 
-    def __init__(self, pixel_object, color, name=None):
-        super().__init__(pixel_object, speed=1, colors=[color], name=name)
+    # pylint: disable=too-many-arguments
+    def __init__(
+        self,
+        pixel_object,
+        speed,
+        size=2,
+        spacing=3,
+        reverse=False,
+        name=None,
+        colors=RAINBOW,
+    ):
+        self._num_colors = len(colors)
+        self._colors = colors
+        self._color_idx = 0
+        super().__init__(pixel_object, speed, 0, size, spacing, reverse, name)
 
-    def _set_color(self, color):
-        self.colors = [color]
+    def bar_color(self, n, pixel_no=0):
+        return self._colors[self._color_idx - (n % len(self._colors))]
+
+    def on_cycle_complete(self):
+        self._color_idx = (self._color_idx + self._direction) % len(self._colors)
+        super().on_cycle_complete()

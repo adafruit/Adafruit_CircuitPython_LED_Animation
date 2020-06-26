@@ -172,7 +172,6 @@ class AnimationSequence:
             self.current_animation.reset()
         if self.auto_clear:
             self.current_animation.fill(self.clear_color)
-            self.current_animation.show()
         if self._random:
             self.random()
         else:
@@ -317,6 +316,6 @@ class AnimateOnce(AnimationSequence):
         super().on_cycle_complete()
         self._running = False
 
-    def animate(self):
-        super().animate()
+    def animate(self, show=True):
+        super().animate(show)
         return self._running
