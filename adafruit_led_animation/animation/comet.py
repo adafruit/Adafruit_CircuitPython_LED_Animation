@@ -78,7 +78,7 @@ class Comet(Animation):
         if tail_length == 0:
             tail_length = len(pixel_object) // 4
         if bounce and ring:
-            raise ValueError('Cannot combine bounce and ring mode')
+            raise ValueError("Cannot combine bounce and ring mode")
         self.reverse = reverse
         self.bounce = bounce
         self._initial_reverse = reverse
