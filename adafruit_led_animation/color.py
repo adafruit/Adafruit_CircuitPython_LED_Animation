@@ -21,6 +21,10 @@
 # THE SOFTWARE.
 """Color variables made available for import for CircuitPython LED animations library.
 
+RGBW_WHITE_RGB is for RGBW strips to illuminate only the RGB diodes.
+RGBW_WHITE_W is for RGBW strips to illuminate only White diode.
+RGBW_WHITE_RGBW is for RGBW strips to illuminate the RGB and White diodes.
+
 RAINBOW is a list of colors to use for cycling through.
 """
 RED = (255, 0, 0)
@@ -41,8 +45,11 @@ AQUA = (50, 255, 255)
 JADE = (0, 255, 40)
 AMBER = (255, 100, 0)
 
-RAINBOW = (RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE)
+RGBW_WHITE_RGB = (255, 255, 255, 0)
+RGBW_WHITE_W = (0, 0, 0, 255)
+RGBW_WHITE_RGBW = (255, 255, 255, 255)
 
+RAINBOW = (RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE)
 
 try:
     try:
