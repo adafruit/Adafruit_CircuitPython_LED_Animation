@@ -61,6 +61,7 @@ class RainbowComet(Comet):
     :param bool bounce: Comet will bounce back and forth. Defaults to ``True``.
     :param int colorwheel_offset: Offset from start of colorwheel (0-255).
     :param int step: Colorwheel step (defaults to automatic).
+    :param bool ring: Ring mode.  Defaults to ``False``.
     """
 
     # pylint: disable=too-many-arguments
@@ -74,13 +75,14 @@ class RainbowComet(Comet):
         colorwheel_offset=0,
         step=0,
         name=None,
+        ring=False,
     ):
         if step == 0:
             self._colorwheel_step = int(256 / tail_length)
         else:
             self._colorwheel_step = step
         self._colorwheel_offset = colorwheel_offset
-        super().__init__(pixel_object, speed, 0, tail_length, reverse, bounce, name)
+        super().__init__(pixel_object, speed, 0, tail_length, reverse, bounce, name, ring)
 
     def _set_color(self, color):
         self._comet_colors = [BLACK]

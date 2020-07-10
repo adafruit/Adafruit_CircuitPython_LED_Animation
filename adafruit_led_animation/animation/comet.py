@@ -60,6 +60,7 @@ class Comet(Animation):
                             maximum of the length of the ``pixel_object``.
     :param bool reverse: Animates the comet in the reverse order. Defaults to ``False``.
     :param bool bounce: Comet will bounce back and forth. Defaults to ``True``.
+    :param bool ring: Ring mode.  Defaults to ``False``.
     """
 
     # pylint: disable=too-many-arguments,too-many-instance-attributes
@@ -72,9 +73,12 @@ class Comet(Animation):
         reverse=False,
         bounce=False,
         name=None,
+        ring=False,
     ):
         if tail_length == 0:
             tail_length = len(pixel_object) // 4
+        if bounce and ring:
+            raise ValueError('Cannot combine bounce and ring mode')
         self.reverse = reverse
         self.bounce = bounce
         self._initial_reverse = reverse
@@ -87,6 +91,9 @@ class Comet(Animation):
         self._left_side = -self._tail_length
         self._right_side = self._num_pixels
         self._tail_start = 0
+        self._ring = ring
+        if ring:
+            self._left_side = 0
         self.reset()
         super().__init__(pixel_object, speed, color, name=name)
 
@@ -107,7 +114,10 @@ class Comet(Animation):
         for pixel_no, color in enumerate(colors):
             draw_at = self._tail_start + pixel_no
             if draw_at < 0 or draw_at >= self._num_pixels:
-                continue
+                if not self._ring:
+                    continue
+                draw_at = draw_at % self._num_pixels
+
             self.pixel_object[draw_at] = color
 
         self._tail_start += self._direction
@@ -116,6 +126,8 @@ class Comet(Animation):
             if self.bounce:
                 self.reverse = not self.reverse
                 self._direction = -self._direction
+            elif self._ring:
+                self._tail_start = self._tail_start % self._num_pixels
             else:
                 self.reset()
             if self.reverse == self._initial_reverse and self.draw_count > 0:
@@ -130,3 +142,6 @@ class Comet(Animation):
             self._tail_start = self._num_pixels + self._tail_length + 1
         else:
             self._tail_start = -self._tail_length - 1
+
+        if self._ring:
+            self._tail_start = self._tail_start % self._num_pixels
