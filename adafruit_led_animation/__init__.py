@@ -34,7 +34,9 @@ except ImportError:
 
 
 try:
-    from time import monotonic_ms
+    from time import monotonic_ns
+
+    monotonic_ns()  # Test monotonic_ns in 6.x
 
     def monotonic_ms():
         """
@@ -43,7 +45,7 @@ try:
         return monotonic_ns() // NANOS_PER_MS
 
 
-except ImportError:
+except (ImportError, NotImplementedError):
     import time
 
     def monotonic_ms():
