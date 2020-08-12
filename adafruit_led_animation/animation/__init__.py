@@ -61,13 +61,13 @@ class Animation:
         self.pixel_object = pixel_object
         self.pixel_object.auto_write = False
         self._peers = [self] + peers if peers is not None else [self]
-        self._speed_ns = 0
+        self._speed_ms = 0
         self._color = None
         self._paused = paused
         self._next_update = monotonic_ms()
         self._time_left_at_pause = 0
         self._also_notify = []
-        self.speed = speed  # sets _speed_ns
+        self.speed = speed  # sets _speed_ms
         self.color = color  # Triggers _set_color
         self.name = name
         self.cycle_complete = False
@@ -113,7 +113,7 @@ class Animation:
                 anim.cycle_complete = False
                 anim.on_cycle_complete()
 
-        self._next_update = now + self._speed_ns
+        self._next_update = now + self._speed_ms
         return True
 
     def draw(self):
@@ -201,11 +201,11 @@ class Animation:
         """
         The animation speed in fractional seconds.
         """
-        return self._speed_ns / MS_PER_SECOND
+        return self._speed_ms / MS_PER_SECOND
 
     @speed.setter
     def speed(self, seconds):
-        self._speed_ns = int(seconds * MS_PER_SECOND)
+        self._speed_ms = int(seconds * MS_PER_SECOND)
 
     def on_cycle_complete(self):
         """

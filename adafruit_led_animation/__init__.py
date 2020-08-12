@@ -34,7 +34,7 @@ except ImportError:
 
 
 try:
-    from time import monotonic_ns
+    from time import monotonic_ms
 
     def monotonic_ms():
         """
