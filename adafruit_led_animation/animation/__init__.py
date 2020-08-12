@@ -46,7 +46,7 @@ Implementation Notes
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
 
-from adafruit_led_animation import NANOS_PER_SECOND, monotonic_ns
+from adafruit_led_animation import MS_PER_SECOND, monotonic_ms
 
 
 class Animation:
@@ -64,7 +64,7 @@ class Animation:
         self._speed_ns = 0
         self._color = None
         self._paused = paused
-        self._next_update = monotonic_ns()
+        self._next_update = monotonic_ms()
         self._time_left_at_pause = 0
         self._also_notify = []
         self.speed = speed  # sets _speed_ns
@@ -93,7 +93,7 @@ class Animation:
         if self._paused:
             return False
 
-        now = monotonic_ns()
+        now = monotonic_ms()
         if now < self._next_update:
             return False
 
@@ -157,13 +157,13 @@ class Animation:
         Stops the animation until resumed.
         """
         self._paused = True
-        self._time_left_at_pause = max(0, monotonic_ns() - self._next_update)
+        self._time_left_at_pause = max(0, monotonic_ms() - self._next_update)
 
     def resume(self):
         """
         Resumes the animation.
         """
-        self._next_update = monotonic_ns() + self._time_left_at_pause
+        self._next_update = monotonic_ms() + self._time_left_at_pause
         self._time_left_at_pause = 0
         self._paused = False
 
@@ -201,11 +201,11 @@ class Animation:
         """
         The animation speed in fractional seconds.
         """
-        return self._speed_ns / NANOS_PER_SECOND
+        return self._speed_ns / MS_PER_SECOND
 
     @speed.setter
     def speed(self, seconds):
-        self._speed_ns = int(seconds * NANOS_PER_SECOND)
+        self._speed_ns = int(seconds * MS_PER_SECOND)
 
     def on_cycle_complete(self):
         """

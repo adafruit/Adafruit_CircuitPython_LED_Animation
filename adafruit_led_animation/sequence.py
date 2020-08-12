@@ -46,7 +46,7 @@ Implementation Notes
 
 import random
 from adafruit_led_animation.color import BLACK
-from . import NANOS_PER_SECOND, monotonic_ns
+from . import MS_PER_SECOND, monotonic_ms
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
@@ -108,9 +108,9 @@ class AnimationSequence:
             )
         self._members = members
         self._advance_interval = (
-            advance_interval * NANOS_PER_SECOND if advance_interval else None
+            advance_interval * MS_PER_SECOND if advance_interval else None
         )
-        self._last_advance = monotonic_ns()
+        self._last_advance = monotonic_ms()
         self._current = 0
         self.auto_clear = auto_clear
         self.auto_reset = auto_reset
@@ -162,7 +162,7 @@ class AnimationSequence:
     def _auto_advance(self):
         if not self._advance_interval:
             return
-        now = monotonic_ns()
+        now = monotonic_ms()
         if now - self._last_advance > self._advance_interval:
             self._last_advance = now
             self._advance()
@@ -247,7 +247,7 @@ class AnimationSequence:
         if self._paused:
             return
         self._paused = True
-        self._paused_at = monotonic_ns()
+        self._paused_at = monotonic_ms()
         self.current_animation.freeze()
 
     def resume(self):
@@ -257,7 +257,7 @@ class AnimationSequence:
         if not self._paused:
             return
         self._paused = False
-        now = monotonic_ns()
+        now = monotonic_ms()
         self._last_advance += now - self._paused_at
         self._paused_at = 0
         self.current_animation.resume()

@@ -35,15 +35,20 @@ except ImportError:
 
 try:
     from time import monotonic_ns
+
+    def monotonic_ms():
+        return monotonic_ns() // NANOS_PER_MS
+
+
 except ImportError:
     import time
 
-    def monotonic_ns():
+    def monotonic_ms():
         """
         Implementation of monotonic_ns for platforms without time.monotonic_ns
         """
-        return int(time.time() * NANOS_PER_SECOND)
+        return int(time.monotonic() * MS_PER_SECOND)
 
 
-NANOS_PER_SECOND = const(1000000000)
 NANOS_PER_MS = const(1000000)
+MS_PER_SECOND = const(1000)

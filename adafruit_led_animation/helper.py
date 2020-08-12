@@ -44,7 +44,7 @@ Implementation Notes
 
 import math
 
-from . import NANOS_PER_SECOND, monotonic_ns
+from . import MS_PER_SECOND, monotonic_ms
 from .color import calculate_intensity
 
 
@@ -339,14 +339,14 @@ def pulse_generator(period: float, animation_object, dotstar_pwm=False):
     :param animation_object: An animation object to interact with.
     :param dotstar_pwm: Whether to use the dostar per pixel PWM value for brightness control.
     """
-    period = int(period * NANOS_PER_SECOND)
+    period = int(period * MS_PER_SECOND)
     half_period = period // 2
 
-    last_update = monotonic_ns()
+    last_update = monotonic_ms()
     cycle_position = 0
     last_pos = 0
     while True:
-        now = monotonic_ns()
+        now = monotonic_ms()
         time_since_last_draw = now - last_update
         last_update = now
         pos = cycle_position = (cycle_position + time_since_last_draw) % period
