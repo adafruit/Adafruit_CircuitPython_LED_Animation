@@ -37,6 +37,9 @@ try:
     from time import monotonic_ns
 
     def monotonic_ms():
+        """
+        Return monotonic time in milliseconds.
+        """
         return monotonic_ns() // NANOS_PER_MS
 
 
@@ -45,7 +48,7 @@ except ImportError:
 
     def monotonic_ms():
         """
-        Implementation of monotonic_ns for platforms without time.monotonic_ns
+        Implementation of monotonic_ms for platforms without time.monotonic_ns
         """
         return int(time.monotonic() * MS_PER_SECOND)
 
