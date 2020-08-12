@@ -45,7 +45,7 @@ Implementation Notes
 
 from adafruit_led_animation.animation import Animation
 from adafruit_led_animation.color import BLACK, colorwheel
-from adafruit_led_animation import NANOS_PER_SECOND, monotonic_ns
+from adafruit_led_animation import MS_PER_SECOND, monotonic_ms
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
@@ -88,15 +88,15 @@ class Rainbow(Animation):
     on_cycle_complete_supported = True
 
     def _color_wheel_generator(self):
-        period = int(self._period * NANOS_PER_SECOND)
+        period = int(self._period * MS_PER_SECOND)
 
         num_pixels = len(self.pixel_object)
-        last_update = monotonic_ns()
+        last_update = monotonic_ms()
         cycle_position = 0
         last_pos = 0
         while True:
             cycle_completed = False
-            now = monotonic_ns()
+            now = monotonic_ms()
             time_since_last_draw = now - last_update
             last_update = now
             pos = cycle_position = (cycle_position + time_since_last_draw) % period
