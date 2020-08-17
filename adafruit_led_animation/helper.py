@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2019 Roy Hooper
+# Copyright (c) 2019
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 
 Helper classes for making complex animations using CircuitPython LED animations library.
 
-* Author(s): Roy Hooper, Kattni Rembor
+* Author(s): Kattni Rembor
 
 Implementation Notes
 --------------------

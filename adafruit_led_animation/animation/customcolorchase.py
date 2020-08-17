@@ -1,6 +1,5 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2019-2020 Roy Hooper
 # Copyright (c) 2020 Kattni Rembor for Adafruit Industries
 # Copyright (c) 2020 Connie Sieh
 #
@@ -27,7 +26,7 @@
 
 Custom color chase animation for CircuitPython helper library for LED animations.
 
-* Author(s): Roy Hooper, Kattni Rembor, Connie Sieh
+* Author(s): Kattni Rembor, Connie Sieh
 
 Implementation Notes
 --------------------
