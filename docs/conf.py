@@ -39,8 +39,8 @@ master_doc = "index"
 
 # General information about the project.
 project = "LED_Animation Library"
-copyright = "2018 Roy Hoopert"
-author = "Roy Hooper"
+copyright = "2020 Kattni Rembor"
+author = "Kattni Rembor"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

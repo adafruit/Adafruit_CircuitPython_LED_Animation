@@ -1,6 +1,5 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2019-2020 Roy Hooper
 # Copyright (c) 2020 Kattni Rembor for Adafruit Industries
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,7 +25,7 @@
 
 Solid animation for CircuitPython helper library for LED animations.
 
-* Author(s): Roy Hooper, Kattni Rembor
+* Author(s): Kattni Rembor
 
 Implementation Notes
 --------------------
