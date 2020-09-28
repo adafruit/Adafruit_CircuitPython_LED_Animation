@@ -68,7 +68,7 @@ class TimedAnimationSequence(AnimationSequence):
         blink = blink_animation.Blink(strip_pixels, 0.2, color.RED)
         comet = comet_animation.Comet(strip_pixels, 0.1, color.BLUE)
         sparkle = sparkle_animation.Sparkle(strip_pixels, 0.05, color.GREEN)
-        animations = AnimationSequence(blink, 5, comet, 3, sparkle, 7)
+        animations = TimedAnimationSequence(blink, 5, comet, 3, sparkle, 7)
         while True:
             animations.animate()
     """
