@@ -91,7 +91,7 @@ class TimedAnimationSequence(AnimationSequence):
             random_order=random_order,
             auto_reset=auto_reset,
             advance_on_cycle_complete=False,
-            name=name
+            name=name,
         )
         self._advance_interval = self._animation_timings[self._current] * MS_PER_SECOND
 
