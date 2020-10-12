@@ -33,4 +33,4 @@ while True:
     comet.animate()
 
     if time.monotonic() > 3600:  # After an hour passes, reset the board.
-        microcontroller.reset()
+        microcontroller.reset()  # pylint: disable=no-member
