@@ -5,6 +5,7 @@ animates a purple comet that bounces from end to end of the strip, and resets th
 specified amount of time has passed since the board was last reset.
 
 See this FAQ for details:
+https://learn.adafruit.com/circuitpython-led-animations/faqs#on-the-samd21-non-express-board-why-does-my-animation-slow-down-if-i-leave-it-running-for-a-while-3074335-3
 
 For QT Py Haxpress and a NeoPixel strip. Update pixel_pin and pixel_num to match your wiring if
 using a different board or form of NeoPixels.
