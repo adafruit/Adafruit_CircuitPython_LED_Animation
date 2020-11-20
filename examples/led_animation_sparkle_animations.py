@@ -17,8 +17,9 @@ from adafruit_led_animation.color import AMBER, JADE
 pixel_pin = board.D6
 # Update to match the number of NeoPixels you have connected
 pixel_num = 32
+first_eight_mask = [ 1, 2, 3, 4, 5, 6, 7, 8]
 
-pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.5, auto_write=False)
+pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.5, auto_write=False, mask=first_eight_mask )
 
 sparkle = Sparkle(pixels, speed=0.05, color=AMBER, num_sparkles=10)
 sparkle_pulse = SparklePulse(pixels, speed=0.05, period=3, color=JADE)

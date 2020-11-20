@@ -57,18 +57,22 @@ class Sparkle(Animation):
     :param float speed: Animation speed in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     :param num_sparkles: Number of sparkles to generate per animation cycle.
+    :param mask: array to limit sparkles within range of the mask
     """
 
     # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, color, num_sparkles=1, name=None):
+    def __init__(self, pixel_object, speed, color, num_sparkles=1, name=None, mask = None):
         if len(pixel_object) < 2:
             raise ValueError("Sparkle needs at least 2 pixels")
+        if len(mask) >= len(pixel_object):
+            raise ValueError("Sparkle mask should be smaller than number pixel array")
         self._half_color = color
         self._dim_color = color
         self._sparkle_color = color
         self._num_sparkles = num_sparkles
         self._num_pixels = len(pixel_object)
         self._pixels = []
+        self._mask = mask
         super().__init__(pixel_object, speed, color, name=name)
 
     def _set_color(self, color):
@@ -83,9 +87,15 @@ class Sparkle(Animation):
         self._dim_color = dim_color
         self._sparkle_color = color
 
+    def _random_in_mask(self):
+        if self.mask == None:
+            return random.randint(0, (len(self.pixel_object) - 1))
+        else: 
+            return self.mask[random.randint(0, (len(self.mask)-1))]
+
     def draw(self):
         self._pixels = [
-            random.randint(0, (len(self.pixel_object) - 1))
+            self._random_in_mask()
             for _ in range(self._num_sparkles)
         ]
         for pixel in self._pixels:
