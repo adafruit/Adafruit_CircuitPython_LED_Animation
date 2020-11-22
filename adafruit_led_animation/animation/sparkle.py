@@ -61,7 +61,7 @@ class Sparkle(Animation):
     """
 
     # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, color, num_sparkles=1, name=None, mask = None):
+    def __init__(self, pixel_object, speed, color, num_sparkles=1, name=None, mask=[]):
         if len(pixel_object) < 2:
             raise ValueError("Sparkle needs at least 2 pixels")
         if len(mask) >= len(pixel_object):
@@ -88,10 +88,10 @@ class Sparkle(Animation):
         self._sparkle_color = color
 
     def _random_in_mask(self):
-        if self.mask == None:
+        if len(self._mask) == 0:
             return random.randint(0, (len(self.pixel_object) - 1))
         else: 
-            return self.mask[random.randint(0, (len(self.mask)-1))]
+            return self._mask[random.randint(0, (len(self._mask)-1))]
 
     def draw(self):
         self._pixels = [
@@ -105,4 +105,5 @@ class Sparkle(Animation):
         self.show()
         for pixel in self._pixels:
             self.pixel_object[pixel % self._num_pixels] = self._half_color
-            self.pixel_object[(pixel + 1) % self._num_pixels] = self._dim_color
+            if (pixel+1) % self._num_pixels in self._mask: self.pixel_object[(pixel + 1) % self._num_pixels] = self._dim_color
+
