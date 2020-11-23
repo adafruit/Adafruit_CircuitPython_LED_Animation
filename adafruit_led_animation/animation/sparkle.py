@@ -90,14 +90,11 @@ class Sparkle(Animation):
     def _random_in_mask(self):
         if len(self._mask) == 0:
             return random.randint(0, (len(self.pixel_object) - 1))
-        else: 
-            return self._mask[random.randint(0, (len(self._mask)-1))]
+        else:
+            return self._mask[random.randint(0, (len(self._mask) - 1))]
 
     def draw(self):
-        self._pixels = [
-            self._random_in_mask()
-            for _ in range(self._num_sparkles)
-        ]
+        self._pixels = [self._random_in_mask() for _ in range(self._num_sparkles)]
         for pixel in self._pixels:
             self.pixel_object[pixel] = self._sparkle_color
 
@@ -105,5 +102,5 @@ class Sparkle(Animation):
         self.show()
         for pixel in self._pixels:
             self.pixel_object[pixel % self._num_pixels] = self._half_color
-            if (pixel+1) % self._num_pixels in self._mask: self.pixel_object[(pixel + 1) % self._num_pixels] = self._dim_color
-
+            if (pixel + 1) % self._num_pixels in self._mask:
+                self.pixel_object[(pixel + 1) % self._num_pixels] = self._dim_color
