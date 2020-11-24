@@ -23,8 +23,7 @@ heart_mask = [     1,  2,          5,  6,
               24, 25, 26, 27, 28, 29, 30, 31,
                   33, 34, 35, 36, 37, 38,
                       42, 43, 44, 45,
-                          51, 52]
-                          
+                          51, 52]                      
 unheart_mask = [0,           3,  4,         7,
 
 
@@ -34,7 +33,6 @@ unheart_mask = [0,           3,  4,         7,
                 48, 49, 50,        53, 54, 55,
                 56, 57, 58, 59, 60, 61, 62, 63]
 # fmt: on
-
 pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.9, auto_write=False)
 
 animations = AnimationSequence(
