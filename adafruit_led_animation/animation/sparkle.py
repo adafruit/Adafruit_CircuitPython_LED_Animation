@@ -61,7 +61,9 @@ class Sparkle(Animation):
     """
 
     # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, color, num_sparkles=1, name=None, mask=None):
+    def __init__(
+        self, pixel_object, speed, color, num_sparkles=1, name=None, mask=None
+    ):
         if len(pixel_object) < 2:
             raise ValueError("Sparkle needs at least 2 pixels")
         if mask:
