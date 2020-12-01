@@ -44,6 +44,7 @@ PINK = (242, 90, 255)
 AQUA = (50, 255, 255)
 JADE = (0, 255, 40)
 AMBER = (255, 100, 0)
+OLD_LACE = (253, 245, 230)  # Warm white.
 
 RGBW_WHITE_RGB = (255, 255, 255, 0)
 RGBW_WHITE_W = (0, 0, 0, 255)
