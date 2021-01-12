@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 """
 This example shows how to reset the microcontroller to avoid the animation slowing down over time
 due to the limitations of CircuitPython for the SAMD21 (M0) microcontroller. The example

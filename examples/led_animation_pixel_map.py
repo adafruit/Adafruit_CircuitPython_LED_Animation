@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 """
 This example shows usage of the PixelMap helper to easily treat a single strip as a horizontal or
 vertical grid for animation purposes.

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 """
 This example uses AnimationsSequence to display multiple animations in sequence, at a five second
 interval.
@@ -24,7 +27,10 @@ sparkle = Sparkle(pixels, speed=0.05, color=AMBER, num_sparkles=10)
 sparkle_pulse = SparklePulse(pixels, speed=0.05, period=3, color=JADE)
 
 animations = AnimationSequence(
-    sparkle, sparkle_pulse, advance_interval=5, auto_clear=True,
+    sparkle,
+    sparkle_pulse,
+    advance_interval=5,
+    auto_clear=True,
 )
 
 while True:
