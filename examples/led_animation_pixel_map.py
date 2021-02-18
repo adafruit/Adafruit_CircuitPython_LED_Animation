@@ -1,4 +1,3 @@
-# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
 # SPDX-FileCopyrightText: 2021 Kattni Rembor for Adafruit Industries
 # SPDX-License-Identifier: MIT
 
