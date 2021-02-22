@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-FileCopyrightText: 2021 Kattni Rembor for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 """
 This example shows three different ways to use AnimationGroup: syncing two animations, displaying
 two animations at different speeds, and displaying two animations sequentially, across two separate
