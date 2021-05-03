@@ -61,8 +61,8 @@ class Comet(Animation):
             tail_length = len(pixel_object) // 4
         if bounce and ring:
             raise ValueError("Cannot combine bounce and ring mode")
-        self.reverse = reverse
         self.bounce = bounce
+        self._reverse = reverse
         self._initial_reverse = reverse
         self._tail_length = tail_length
         self._color_step = 0.95 / tail_length
@@ -89,6 +89,33 @@ class Comet(Animation):
             )
         self._computed_color = color
 
+    @property
+    def reverse(self):
+        """
+        Whether the animation is reversed
+        """
+        return self._reverse
+
+    @reverse.setter
+    def reverse(self, value):
+        self._reverse = value
+        self._direction = -1 if self._reverse else 1
+
+    @property
+    def ring(self):
+        """
+        Ring mode.
+        """
+        return self._ring
+
+    @ring.setter
+    def ring(self, value):
+        if self.bounce and value:
+            raise ValueError("Cannot combine bounce and ring mode")
+        self._ring = value
+        self._left_side = 0 if value else -self._tail_length
+        self.reset()
+
     def draw(self):
         colors = self._comet_colors
         if self.reverse:
@@ -104,22 +131,20 @@ class Comet(Animation):
 
         self._tail_start += self._direction
 
-        if self._tail_start < self._left_side or self._tail_start >= self._right_side:
+        if self._tail_start < self._left_side or (self._tail_start >= self._right_side and not self._reverse):
             if self.bounce:
                 self.reverse = not self.reverse
-                self._direction = -self._direction
             elif self._ring:
                 self._tail_start = self._tail_start % self._num_pixels
             else:
                 self.reset()
-            if self.reverse == self._initial_reverse and self.draw_count > 0:
-                self.cycle_complete = True
+
+            self.cycle_complete = True
 
     def reset(self):
         """
         Resets to the first state.
         """
-        self.reverse = self._initial_reverse
         if self.reverse:
             self._tail_start = self._num_pixels + self._tail_length + 1
         else:
