@@ -131,7 +131,9 @@ class Comet(Animation):
 
         self._tail_start += self._direction
 
-        if self._tail_start < self._left_side or (self._tail_start >= self._right_side and not self._reverse):
+        if self._tail_start < self._left_side or (
+            self._tail_start >= self._right_side and not self._reverse
+        ):
             if self.bounce:
                 self.reverse = not self.reverse
             elif self._ring:
