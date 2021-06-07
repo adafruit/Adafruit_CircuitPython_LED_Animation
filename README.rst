@@ -76,7 +76,7 @@ Contributing
 ============
 
 Contributions are welcome! Please read our `Code of Conduct
-<https://github.com/apatt/CircuitPython_LED_Animation/blob/master/CODE_OF_CONDUCT.md>`_
+<https://github.com/apatt/CircuitPython_LED_Animation/blob/main/CODE_OF_CONDUCT.md>`_
 before contributing to help this project stay welcoming.
 
 Building locally
