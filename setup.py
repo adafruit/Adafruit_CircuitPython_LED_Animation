@@ -35,6 +35,7 @@ setup(
     author_email="circuitpython@adafruit.com",
     install_requires=[
         "Adafruit-Blinka",
+        "Adafruit-CircuitPython-Ticks",
     ],
     # Choose your license
     license="MIT",
