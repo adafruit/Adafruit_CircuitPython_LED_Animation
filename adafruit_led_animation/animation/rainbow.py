@@ -26,8 +26,8 @@ Implementation Notes
 """
 
 from adafruit_ticks import ticks_diff, ticks_ms
-from .animation import Animation
-from .color import BLACK, colorwheel
+from ..animation import Animation
+from ..color import BLACK, colorwheel
 from . import MS_PER_SECOND
 
 __version__ = "0.0.0-auto.0"
