@@ -28,7 +28,10 @@ Implementation Notes
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
 
-from adafruit_led_animation import MS_PER_SECOND, monotonic_ms
+from adafruit_ticks import ticks_ms, ticks_diff, ticks_add, ticks_less
+from micropython import const
+
+MS_PER_SECOND = const(1000)
 
 
 class Animation:
@@ -46,7 +49,7 @@ class Animation:
         self._speed_ms = 0
         self._color = None
         self._paused = paused
-        self._next_update = monotonic_ms()
+        self._next_update = ticks_ms()
         self._time_left_at_pause = 0
         self._also_notify = []
         self.speed = speed  # sets _speed_ms
@@ -75,8 +78,8 @@ class Animation:
         if self._paused:
             return False
 
-        now = monotonic_ms()
-        if now < self._next_update:
+        now = ticks_ms()
+        if ticks_less(now, self._next_update):
             return False
 
         # Draw related animations together
@@ -139,13 +142,13 @@ class Animation:
         Stops the animation until resumed.
         """
         self._paused = True
-        self._time_left_at_pause = max(0, monotonic_ms() - self._next_update)
+        self._time_left_at_pause = max(0, ticks_diff(ticks_ms(), self._next_update))
 
     def resume(self):
         """
         Resumes the animation.
         """
-        self._next_update = monotonic_ms() + self._time_left_at_pause
+        self._next_update = ticks_add(ticks_ms(), self._time_left_at_pause)
         self._time_left_at_pause = 0
         self._paused = False
 

@@ -27,8 +27,11 @@ Implementation Notes
 
 import math
 
-from . import MS_PER_SECOND, monotonic_ms
+from micropython import const
+from adafruit_ticks import ticks_diff, ticks_ms
 from .color import calculate_intensity
+
+MS_PER_SECOND = const(1000)
 
 
 class PixelMap:
@@ -325,12 +328,12 @@ def pulse_generator(period: float, animation_object, dotstar_pwm=False):
     period = int(period * MS_PER_SECOND)
     half_period = period // 2
 
-    last_update = monotonic_ms()
+    last_update = ticks_ms()
     cycle_position = 0
     last_pos = 0
     while True:
-        now = monotonic_ms()
-        time_since_last_draw = now - last_update
+        now = ticks_ms()
+        time_since_last_draw = ticks_diff(now, last_update)
         last_update = now
         pos = cycle_position = (cycle_position + time_since_last_draw) % period
         if pos < last_pos:

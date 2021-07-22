@@ -27,8 +27,11 @@ Implementation Notes
 """
 
 import random
-from adafruit_led_animation.color import BLACK
-from . import MS_PER_SECOND, monotonic_ms
+from adafruit_ticks import ticks_ms, ticks_diff, ticks_add
+from micropython import const
+from .color import BLACK
+
+MS_PER_SECOND = const(1000)
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
@@ -92,7 +95,7 @@ class AnimationSequence:
         self._advance_interval = (
             advance_interval * MS_PER_SECOND if advance_interval else None
         )
-        self._last_advance = monotonic_ms()
+        self._last_advance = ticks_ms()
         self._current = 0
         self.auto_clear = auto_clear
         self.auto_reset = auto_reset
@@ -144,8 +147,8 @@ class AnimationSequence:
     def _auto_advance(self):
         if not self._advance_interval:
             return
-        now = monotonic_ms()
-        if now - self._last_advance > self._advance_interval:
+        now = ticks_ms()
+        if ticks_diff(now, self._last_advance) > self._advance_interval:
             self._last_advance = now
             self._advance()
 
@@ -229,7 +232,7 @@ class AnimationSequence:
         if self._paused:
             return
         self._paused = True
-        self._paused_at = monotonic_ms()
+        self._paused_at = ticks_ms()
         self.current_animation.freeze()
 
     def resume(self):
@@ -239,8 +242,10 @@ class AnimationSequence:
         if not self._paused:
             return
         self._paused = False
-        now = monotonic_ms()
-        self._last_advance += now - self._paused_at
+        now = ticks_ms()
+        self._last_advance = ticks_add(
+            self._last_advance, ticks_diff(now - self._paused_at)
+        )
         self._paused_at = 0
         self.current_animation.resume()
 

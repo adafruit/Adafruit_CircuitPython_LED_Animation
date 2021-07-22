@@ -90,6 +90,7 @@ class RainbowSparkle(Rainbow):
                 )
 
     def after_draw(self):
+        """Steps run after the main draw()"""
         self.show()
         pixels = [
             random.randint(0, len(self.pixel_object) - 1)
