@@ -23,6 +23,9 @@ Implementation Notes
 * Adafruit CircuitPython firmware for the supported boards:
   https://circuitpython.org/downloads
 """
+# Makes colorwheel() available.
+from rainbowio import colorwheel  # pylint: disable=unused-import
+
 RED = (255, 0, 0)
 """Red."""
 YELLOW = (255, 150, 0)
@@ -69,29 +72,6 @@ RGBW_WHITE_RGBW = (255, 255, 255, 255)
 RAINBOW = (RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE)
 """RAINBOW is a list of colors to use for cycling through.
 Includes, in order: red, orange, yellow, green, blue, and purple."""
-
-try:
-    try:
-        # Backwards compatibility for 5.3.0 and prior
-        from _pixelbuf import colorwheel  # pylint: disable=unused-import
-    except ImportError:
-        from _pixelbuf import wheel as colorwheel  # pylint: disable=unused-import
-except ImportError:
-
-    def colorwheel(pos):
-        """Colorwheel is built into CircuitPython's _pixelbuf. A separate colorwheel is included
-        here for use with CircuitPython builds that do not include _pixelbuf, as with some of the
-        SAMD21 builds. To use: input a value 0 to 255 to get a color value.
-        The colours are a transition from red to green to blue and back to red."""
-        if pos < 0 or pos > 255:
-            return 0, 0, 0
-        if pos < 85:
-            return int(255 - pos * 3), int(pos * 3), 0
-        if pos < 170:
-            pos -= 85
-            return 0, int(255 - pos * 3), int(pos * 3)
-        pos -= 170
-        return int(pos * 3), 0, int(255 - (pos * 3))
 
 
 def calculate_intensity(color, intensity=1.0):
