@@ -40,7 +40,7 @@ class RainbowChase(Chase):
     :param size: Number of pixels to turn on in a row.
     :param spacing: Number of pixels to turn off in a row.
     :param reverse: Reverse direction of movement.
-    :param step: How many colors to skip in `colorwheel` per bar (default 8)
+    :param step: How many colors to skip in ``colorwheel`` per bar (default 8)
     """
 
     # pylint: disable=too-many-arguments
