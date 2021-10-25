@@ -72,6 +72,11 @@ Usage Example
     while True:
         blink.animate()
 
+Documentation
+=============
+
+API documentation for this library can be found on `Read the Docs <https://circuitpython.readthedocs.io/projects/led-animation/en/latest/>`_.
+
 Contributing
 ============
 
