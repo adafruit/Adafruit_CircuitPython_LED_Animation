@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 Kattni Rembor for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 """
 This example uses AnimationsSequence to display multiple animations in sequence, at a five second
 interval.

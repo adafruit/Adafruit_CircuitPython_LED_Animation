@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 Kattni Rembor for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 """
 This example displays the basic animations in sequence, at a five second interval.
 
@@ -43,7 +46,14 @@ pulse = Pulse(pixels, speed=0.1, color=AMBER, period=3)
 
 
 animations = AnimationSequence(
-    solid, blink, colorcycle, chase, comet, pulse, advance_interval=5, auto_clear=True,
+    solid,
+    blink,
+    colorcycle,
+    chase,
+    comet,
+    pulse,
+    advance_interval=5,
+    auto_clear=True,
 )
 
 while True:
