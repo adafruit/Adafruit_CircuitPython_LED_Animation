@@ -20,6 +20,19 @@ Table of Contents
 
     api
 
+
+.. toctree::
+    :caption: Tutorials
+
+    CircuitPython LED Animations Learning Guide <https://learn.adafruit.com/circuitpython-led-animations>
+
+.. toctree::
+    :caption: Related Products
+
+    Adafruit NeoPixel LEDs <https://www.adafruit.com/category/168>
+
+    Adafruit DotStar LEDs <https://www.adafruit.com/category/885>
+
 .. toctree::
     :caption: Other Links
 
