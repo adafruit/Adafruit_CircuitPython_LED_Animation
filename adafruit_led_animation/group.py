@@ -44,7 +44,7 @@ class AnimationGroup:
 
     Example:
 
-        .. code-block::
+        .. code-block:: python
 
             import board
             import neopixel
