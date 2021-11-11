@@ -21,7 +21,7 @@ from adafruit_led_animation.animation.chase import Chase
 from adafruit_led_animation.group import AnimationGroup
 from adafruit_led_animation.sequence import AnimationSequence
 
-import adafruit_led_animation.color as color
+from adafruit_led_animation import color
 
 strip_pixels = neopixel.NeoPixel(board.A1, 30, brightness=0.5, auto_write=False)
 cp.pixels.brightness = 0.5
