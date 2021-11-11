@@ -66,7 +66,9 @@ class Sparkle(Animation):
     def _set_color(self, color):
         half_color = tuple(color[rgb] // 4 for rgb in range(len(color)))
         dim_color = tuple(color[rgb] // 10 for rgb in range(len(color)))
-        for pixel in range(len(self.pixel_object)):
+        for pixel in range(  # pylint: disable=consider-using-enumerate
+            len(self.pixel_object)
+        ):
             if self.pixel_object[pixel] == self._half_color:
                 self.pixel_object[pixel] = half_color
             elif self.pixel_object[pixel] == self._dim_color:
