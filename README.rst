@@ -57,7 +57,7 @@ Usage Example
 
     import board
     import neopixel
-    from adafruit_led_animation.animation import Blink
+    from adafruit_led_animation.animation.blink import Blink
     import adafruit_led_animation.color as color
 
     # Works on Circuit Playground Express and Bluefruit.
