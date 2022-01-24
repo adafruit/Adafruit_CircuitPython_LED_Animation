@@ -30,7 +30,7 @@ autodoc_mock_imports = ["rainbowio"]
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "CircuitPython": ("https://circuitpython.readthedocs.io/en/latest/", None),
+    "CircuitPython": ("https://docs.circuitpython.org/en/latest/", None),
 }
 
 # Add any paths that contain templates here, relative to this directory.
