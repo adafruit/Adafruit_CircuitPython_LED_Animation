@@ -41,5 +41,4 @@ while True:
     if button.value:
         animation_sequence.next()
         while button.value:
-            time.sleep(0.1) # Used for button debouncing
-    
+            time.sleep(0.1)  # Used for button debouncing

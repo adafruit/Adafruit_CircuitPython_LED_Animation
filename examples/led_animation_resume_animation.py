@@ -30,7 +30,7 @@ button.pull = Pull.DOWN
 
 # Create the animation and freeze it afterwards
 pulse_animation = Pulse(pixels, speed=0.1, period=1, color=RED)
-pulse_animation.freeze() 
+pulse_animation.freeze()
 
 while True:
     pulse_animation.animate()
