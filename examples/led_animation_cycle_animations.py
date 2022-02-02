@@ -8,8 +8,8 @@ two animations
 For NeoPixel FeatherWing. Update pixel_pin and pixel_num to match your wiring if using
 a different form of NeoPixels.
 """
-import board
 import time
+import board
 import neopixel
 from digitalio import DigitalInOut, Direction, Pull
 
