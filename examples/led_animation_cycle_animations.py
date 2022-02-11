@@ -28,7 +28,7 @@ button_pin = board.D3
 pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.5, auto_write=False)
 button = DigitalInOut(button_pin)
 button.direction = Direction.INPUT
-button.pull = Pull.DOWN
+button.pull = Pull.UP
 
 solid_blue = Solid(pixels, color=BLUE)
 solid_red = Solid(pixels, color=RED)
@@ -38,7 +38,7 @@ while True:
     animation_sequence.animate()
 
     # Pressing the button pauses the animation permanently
-    if button.value:
+    if not button.value:
         animation_sequence.next()
         while button.value:
             time.sleep(0.1)  # Used for button debouncing

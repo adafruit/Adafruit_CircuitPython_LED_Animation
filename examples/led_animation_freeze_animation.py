@@ -26,7 +26,7 @@ button_pin = board.D3
 pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=0.5, auto_write=False)
 button = DigitalInOut(button_pin)
 button.direction = Direction.INPUT
-button.pull = Pull.DOWN
+button.pull = Pull.UP
 
 pulse_animation = Pulse(pixels, speed=0.1, period=1, color=RED)
 
@@ -34,5 +34,5 @@ while True:
     pulse_animation.animate()
 
     # Pressing the button pauses the animation permanently
-    if button.value:
+    if not button.value:
         pulse_animation.freeze()
