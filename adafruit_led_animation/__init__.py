@@ -27,7 +27,6 @@ try:
         """
         return monotonic_ns() // NANOS_PER_MS
 
-
 except (ImportError, NotImplementedError):
     import time
 
