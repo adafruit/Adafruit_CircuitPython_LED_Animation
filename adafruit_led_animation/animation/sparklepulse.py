@@ -64,10 +64,8 @@ class SparklePulse(Sparkle):
 
     def _set_color(self, color):
         self._color = color
+        super()._set_color(color)
 
     def draw(self):
         self._sparkle_color = next(self._generator)
         super().draw()
-
-    def after_draw(self):
-        self.show()
