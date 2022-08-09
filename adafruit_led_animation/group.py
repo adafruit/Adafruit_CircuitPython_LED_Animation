@@ -152,10 +152,10 @@ class AnimationGroup:
                         member.show()
             return result
 
-        ret=False
+        ret = False
         for item in self._members:
             if item.animate(show):
-                ret=True
+                ret = True
         return ret
 
     @property
