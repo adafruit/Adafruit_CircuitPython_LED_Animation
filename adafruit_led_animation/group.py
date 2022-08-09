@@ -152,7 +152,12 @@ class AnimationGroup:
                         member.show()
             return result
 
-        return any(item.animate(show) for item in self._members)
+        ret=False
+        for item in self._members:
+            if item.animate(show):
+                ret=True
+        return ret
+        #return any(item.animate(show) for item in self._members)
 
     @property
     def color(self):
