@@ -152,10 +152,18 @@ class AnimationGroup:
                         member.show()
             return result
 
+        #improve performance of non-synced animations by only calling show on the last member
         ret = False
+        pos = 1
+        num_members = len(self._members)
         for item in self._members:
-            if item.animate(show):
-                ret = True
+            if pos == num_members:
+                if item.animate(show):
+                    ret = True
+            else:
+                if item.animate(False):
+                    ret = True
+                pos = pos + 1
         return ret
 
     @property
