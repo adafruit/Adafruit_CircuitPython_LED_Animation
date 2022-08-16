@@ -25,7 +25,7 @@ Implementation Notes
 
 """
 
-__version__ = "0.0.0-auto.0"
+__version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
 
 from adafruit_led_animation import MS_PER_SECOND, monotonic_ms

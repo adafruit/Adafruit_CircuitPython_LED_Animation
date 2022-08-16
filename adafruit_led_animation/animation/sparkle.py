@@ -28,7 +28,7 @@ Implementation Notes
 import random
 from adafruit_led_animation.animation import Animation
 
-__version__ = "0.0.0-auto.0"
+__version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
 
 
