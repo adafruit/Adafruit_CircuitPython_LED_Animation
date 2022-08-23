@@ -44,8 +44,14 @@ master_doc = "index"
 
 # General information about the project.
 project = "LED_Animation Library"
+creation_year = "2020"
 current_year = str(datetime.datetime.now().year)
-copyright = current_year + " Kattni Rembor"
+year_duration = (
+    current_year
+    if current_year == creation_year
+    else creation_year + " - " + current_year
+)
+copyright = year_duration + " Kattni Rembor"
 author = "Kattni Rembor"
 
 # The version info for the project you're documenting, acts as replacement for
