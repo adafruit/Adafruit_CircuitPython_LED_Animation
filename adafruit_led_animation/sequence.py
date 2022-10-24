@@ -179,6 +179,13 @@ class AnimationSequence:
             self.on_cycle_complete()
         self.activate(current % len(self._members))
 
+    def previous(self):
+        """
+        Jump to the previous animation.
+        """
+        current = self._current - 1
+        self.activate(current % len(self._members))
+
     def random(self):
         """
         Jump to a random animation.
