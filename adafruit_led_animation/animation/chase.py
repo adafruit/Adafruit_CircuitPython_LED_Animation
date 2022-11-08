@@ -111,7 +111,8 @@ class Chase(Animation):
         """
         return self.color
 
-    def space_color(self, n, pixel_no=0):  # pylint: disable=unused-argument
+    @staticmethod
+    def space_color(n, pixel_no=0):  # pylint: disable=unused-argument
         """
         Generate the spacing color for the n'th bar_color in the Chase
 
