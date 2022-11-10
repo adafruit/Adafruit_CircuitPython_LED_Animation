@@ -120,14 +120,24 @@ class Comet(Animation):
         colors = self._comet_colors
         if self.reverse:
             colors = reversed(colors)
-        for pixel_no, color in enumerate(colors):
-            draw_at = self._tail_start + pixel_no
-            if draw_at < 0 or draw_at >= self._num_pixels:
-                if not self._ring:
-                    continue
-                draw_at = draw_at % self._num_pixels
 
-            self.pixel_object[draw_at] = color
+        pixels = self.pixel_object
+        start = self._tail_start
+        npixels = len(pixels)
+        if self._ring:
+            start %= npixels
+            for color in colors:
+                pixels[start] = color
+                start += 1
+                if start == npixels:
+                    start = 0
+        else:
+            for color in colors:
+                if start >= npixels:
+                    break
+                if start >= 0:
+                    pixels[start] = color
+                start += 1
 
         self._tail_start += self._direction
 
