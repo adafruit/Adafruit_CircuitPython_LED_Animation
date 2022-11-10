@@ -96,7 +96,7 @@ class Chase(Animation):
                 bar_no += 1
 
         colorgen = bar_colors()
-        self.pixel_object[:] = [next(colorgen) for _ in self.pixel_object]
+        self.pixel_object[:] = [next(colorgen) for _ in range(len(self.pixel_object))]
 
         if self.draw_count % len(self.pixel_object) == 0:
             self.cycle_complete = True
