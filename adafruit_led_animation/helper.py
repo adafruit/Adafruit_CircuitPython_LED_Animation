@@ -25,8 +25,7 @@ Implementation Notes
 
 """
 
-import math
-
+import _pixelmap
 from . import MS_PER_SECOND, monotonic_ms
 from .color import calculate_intensity
 
@@ -106,17 +105,26 @@ class PixelMap:
 
     def __init__(self, strip, pixel_ranges, individual_pixels=False):
         self._pixels = strip
-        self._ranges = pixel_ranges
+        if isinstance(pixel_ranges, list) or isinstance(pixel_ranges[0], list):
+            self._ranges = tuple(
+                tuple(item for item in sublist) for sublist in pixel_ranges
+            )
+
+        elif isinstance(pixel_ranges, tuple):
+            self._ranges = pixel_ranges
 
         self.n = len(self._ranges)
         if self.n == 0:
             raise ValueError("A PixelMap must have at least one pixel defined")
         self._individual_pixels = individual_pixels
         self._expand_ranges()
+        self._map = _pixelmap.PixelMap(self._pixels, self._ranges)
 
     def _expand_ranges(self):
         if not self._individual_pixels:
-            self._ranges = [list(range(start, end)) for start, end in self._ranges]
+            self._ranges = tuple(
+                tuple(list(range(start, end))) for start, end in self._ranges
+            )
             return
         if isinstance(self._ranges[0], int):
             self._ranges = [[n] for n in self._ranges]
@@ -125,21 +133,12 @@ class PixelMap:
         return "[" + ", ".join([str(self[x]) for x in range(self.n)]) + "]"
 
     def _set_pixels(self, index, val):
-        for pixel in self._ranges[index]:
-            self._pixels[pixel] = val
+        self._map[index] = val
 
     def __setitem__(self, index, val):
-        if isinstance(index, slice):
-            start, stop, step = index.indices(len(self._ranges))
-            length = stop - start
-            if step != 0:
-                length = math.ceil(length / step)
-            if len(val) != length:
-                raise ValueError("Slice and input sequence size do not match.")
-            for val_i, in_i in enumerate(range(start, stop, step)):
-                self._set_pixels(in_i, val[val_i])
-        else:
-            self._set_pixels(index, val)
+        if isinstance(index, int) and index < 0:
+            index += len(self)
+        self._map[index] = val
 
         if self._pixels.auto_write:
             self.show()
@@ -154,7 +153,7 @@ class PixelMap:
             index += len(self)
         if index >= self.n or index < 0:
             raise IndexError
-        return self._pixels[self._ranges[index][0]]
+        return self._map[index]
 
     def __len__(self):
         return len(self._ranges)
@@ -177,9 +176,7 @@ class PixelMap:
 
         :param color: Color to fill all pixels referenced by this PixelMap definition with.
         """
-        for pixels in self._ranges:
-            for pixel in pixels:
-                self._pixels[pixel] = color
+        self._map.fill(color)
 
     def show(self):
         """
@@ -192,11 +189,11 @@ class PixelMap:
         """
         auto_write from the underlying strip.
         """
-        return self._pixels.auto_write
+        return self._map.auto_write
 
     @auto_write.setter
     def auto_write(self, value):
-        self._pixels.auto_write = value
+        self._map.auto_write = value
 
     @classmethod
     def vertical_lines(cls, pixel_object, width, height, gridmap):
