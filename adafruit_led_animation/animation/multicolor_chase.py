@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2020 Kattni Rembor for Adafruit Industries
+# SPDX-FileCopyrightText: 2022 Tim Cocks
 #
 # SPDX-License-Identifier: MIT
 
@@ -8,7 +8,7 @@
 
 Rainbow chase animation for CircuitPython helper library for LED animations.
 
-* Author(s): Kattni Rembor
+* Author(s): Kattni Rembor, Tim Cocks
 
 Implementation Notes
 --------------------
