@@ -51,7 +51,7 @@ class Comet(Animation):
         pixel_object,
         speed,
         color,
-        background_color=BLACK
+        background_color=BLACK,
         tail_length=0,
         reverse=False,
         bounce=False,
