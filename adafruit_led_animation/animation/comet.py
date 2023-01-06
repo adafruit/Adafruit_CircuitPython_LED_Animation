@@ -51,6 +51,7 @@ class Comet(Animation):
         pixel_object,
         speed,
         color,
+        background_color=BLACK,
         tail_length=0,
         reverse=False,
         bounce=False,
@@ -68,6 +69,7 @@ class Comet(Animation):
         self._color_step = 0.95 / tail_length
         self._comet_colors = None
         self._computed_color = color
+        self._background_color = background_color
         self._num_pixels = len(pixel_object)
         self._direction = -1 if reverse else 1
         self._left_side = -self._tail_length
@@ -82,7 +84,7 @@ class Comet(Animation):
     on_cycle_complete_supported = True
 
     def _set_color(self, color):
-        self._comet_colors = [BLACK]
+        self._comet_colors = [self._background_color]
         for n in range(self._tail_length):
             self._comet_colors.append(
                 calculate_intensity(color, n * self._color_step + 0.05)
