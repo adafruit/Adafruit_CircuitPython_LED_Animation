@@ -41,7 +41,7 @@ class Comet(Animation):
                             ``pixel_object``. Automatically compensates for a minimum of 2 and a
                             maximum of the length of the ``pixel_object``.
     :param bool reverse: Animates the comet in the reverse order. Defaults to ``False``.
-    :param bool bounce: Comet will bounce back and forth. Defaults to ``True``.
+    :param bool bounce: Comet will bounce back and forth. Defaults to ``False``.
     :param bool ring: Ring mode.  Defaults to ``False``.
     """
 
