@@ -40,7 +40,7 @@ class RainbowComet(Comet):
                             pixels present in the pixel object, e.g. if the strip is 30 pixels
                             long, the ``tail_length`` cannot exceed 30 pixels.
     :param bool reverse: Animates the comet in the reverse order. Defaults to ``False``.
-    :param bool bounce: Comet will bounce back and forth. Defaults to ``True``.
+    :param bool bounce: Comet will bounce back and forth. Defaults to ``False``.
     :param int colorwheel_offset: Offset from start of colorwheel (0-255).
     :param int step: Colorwheel step (defaults to automatic).
     :param bool ring: Ring mode.  Defaults to ``False``.
