@@ -37,6 +37,8 @@ class Comet(Animation):
     :param pixel_object: The initialised LED object.
     :param float speed: Animation speed in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
+    :param background_color: Background color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
+                             Defaults to BLACK.
     :param int tail_length: The length of the comet. Defaults to 25% of the length of the
                             ``pixel_object``. Automatically compensates for a minimum of 2 and a
                             maximum of the length of the ``pixel_object``.
