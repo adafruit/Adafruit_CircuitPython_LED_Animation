@@ -42,6 +42,8 @@ class MulticolorComet(Comet):
                             maximum of the length of the ``pixel_object``.
     :param bool reverse: Animates the comet in the reverse order. Defaults to ``False``.
     :param bool bounce: Comet will bounce back and forth. Defaults to ``True``.
+    :param Optional[string] name: A human-readable name for the Animation.
+                                  Used by the to string function.
     :param bool ring: Ring mode.  Defaults to ``False``.
     :param bool off_pixels: Turn pixels off after the animation passes them. Defaults to ``True``.
                             Setting to False will result in all pixels not currently in the comet
@@ -54,6 +56,7 @@ class MulticolorComet(Comet):
         pixel_object,
         speed,
         colors,
+        *,
         tail_length=0,
         reverse=False,
         bounce=False,
