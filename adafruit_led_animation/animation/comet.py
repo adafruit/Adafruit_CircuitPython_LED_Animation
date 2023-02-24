@@ -37,11 +37,13 @@ class Comet(Animation):
     :param pixel_object: The initialised LED object.
     :param float speed: Animation speed in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
+    :param background_color: Background color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
+                             Defaults to BLACK.
     :param int tail_length: The length of the comet. Defaults to 25% of the length of the
                             ``pixel_object``. Automatically compensates for a minimum of 2 and a
                             maximum of the length of the ``pixel_object``.
     :param bool reverse: Animates the comet in the reverse order. Defaults to ``False``.
-    :param bool bounce: Comet will bounce back and forth. Defaults to ``True``.
+    :param bool bounce: Comet will bounce back and forth. Defaults to ``False``.
     :param Optional[string] name: A human-readable name for the Animation.
                                   Used by the to string function.
     :param bool ring: Ring mode.  Defaults to ``False``.
@@ -53,6 +55,7 @@ class Comet(Animation):
         pixel_object,
         speed,
         color,
+        background_color=BLACK,
         tail_length=0,
         reverse=False,
         bounce=False,
@@ -70,6 +73,7 @@ class Comet(Animation):
         self._color_step = 0.95 / tail_length
         self._comet_colors = None
         self._computed_color = color
+        self._background_color = background_color
         self._num_pixels = len(pixel_object)
         self._direction = -1 if reverse else 1
         self._left_side = -self._tail_length
@@ -84,7 +88,7 @@ class Comet(Animation):
     on_cycle_complete_supported = True
 
     def _set_color(self, color):
-        self._comet_colors = [BLACK]
+        self._comet_colors = [self._background_color]
         for n in range(self._tail_length):
             self._comet_colors.append(
                 calculate_intensity(color, n * self._color_step + 0.05)

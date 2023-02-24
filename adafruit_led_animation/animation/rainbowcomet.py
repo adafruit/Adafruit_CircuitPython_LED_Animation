@@ -40,7 +40,7 @@ class RainbowComet(Comet):
                             pixels present in the pixel object, e.g. if the strip is 30 pixels
                             long, the ``tail_length`` cannot exceed 30 pixels.
     :param bool reverse: Animates the comet in the reverse order. Defaults to ``False``.
-    :param bool bounce: Comet will bounce back and forth. Defaults to ``True``.
+    :param bool bounce: Comet will bounce back and forth. Defaults to ``False``.
     :param int colorwheel_offset: Offset from start of colorwheel (0-255).
     :param int step: Colorwheel step (defaults to automatic).
     :param bool ring: Ring mode.  Defaults to ``False``.
@@ -65,7 +65,7 @@ class RainbowComet(Comet):
             self._colorwheel_step = step
         self._colorwheel_offset = colorwheel_offset
         super().__init__(
-            pixel_object, speed, 0, tail_length, reverse, bounce, name, ring
+            pixel_object, speed, 0, 0, tail_length, reverse, bounce, name, ring
         )
 
     def _set_color(self, color):
