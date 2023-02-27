@@ -44,6 +44,8 @@ class Comet(Animation):
                             maximum of the length of the ``pixel_object``.
     :param bool reverse: Animates the comet in the reverse order. Defaults to ``False``.
     :param bool bounce: Comet will bounce back and forth. Defaults to ``False``.
+    :param Optional[string] name: A human-readable name for the Animation.
+                                  Used by the to string function.
     :param bool ring: Ring mode.  Defaults to ``False``.
     """
 
