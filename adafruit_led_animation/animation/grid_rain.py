@@ -57,7 +57,6 @@ class Rain(Animation):
         super().__init__(grid_object, speed, color, name=name)
 
     def draw(self):
-
         # Move raindrops down
         keep = []
         for raindrop in self._raindrops:
