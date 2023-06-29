@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-FileCopyrightText: 2021 Kattni Rembor for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 """
 This example shows three different ways to use AnimationGroup: syncing two animations, displaying
 two animations at different speeds, and displaying two animations sequentially, across two separate
@@ -17,7 +21,7 @@ from adafruit_led_animation.animation.chase import Chase
 from adafruit_led_animation.group import AnimationGroup
 from adafruit_led_animation.sequence import AnimationSequence
 
-import adafruit_led_animation.color as color
+from adafruit_led_animation import color
 
 strip_pixels = neopixel.NeoPixel(board.A1, 30, brightness=0.5, auto_write=False)
 cp.pixels.brightness = 0.5

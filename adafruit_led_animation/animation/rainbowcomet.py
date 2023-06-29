@@ -1,24 +1,7 @@
-# The MIT License (MIT)
+# SPDX-FileCopyrightText: 2020 Kattni Rembor for Adafruit Industries
 #
-# Copyright (c) 2020 Kattni Rembor for Adafruit Industries
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
+# SPDX-License-Identifier: MIT
+
 """
 `adafruit_led_animation.animation.rainbowcomet`
 ================================================================================
@@ -57,7 +40,7 @@ class RainbowComet(Comet):
                             pixels present in the pixel object, e.g. if the strip is 30 pixels
                             long, the ``tail_length`` cannot exceed 30 pixels.
     :param bool reverse: Animates the comet in the reverse order. Defaults to ``False``.
-    :param bool bounce: Comet will bounce back and forth. Defaults to ``True``.
+    :param bool bounce: Comet will bounce back and forth. Defaults to ``False``.
     :param int colorwheel_offset: Offset from start of colorwheel (0-255).
     :param int step: Colorwheel step (defaults to automatic).
     :param bool ring: Ring mode.  Defaults to ``False``.
@@ -82,7 +65,7 @@ class RainbowComet(Comet):
             self._colorwheel_step = step
         self._colorwheel_offset = colorwheel_offset
         super().__init__(
-            pixel_object, speed, 0, tail_length, reverse, bounce, name, ring
+            pixel_object, speed, 0, 0, tail_length, reverse, bounce, name, ring
         )
 
     def _set_color(self, color):

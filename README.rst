@@ -2,16 +2,20 @@ Introduction
 ============
 
 .. image:: https://readthedocs.org/projects/adafruit_circuitpython_led_animation/badge/?version=latest
-    :target: https://circuitpython.readthedocs.io/projects/led-animation/en/latest/
+    :target: https://docs.circuitpython.org/projects/led-animation/en/latest/
     :alt: Documentation Status
 
-.. image:: https://img.shields.io/discord/327254708534116352.svg
+.. image:: https://raw.githubusercontent.com/adafruit/Adafruit_CircuitPython_Bundle/main/badges/adafruit_discord.svg
     :target: https://adafru.it/discord
     :alt: Discord
 
 .. image:: https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation/workflows/Build%20CI/badge.svg
     :target: https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation/actions
     :alt: Build Status
+
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
+    :alt: Code Style: Black
 
 Perform a variety of LED animation tasks
 
@@ -46,8 +50,8 @@ To install in a virtual environment in your current project:
 .. code-block:: shell
 
     mkdir project-name && cd project-name
-    python3 -m venv .env
-    source .env/bin/activate
+    python3 -m venv .venv
+    source .venv/bin/activate
     pip3 install adafruit-circuitpython-led-animation
 
 Usage Example
@@ -57,7 +61,7 @@ Usage Example
 
     import board
     import neopixel
-    from adafruit_led_animation.animation import Blink
+    from adafruit_led_animation.animation.blink import Blink
     import adafruit_led_animation.color as color
 
     # Works on Circuit Playground Express and Bluefruit.
@@ -72,11 +76,18 @@ Usage Example
     while True:
         blink.animate()
 
+Documentation
+=============
+
+API documentation for this library can be found on `Read the Docs <https://docs.circuitpython.org/projects/led-animation/en/latest/>`_.
+
+For information on building library documentation, please check out `this guide <https://learn.adafruit.com/creating-and-sharing-a-circuitpython-library/sharing-our-docs-on-readthedocs#sphinx-5-1>`_.
+
 Contributing
 ============
 
 Contributions are welcome! Please read our `Code of Conduct
-<https://github.com/apatt/CircuitPython_LED_Animation/blob/master/CODE_OF_CONDUCT.md>`_
+<https://github.com/apatt/CircuitPython_LED_Animation/blob/main/CODE_OF_CONDUCT.md>`_
 before contributing to help this project stay welcoming.
 
 Building locally
@@ -90,15 +101,15 @@ To build this library locally you'll need to install the
 
 .. code-block:: shell
 
-    python3 -m venv .env
-    source .env/bin/activate
+    python3 -m venv .venv
+    source .venv/bin/activate
     pip install circuitpython-build-tools
 
 Once installed, make sure you are in the virtual environment:
 
 .. code-block:: shell
 
-    source .env/bin/activate
+    source .venv/bin/activate
 
 Then run the build:
 
@@ -114,8 +125,8 @@ install dependencies (feel free to reuse the virtual environment from above):
 
 .. code-block:: shell
 
-    python3 -m venv .env
-    source .env/bin/activate
+    python3 -m venv .venv
+    source .venv/bin/activate
     pip install Sphinx sphinx-rtd-theme
 
 Now, once you have the virtual environment activated:
