@@ -163,7 +163,7 @@ class AnimationGroup:
             else:
                 if item.animate(False):
                     ret = True
-                pos = pos + 1
+                pos += 1
         return ret
 
     @property
