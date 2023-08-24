@@ -152,7 +152,7 @@ class AnimationGroup:
                         member.show()
             return result
 
-        #improve performance of non-synced animations by only calling show on the last member
+        # improve performance of non-synced animations by only calling show on the last member
         ret = False
         pos = 1
         num_members = len(self._members)
