@@ -339,7 +339,7 @@ def pulse_generator(period: float, animation_object, dotstar_pwm=False):
         last_pos = pos
         if pos > half_period:
             pos = period - pos
-        if pos < half_period and pox > (half_period - breath):
+        if pos < half_period and pos > (half_period - breath):
             intensity = animation_object.max_intensity
         elif pos > (period - breath):
             intensity = animation_object.min_intensity
