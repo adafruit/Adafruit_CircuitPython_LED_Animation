@@ -322,7 +322,8 @@ def pulse_generator(period: float, animation_object, dotstar_pwm=False):
     :param animation_object: An animation object to interact with.
     :param dotstar_pwm: Whether to use the dostar per pixel PWM value for brightness control.
     """
-    period = int(period * MS_PER_SECOND)
+    period = int((period + (animation_object._breath * 2)) * MS_PER_SECOND)
+    breath = int(animation_object._breath * MS_PER_SECOND)
     half_period = period // 2
 
     last_update = monotonic_ms()
@@ -338,7 +339,11 @@ def pulse_generator(period: float, animation_object, dotstar_pwm=False):
         last_pos = pos
         if pos > half_period:
             pos = period - pos
-        intensity = pos / half_period
+        intensity = animation_object._min_intensity + ((pos / (half_period - breath)) * (animation_object._max_intensity - animation_object._min_intensity))
+        if pos < half_period and pos > (half_period - breath):
+            intensity = animation_object._max_intensity
+        if pos > (period - breath):
+            intensity = animation_object._min_intensity
         if dotstar_pwm:
             fill_color = (
                 animation_object.color[0],

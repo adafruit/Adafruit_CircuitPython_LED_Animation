@@ -37,12 +37,18 @@ class Pulse(Animation):
     :param float speed: Animation refresh rate in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     :param period: Period to pulse the LEDs over.  Default 5.
+    :param breath: Duration to hold minimum and maximum intensity levels. Default 0.
+    :param min_intensity: Lowest brightness level of the pulse. Default 0.
+    :param max_intensity: Highest brightness elvel of the pulse. Default 1.
     """
 
     # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, color, period=5, name=None):
+    def __init__(self, pixel_object, speed, color, period=5, breath=0, min_intensity=0, max_intensity=1, name=None):
         super().__init__(pixel_object, speed, color, name=name)
         self._period = period
+        self._breath = breath
+        self._min_intensity = min_intensity
+        self._max_intensity = max_intensity
         self._generator = None
         self.reset()
 
