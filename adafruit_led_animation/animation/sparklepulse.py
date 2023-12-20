@@ -55,10 +55,10 @@ class SparklePulse(Sparkle):
         min_intensity=0,
         name=None,
     ):
-        self._max_intensity = max_intensity
-        self._min_intensity = min_intensity
         self._period = period
-        self._breath = breath
+        self.breath = breath
+        self.min_intensity = min_intensity
+        self.max_intensity = max_intensity
         dotstar = len(pixel_object) == 4 and isinstance(pixel_object[0][-1], float)
         super().__init__(
             pixel_object, speed=speed, color=color, num_sparkles=1, name=name

@@ -46,9 +46,9 @@ class Pulse(Animation):
     def __init__(self, pixel_object, speed, color, period=5, breath=0, min_intensity=0, max_intensity=1, name=None):
         super().__init__(pixel_object, speed, color, name=name)
         self._period = period
-        self._breath = breath
-        self._min_intensity = min_intensity
-        self._max_intensity = max_intensity
+        self.breath = breath
+        self.min_intensity = min_intensity
+        self.max_intensity = max_intensity
         self._generator = None
         self.reset()
 
