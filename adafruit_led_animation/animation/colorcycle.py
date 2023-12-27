@@ -42,7 +42,7 @@ class ColorCycle(Animation):
     """
 
     # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, colors=RAINBOW, start_color=0, name=None):
+    def __init__(self, pixel_object, speed, colors=RAINBOW, name=None, start_color=0):
         self.colors = colors
         self.start_color = start_color
         super().__init__(pixel_object, speed, colors[start_color], name=name)
