@@ -40,7 +40,7 @@ class ColorCycle(Animation):
                    format. Defaults to a rainbow color cycle.
     :param start_color: An index (from 0) for which color to start from. Default 0 (first color).
     """
-    
+
     # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, colors=RAINBOW, start_color=0, name=None):
         self.colors = colors
@@ -61,7 +61,7 @@ class ColorCycle(Animation):
             self._color = self.colors[index]
             yield
             index = (index + 1) % len(self.colors)
-            if index == 0:
+            if index == start_color:
                 self.cycle_complete = True
 
     def reset(self):
