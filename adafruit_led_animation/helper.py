@@ -344,7 +344,10 @@ def pulse_generator(period: float, animation_object, dotstar_pwm=False):
         elif pos > (half_period - half_breath):
             intensity = animation_object.max_intensity
         else:
-            intensity = animation_object.min_intensity + (((pos - half_breath) / (half_period - (half_breath * 2))) * (animation_object.max_intensity - animation_object.min_intensity))
+            intensity = animation_object.min_intensity + (
+                ((pos - half_breath) / (half_period - (half_breath * 2)))
+                * (animation_object.max_intensity - animation_object.min_intensity)
+            )
         if dotstar_pwm:
             fill_color = (
                 animation_object.color[0],

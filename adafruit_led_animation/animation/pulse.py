@@ -43,7 +43,17 @@ class Pulse(Animation):
     """
 
     # pylint: disable=too-many-arguments
-    def __init__(self, pixel_object, speed, color, period=5, breath=0, min_intensity=0, max_intensity=1, name=None):
+    def __init__(
+        self,
+        pixel_object,
+        speed,
+        color,
+        period=5,
+        breath=0,
+        min_intensity=0,
+        max_intensity=1,
+        name=None,
+    ):
         super().__init__(pixel_object, speed, color, name=name)
         self._period = period
         self.breath = breath
