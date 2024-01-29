@@ -38,6 +38,7 @@ class SparklePulse(Sparkle):
     :param int speed: Animation refresh rate in seconds, e.g. ``0.1``.
     :param color: Animation color in ``(r, g, b)`` tuple, or ``0x000000`` hex format.
     :param period: Period to pulse the LEDs over.  Default 5.
+    :param breath: Duration to hold minimum and maximum intensity. Default 0.
     :param max_intensity: The maximum intensity to pulse, between 0 and 1.0.  Default 1.
     :param min_intensity: The minimum intensity to pulse, between 0 and 1.0.  Default 0.
     """
@@ -49,13 +50,15 @@ class SparklePulse(Sparkle):
         speed,
         color,
         period=5,
+        breath=0,
         max_intensity=1,
         min_intensity=0,
         name=None,
     ):
-        self._max_intensity = max_intensity
-        self._min_intensity = min_intensity
         self._period = period
+        self.breath = breath
+        self.min_intensity = min_intensity
+        self.max_intensity = max_intensity
         dotstar = len(pixel_object) == 4 and isinstance(pixel_object[0][-1], float)
         super().__init__(
             pixel_object, speed=speed, color=color, num_sparkles=1, name=name
