@@ -27,7 +27,7 @@ Implementation Notes
 """
 
 from adafruit_led_animation.animation.sparkle import Sparkle
-from adafruit_led_animation.helper import pulse_generator
+from adafruit_led_animation.pulse_generator import pulse_generator
 
 
 class SparklePulse(Sparkle):
