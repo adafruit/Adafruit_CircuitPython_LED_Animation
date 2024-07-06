@@ -75,7 +75,7 @@ class Pulse(Animation):
         dotstar = len(self.pixel_object[0]) == 4 and isinstance(
             self.pixel_object[0][-1], float
         )
-        from adafruit_led_animation.helper import (  # pylint: disable=import-outside-toplevel
+        from adafruit_led_animation.pulse_generator import (  # pylint: disable=import-outside-toplevel
             pulse_generator,
         )
 
