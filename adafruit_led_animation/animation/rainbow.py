@@ -85,9 +85,9 @@ class Rainbow(Animation):
             if pos < last_pos:
                 cycle_completed = True
             last_pos = pos
-            wheel_index = int((pos / period) * len(self.colors))
 
             if self.colors:
+                wheel_index = int((pos / period) * len(self.colors))
                 self._draw_precomputed(num_pixels, wheel_index)
             else:
                 wheel_index = int((pos / period) * 256)
