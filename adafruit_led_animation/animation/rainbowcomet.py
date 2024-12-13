@@ -60,7 +60,7 @@ class RainbowComet(Comet):
         ring=False,
     ):
         if step == 0:
-            self._colorwheel_step = int(256 / tail_length)
+            self._colorwheel_step = max(int(256 / tail_length), 1)
         else:
             self._colorwheel_step = step
         self._colorwheel_offset = colorwheel_offset
