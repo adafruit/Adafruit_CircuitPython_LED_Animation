@@ -127,7 +127,7 @@ class Rainbow(Animation):
     @property
     def period(self) -> float:
         """
-         Period to cycle the rainbow over in seconds.
+        Period to cycle the rainbow over in seconds.
         """
         return self._period
 
