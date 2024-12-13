@@ -123,3 +123,12 @@ class Rainbow(Animation):
         Resets the animation.
         """
         self._generator = self._color_wheel_generator()
+
+    @property
+    def period(self) -> float:
+        return self._period
+
+    @period.setter
+    def period(self, new_value: float) -> None:
+        self._period = new_value
+        self.reset()
