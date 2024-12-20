@@ -39,7 +39,7 @@ class Pulse(Animation):
     :param period: Period to pulse the LEDs over.  Default 5.
     :param breath: Duration to hold minimum and maximum intensity levels. Default 0.
     :param min_intensity: Lowest brightness level of the pulse. Default 0.
-    :param max_intensity: Highest brightness elvel of the pulse. Default 1.
+    :param max_intensity: Highest brightness level of the pulse. Default 1.
     """
 
     # pylint: disable=too-many-arguments
@@ -80,3 +80,15 @@ class Pulse(Animation):
         )
 
         self._generator = pulse_generator(self._period, self, dotstar_pwm=dotstar)
+
+    @property
+    def period(self):
+        """
+        Period to pulse the LEDs over in seconds
+        """
+        return self._period
+
+    @period.setter
+    def period(self, new_value):
+        self._period = new_value
+        self.reset()
