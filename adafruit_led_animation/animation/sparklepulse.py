@@ -74,3 +74,21 @@ class SparklePulse(Sparkle):
 
     def after_draw(self):
         self.show()
+
+    @property
+    def period(self):
+        """
+        Period to pulse the LEDs over in seconds
+        """
+        return self._period
+
+    @period.setter
+    def period(self, new_value):
+        self._period = new_value
+        self.reset()
+
+    def reset(self):
+        dotstar = len(self.pixel_object) == 4 and isinstance(
+            self.pixel_object[0][-1], float
+        )
+        self._generator = pulse_generator(self._period, self, dotstar_pwm=dotstar)
