@@ -44,7 +44,13 @@ class Volume(Animation):
 
     # pylint: disable=too-many-arguments
     def __init__(
-        self, pixel_object, speed, brightest_color, decoder, max_volume=500, name=None
+        self,
+        pixel_object,
+        speed,
+        brightest_color,
+        decoder,
+        max_volume=500,
+        name=None,
     ):
         self._decoder = decoder
         self._num_pixels = len(pixel_object)
@@ -89,8 +95,15 @@ class Volume(Animation):
         )
 
         lit_pixels = int(
-            map_range(self._decoder.rms_level, 0, self._max_volume, 0, self._num_pixels)
+            map_range(
+                self._decoder.rms_level,
+                0,
+                self._max_volume,
+                0,
+                self._num_pixels,
+            )
         )
+        # pylint: disable=consider-using-min-builtin
         if lit_pixels > self._num_pixels:
             lit_pixels = self._num_pixels
 

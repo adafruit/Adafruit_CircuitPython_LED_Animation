@@ -61,6 +61,14 @@ Demonstrates the blink animation.
     :caption: examples/led_animation_blink.py
     :linenos:
 
+Blink with a selcted background color
+----------------------------------------
+Demonstrates the blink animation with an user defined background color.
+
+.. literalinclude:: ../examples/led_animation_blink_with_background.py
+    :caption: examples/led_animation_blink_with_background.py
+    :linenos:
+
 Comet
 -----
 
