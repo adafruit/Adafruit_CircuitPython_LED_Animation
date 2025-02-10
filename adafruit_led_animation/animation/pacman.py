@@ -104,10 +104,7 @@ class Pacman(Animation):
         pixel_list[self.pacman[1] + self.black_dir] = BLACK
         self.pacman[1] += self.direction
 
-        if (
-            self.ghosts[3][1] <= self.start_blinking_ghosts
-            and self.direction == -1
-        ):
+        if self.ghosts[3][1] <= self.start_blinking_ghosts and self.direction == -1:
             if self.flag == "beep":
                 for i, ghost in enumerate(self.ghosts):
                     ghost[0] = BLACK
