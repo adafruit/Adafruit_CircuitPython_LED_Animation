@@ -27,15 +27,16 @@ Implementation Notes
 try:
     from rainbowio import colorwheel  # pylint: disable=unused-import
 except (ImportError, ModuleNotFoundError):
+
     def colorwheel(pos):
         # ref: https://github.com/adafruit/circuitpython/blob/main/shared-module/rainbowio/__init__.c
         pos = pos - ((pos // 256) * 256)
         shift1 = 0
         shift2 = 0
-        if (pos < 85):
+        if pos < 85:
             shift1 = 8
             shift2 = 16
-        elif (pos < 170):
+        elif pos < 170:
             pos -= 85
             shift1 = 0
             shift2 = 8
@@ -46,6 +47,7 @@ except (ImportError, ModuleNotFoundError):
         p = (int)(pos * 3)
         p = p if (p < 256) else 255
         return (p << shift1) | ((255 - p) << shift2)
+
 
 RED = (255, 0, 0)
 """Red."""

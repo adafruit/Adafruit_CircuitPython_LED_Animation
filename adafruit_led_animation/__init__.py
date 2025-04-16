@@ -36,6 +36,7 @@ except (ImportError, NotImplementedError):
             Implementation of monotonic_ms for platforms without time.monotonic_ns
             """
             return int(monotonic() * MS_PER_SECOND)
+
     except (ImportError, NotImplementedError):
         from time import time_ns
 
