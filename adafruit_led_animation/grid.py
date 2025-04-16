@@ -27,9 +27,14 @@ Implementation Notes
 from micropython import const
 
 from .helper import (
-    PixelMap, horizontal_strip_gridmap, vertical_strip_gridmap, 
-    pixel_object_show, pixel_object_auto_write, pixel_object_auto_write_set,
-    pixel_object_brightness, pixel_object_brightness_set
+    PixelMap,
+    horizontal_strip_gridmap,
+    vertical_strip_gridmap,
+    pixel_object_show,
+    pixel_object_auto_write,
+    pixel_object_auto_write_set,
+    pixel_object_brightness,
+    pixel_object_brightness_set
 )
 
 

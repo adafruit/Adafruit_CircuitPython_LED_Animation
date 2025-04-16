@@ -29,9 +29,7 @@ __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
 
 from adafruit_led_animation import MS_PER_SECOND, monotonic_ms
-from adafruit_led_animation.helper import (
-    pixel_object_show, pixel_object_auto_write_set
-)
+from adafruit_led_animation.helper import pixel_object_show, pixel_object_auto_write_set
 
 
 class Animation:
