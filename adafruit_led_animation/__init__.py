@@ -28,13 +28,22 @@ try:
         return monotonic_ns() // NANOS_PER_MS
 
 except (ImportError, NotImplementedError):
-    import time
+    try:
+        from time import monotonic
 
-    def monotonic_ms():
-        """
-        Implementation of monotonic_ms for platforms without time.monotonic_ns
-        """
-        return int(time.monotonic() * MS_PER_SECOND)
+        def monotonic_ms():
+            """
+            Implementation of monotonic_ms for platforms without time.monotonic_ns
+            """
+            return int(monotonic() * MS_PER_SECOND)
+    except (ImportError, NotImplementedError):
+        from time import time_ns
+
+        def monotonic_ms():
+            """
+            Implementation of monotonic_ms for platforms without time.monotonic_ns or time.monotonic
+            """
+            return time_ns() // NANOS_PER_MS
 
 
 NANOS_PER_MS = const(1000000)

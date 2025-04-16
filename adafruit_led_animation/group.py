@@ -146,7 +146,10 @@ class AnimationGroup:
                 for member in self._members:
                     if isinstance(member, Animation):
                         if last_strip != member.pixel_object:
-                            member.pixel_object.show()
+                            if hasattr(member.pixel_object, "show"):
+                                member.pixel_object.show()
+                            elif hasattr(member.pixel_object, "write"):
+                                member.pixel_object.write()
                             last_strip = member.pixel_object
                     else:
                         member.show()

@@ -24,7 +24,28 @@ Implementation Notes
   https://circuitpython.org/downloads
 """
 # Makes colorwheel() available.
-from rainbowio import colorwheel  # pylint: disable=unused-import
+try:
+    from rainbowio import colorwheel  # pylint: disable=unused-import
+except (ImportError, ModuleNotFoundError):
+    def colorwheel(pos):
+        # ref: https://github.com/adafruit/circuitpython/blob/main/shared-module/rainbowio/__init__.c
+        pos = pos - ((pos // 256) * 256)
+        shift1 = 0
+        shift2 = 0
+        if (pos < 85):
+            shift1 = 8
+            shift2 = 16
+        elif (pos < 170):
+            pos -= 85
+            shift1 = 0
+            shift2 = 8
+        else:
+            pos -= 170
+            shift1 = 16
+            shift2 = 0
+        p = (int)(pos * 3)
+        p = p if (p < 256) else 255
+        return (p << shift1) | ((255 - p) << shift2)
 
 RED = (255, 0, 0)
 """Red."""

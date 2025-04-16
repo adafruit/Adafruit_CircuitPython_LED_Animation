@@ -138,7 +138,7 @@ class PixelMap:
         else:
             self._set_pixels(index, val)
 
-        if self._pixels.auto_write:
+        if hasattr(self._pixels, "auto_write") and self._pixels.auto_write:
             self.show()
 
     def __getitem__(self, index):
@@ -161,12 +161,13 @@ class PixelMap:
         """
         brightness from the underlying strip.
         """
-        return self._pixels.brightness
+        return self._pixels.brightness if hasattr(self._pixels, "brightness") else 1.0
 
     @brightness.setter
     def brightness(self, brightness):
-        # pylint: disable=attribute-defined-outside-init
-        self._pixels.brightness = min(max(brightness, 0.0), 1.0)
+        if hasattr(self._pixels, "brightness"):
+            # pylint: disable=attribute-defined-outside-init
+            self._pixels.brightness = min(max(brightness, 0.0), 1.0)
 
     def fill(self, color):
         """
@@ -182,18 +183,22 @@ class PixelMap:
         """
         Shows the pixels on the underlying strip.
         """
-        self._pixels.show()
+        if hasattr(self._pixels, "show"):
+            self._pixels.show()
+        elif hasattr(self._pixels, "write"):
+            self._pixels.write()
 
     @property
     def auto_write(self):
         """
         auto_write from the underlying strip.
         """
-        return self._pixels.auto_write
+        return hasattr(self._pixels, "auto_write") and self._pixels.auto_write
 
     @auto_write.setter
     def auto_write(self, value):
-        self._pixels.auto_write = value
+        if hasattr(self._pixels, "auto_write"):
+            self._pixels.auto_write = value
 
     @classmethod
     def vertical_lines(cls, pixel_object, width, height, gridmap):
