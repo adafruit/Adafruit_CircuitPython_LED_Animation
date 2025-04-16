@@ -26,7 +26,11 @@ Implementation Notes
 """
 from micropython import const
 
-from .helper import PixelMap, horizontal_strip_gridmap, vertical_strip_gridmap
+from .helper import (
+    PixelMap, horizontal_strip_gridmap, vertical_strip_gridmap, 
+    pixel_object_show, pixel_object_auto_write, pixel_object_auto_write_set,
+    pixel_object_brightness, pixel_object_brightness_set
+)
 
 
 HORIZONTAL = const(1)
@@ -130,7 +134,7 @@ class PixelGrid:
         else:
             raise ValueError("PixelGrid assignment needs a sub-index or x,y coordinate")
 
-        if hasattr(self._pixels, "auto_write") and self._pixels.auto_write:
+        if pixel_object_auto_write(self._pixels):
             self.show()
 
     def __getitem__(self, index):
@@ -150,13 +154,12 @@ class PixelGrid:
         """
         brightness from the underlying strip.
         """
-        return self._pixels.brightness if hasattr(self._pixels, "brightness") else 1.0
+        return pixel_object_brightness(self._pixels)
 
     @brightness.setter
     def brightness(self, brightness):
-        if hasattr(self._pixels, "brightness"):
-            # pylint: disable=attribute-defined-outside-init
-            self._pixels.brightness = min(max(brightness, 0.0), 1.0)
+        # pylint: disable=attribute-defined-outside-init
+        pixel_object_brightness_set(self._pixels, brightness)
 
     def fill(self, color):
         """
@@ -171,22 +174,19 @@ class PixelGrid:
         """
         Shows the pixels on the underlying strip.
         """
-        if hasattr(self._pixels, "show"):
-            self._pixels.show()
-        elif hasattr(self._pixels, "write"):
-            self._pixels.write()
+        pixel_object_show(self._pixels)
 
     @property
     def auto_write(self):
         """
         auto_write from the underlying strip.
         """
-        return hasattr(self._pixels, "auto_write") and self._pixels.auto_write
+        return pixel_object_auto_write(self._pixels)
 
     @auto_write.setter
     def auto_write(self, value):
-        if hasattr(self._pixels, "auto_write"):
-            self._pixels.auto_write = value
+        # pylint: disable=attribute-defined-outside-init
+        pixel_object_auto_write_set(self._pixels, value)
 
 
 def reverse_x_mapper(width, mapper):

@@ -29,6 +29,9 @@ __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
 
 from adafruit_led_animation import MS_PER_SECOND, monotonic_ms
+from adafruit_led_animation.helper import (
+    pixel_object_show, pixel_object_auto_write_set
+)
 
 
 class Animation:
@@ -41,8 +44,7 @@ class Animation:
     # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, color, peers=None, paused=False, name=None):
         self.pixel_object = pixel_object
-        if hasattr(self.pixel_object, "auto_write"):
-            self.pixel_object.auto_write = False
+        pixel_object_auto_write_set(pixel_object, False)
         self._peers = [self] + peers if peers is not None else [self]
         self._speed_ms = 0
         self._color = None
@@ -117,10 +119,7 @@ class Animation:
         """
         Displays the updated pixels.  Called during animates with changes.
         """
-        if hasattr(self.pixel_object, "show"):
-            self.pixel_object.show()
-        elif hasattr(self.pixel_object, "write"):
-            self.pixel_object.write()
+        pixel_object_show(self.pixel_object)
 
     @property
     def peers(self):
@@ -158,10 +157,7 @@ class Animation:
         Fills the pixel object with a color.
         """
         self.pixel_object.fill(color)
-        if hasattr(self.pixel_object, "show"):
-            self.pixel_object.show()
-        elif hasattr(self.pixel_object, "write"):
-            self.pixel_object.write()
+        pixel_object_show(self.pixel_object)
 
     @property
     def color(self):

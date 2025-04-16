@@ -138,7 +138,7 @@ class PixelMap:
         else:
             self._set_pixels(index, val)
 
-        if hasattr(self._pixels, "auto_write") and self._pixels.auto_write:
+        if pixel_object_auto_write(self._pixels):
             self.show()
 
     def __getitem__(self, index):
@@ -161,13 +161,12 @@ class PixelMap:
         """
         brightness from the underlying strip.
         """
-        return self._pixels.brightness if hasattr(self._pixels, "brightness") else 1.0
+        return pixel_object_brightness(self._pixels)
 
     @brightness.setter
     def brightness(self, brightness):
-        if hasattr(self._pixels, "brightness"):
-            # pylint: disable=attribute-defined-outside-init
-            self._pixels.brightness = min(max(brightness, 0.0), 1.0)
+        # pylint: disable=attribute-defined-outside-init
+        pixel_object_brightness_set(self._pixels, brightness)
 
     def fill(self, color):
         """
@@ -183,22 +182,19 @@ class PixelMap:
         """
         Shows the pixels on the underlying strip.
         """
-        if hasattr(self._pixels, "show"):
-            self._pixels.show()
-        elif hasattr(self._pixels, "write"):
-            self._pixels.write()
+        pixel_object_show(self._pixels)
 
     @property
     def auto_write(self):
         """
         auto_write from the underlying strip.
         """
-        return hasattr(self._pixels, "auto_write") and self._pixels.auto_write
+        return pixel_object_auto_write(self._pixels)
 
     @auto_write.setter
     def auto_write(self, value):
-        if hasattr(self._pixels, "auto_write"):
-            self._pixels.auto_write = value
+        # pylint: disable=attribute-defined-outside-init
+        pixel_object_auto_write_set(self._pixels, value)
 
     @classmethod
     def vertical_lines(cls, pixel_object, width, height, gridmap):
@@ -315,3 +311,57 @@ class PixelSubset(PixelMap):
             pixel_ranges=[[n] for n in range(start, end)],
             individual_pixels=True,
         )
+
+
+def pixel_object_show(pixel_object):
+    """
+    Show the pixel object.  This is a helper function to handle both
+    MicroPython and CircuitPython.
+    :param pixel_object: The pixel object to show/write to.
+    """
+    if hasattr(pixel_object, "show"):
+        pixel_object.show()
+    elif hasattr(pixel_object, "write"):
+        pixel_object.write()
+
+
+def pixel_object_auto_write(pixel_object):
+    """
+    Get the auto_write property of the pixel object.
+    :param pixel_object: The pixel object to get the auto_write property from.
+    :return: The auto_write property of the pixel object.
+    """
+    if hasattr(pixel_object, "auto_write"):
+        return pixel_object.auto_write
+    return False
+
+
+def pixel_object_auto_write_set(pixel_object, value):
+    """
+    Set the auto_write property of the pixel object.
+    :param pixel_object: The pixel object to set the auto_write property on.
+    :param value: The value to set the auto_write property to.
+    """
+    if hasattr(pixel_object, "auto_write"):
+        pixel_object.auto_write = value
+
+
+def pixel_object_brightness(pixel_object):
+    """
+    Get the brightness property of the pixel object.
+    :param pixel_object: The pixel object to get the brightness property from.
+    :return: The brightness property of the pixel object.
+    """
+    if hasattr(pixel_object, "brightness"):
+        return pixel_object.brightness
+    return 1.0
+
+
+def pixel_object_brightness_set(pixel_object, value):
+    """
+    Set the brightness property of the pixel object.
+    :param pixel_object: The pixel object to set the brightness property on.
+    :param value: The value to set the brightness property to.
+    """
+    if hasattr(pixel_object, "brightness"):
+        pixel_object.brightness = value
