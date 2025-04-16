@@ -29,7 +29,18 @@ try:
 except (ImportError, ModuleNotFoundError):
 
     def colorwheel(pos):
-        # ref: https://github.com/adafruit/circuitpython/blob/main/shared-module/rainbowio/__init__.c
+        """
+        Generate a color from a position value on a color wheel.
+        This function maps an input position (0-255) to a color on a
+        virtual RGB color wheel. The colors transition smoothly through
+        red, green, and blue.
+        :param float pos: Position on the color wheel (0-255). Values outside
+                        this range will be wrapped around.
+        :return: color
+        """
+
+        # ref:
+        # https://github.com/adafruit/circuitpython/blob/main/shared-module/rainbowio/__init__.c
         pos = pos - ((pos // 256) * 256)
         shift1 = 0
         shift2 = 0
@@ -44,9 +55,9 @@ except (ImportError, ModuleNotFoundError):
             pos -= 170
             shift1 = 16
             shift2 = 0
-        p = (int)(pos * 3)
-        p = p if (p < 256) else 255
-        return (p << shift1) | ((255 - p) << shift2)
+        pos_new = (int)(pos * 3)
+        pos_new = pos_new if (pos_new < 256) else 255
+        return (pos_new << shift1) | ((255 - pos_new) << shift2)
 
 
 RED = (255, 0, 0)

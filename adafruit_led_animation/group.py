@@ -146,10 +146,7 @@ class AnimationGroup:
                 for member in self._members:
                     if isinstance(member, Animation):
                         if last_strip != member.pixel_object:
-                            if hasattr(member.pixel_object, "show"):
-                                member.pixel_object.show()
-                            elif hasattr(member.pixel_object, "write"):
-                                member.pixel_object.write()
+                            self._pixel_object_show(member.pixel_object)
                             last_strip = member.pixel_object
                     else:
                         member.show()
@@ -160,6 +157,17 @@ class AnimationGroup:
             if item.animate(show):
                 ret = True
         return ret
+
+    def _pixel_object_show(self, pixel_object):
+        """
+        Show the pixel object.  This is a helper function to handle both
+        MicroPython and CircuitPython.
+        :param pixel_object: The pixel object to show/write to.
+        """
+        if hasattr(pixel_object, "show"):
+            pixel_object.show()
+        elif hasattr(pixel_object, "write"):
+            pixel_object.write()
 
     @property
     def color(self):
