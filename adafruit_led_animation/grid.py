@@ -34,7 +34,7 @@ from .helper import (
     pixel_object_auto_write,
     pixel_object_auto_write_set,
     pixel_object_brightness,
-    pixel_object_brightness_set
+    pixel_object_brightness_set,
 )
 
 
