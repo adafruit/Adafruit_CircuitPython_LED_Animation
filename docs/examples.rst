@@ -104,3 +104,12 @@ Demonstrates the sparkle animations.
 .. literalinclude:: ../examples/led_animation_sparkle_animations.py
     :caption: examples/led_animation_sparkle_animations.py
     :linenos:
+
+Pacman
+------
+
+Demonstrates the pacman animation.
+
+.. literalinclude:: ../examples/led_animation_pacman.py
+    :caption: examples/led_animation_pacman.py
+    :linenos:
