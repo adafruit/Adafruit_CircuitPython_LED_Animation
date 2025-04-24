@@ -73,7 +73,7 @@ class AnimationSequence:
             animations.animate()
     """
 
-    # pylint: disable=too-many-instance-attributes
+    # pylint: disable=too-many-instance-attributes, too-many-arguments
     def __init__(
         self,
         *members,
