@@ -9,26 +9,27 @@ a different form of NeoPixels.
 
 This example may not work on SAMD21 (M0) boards.
 """
+
 import board
 import neopixel
 
-from adafruit_led_animation.animation.solid import Solid
-from adafruit_led_animation.animation.colorcycle import ColorCycle
 from adafruit_led_animation.animation.blink import Blink
-from adafruit_led_animation.animation.comet import Comet
 from adafruit_led_animation.animation.chase import Chase
+from adafruit_led_animation.animation.colorcycle import ColorCycle
+from adafruit_led_animation.animation.comet import Comet
 from adafruit_led_animation.animation.pulse import Pulse
-from adafruit_led_animation.sequence import AnimationSequence
+from adafruit_led_animation.animation.solid import Solid
 from adafruit_led_animation.color import (
-    PURPLE,
-    WHITE,
     AMBER,
     JADE,
-    TEAL,
-    PINK,
     MAGENTA,
     ORANGE,
+    PINK,
+    PURPLE,
+    TEAL,
+    WHITE,
 )
+from adafruit_led_animation.sequence import AnimationSequence
 
 # Update to match the pin connected to your NeoPixels
 pixel_pin = board.D6

@@ -43,7 +43,6 @@ class CustomColorChase(Chase):
     :param reverse: Reverse direction of movement.
     """
 
-    # pylint: disable=too-many-arguments
     def __init__(
         self,
         pixel_object,

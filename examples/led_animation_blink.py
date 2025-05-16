@@ -10,6 +10,7 @@ using a different board or form of NeoPixels.
 This example will run on SAMD21 (M0) Express boards (such as Circuit Playground Express or QT Py
 Haxpress), but not on SAMD21 non-Express boards (such as QT Py or Trinket).
 """
+
 import board
 import neopixel
 

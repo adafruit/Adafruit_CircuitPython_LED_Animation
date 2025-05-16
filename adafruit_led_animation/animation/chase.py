@@ -43,10 +43,7 @@ class Chase(Animation):
     :param reverse: Reverse direction of movement.
     """
 
-    # pylint: disable=too-many-arguments
-    def __init__(
-        self, pixel_object, speed, color, size=2, spacing=3, reverse=False, name=None
-    ):
+    def __init__(self, pixel_object, speed, color, size=2, spacing=3, reverse=False, name=None):
         self._size = size
         self._spacing = spacing
         self._repeat_width = size + spacing
@@ -102,7 +99,7 @@ class Chase(Animation):
             self.cycle_complete = True
         self._offset = (self._offset + self._direction) % self._repeat_width
 
-    def bar_color(self, n, pixel_no=0):  # pylint: disable=unused-argument
+    def bar_color(self, n, pixel_no=0):
         """
         Generate the color for the n'th bar_color in the Chase
 
@@ -112,7 +109,7 @@ class Chase(Animation):
         return self.color
 
     @staticmethod
-    def space_color(n, pixel_no=0):  # pylint: disable=unused-argument
+    def space_color(n, pixel_no=0):
         """
         Generate the spacing color for the n'th bar_color in the Chase
 

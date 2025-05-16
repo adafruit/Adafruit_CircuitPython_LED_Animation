@@ -27,7 +27,7 @@ Implementation Notes
 """
 
 from adafruit_led_animation.animation.comet import Comet
-from adafruit_led_animation.color import colorwheel, BLACK, calculate_intensity
+from adafruit_led_animation.color import BLACK, calculate_intensity, colorwheel
 
 
 class RainbowComet(Comet):
@@ -46,7 +46,6 @@ class RainbowComet(Comet):
     :param bool ring: Ring mode.  Defaults to ``False``.
     """
 
-    # pylint: disable=too-many-arguments
     def __init__(
         self,
         pixel_object,
@@ -64,9 +63,7 @@ class RainbowComet(Comet):
         else:
             self._colorwheel_step = step
         self._colorwheel_offset = colorwheel_offset
-        super().__init__(
-            pixel_object, speed, 0, 0, tail_length, reverse, bounce, name, ring
-        )
+        super().__init__(pixel_object, speed, 0, 0, tail_length, reverse, bounce, name, ring)
 
     def _set_color(self, color):
         self._comet_colors = [BLACK]
@@ -75,8 +72,7 @@ class RainbowComet(Comet):
             self._comet_colors.append(
                 calculate_intensity(
                     colorwheel(
-                        int((invert * self._colorwheel_step) + self._colorwheel_offset)
-                        % 256
+                        int((invert * self._colorwheel_step) + self._colorwheel_offset) % 256
                     ),
                     n * self._color_step + 0.05,
                 )

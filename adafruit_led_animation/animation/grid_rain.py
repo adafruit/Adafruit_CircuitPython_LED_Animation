@@ -26,12 +26,13 @@ Implementation Notes
 """
 
 import random
+
 from adafruit_led_animation.animation import Animation
 
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
 
-from adafruit_led_animation.color import BLACK, colorwheel, calculate_intensity, GREEN
+from adafruit_led_animation.color import BLACK, GREEN, calculate_intensity, colorwheel
 
 
 class Rain(Animation):
@@ -46,10 +47,7 @@ class Rain(Animation):
     :param background: Background color (Default BLACK).
     """
 
-    # pylint: disable=too-many-arguments
-    def __init__(
-        self, grid_object, speed, color, count=1, length=3, background=BLACK, name=None
-    ):
+    def __init__(self, grid_object, speed, color, count=1, length=3, background=BLACK, name=None):
         self._count = count
         self._length = length
         self._background = background
@@ -82,7 +80,7 @@ class Rain(Animation):
                 if y >= 0:
                     self.pixel_object[x, y] = color
 
-    def _generate_droplet(self, x, length):  # pylint: disable=unused-argument
+    def _generate_droplet(self, x, length):
         return [[n, self.color] for n in range(-length, 0)]
 
 
@@ -91,9 +89,7 @@ class RainbowRain(Rain):
     Rainbow Rain animation.
     """
 
-    def __init__(  # pylint: disable=too-many-arguments
-        self, grid_object, speed, count=1, length=3, background=BLACK, name=None
-    ):
+    def __init__(self, grid_object, speed, count=1, length=3, background=BLACK, name=None):
         super().__init__(grid_object, speed, BLACK, count, length, background, name)
 
     def _generate_droplet(self, x, length):
@@ -109,7 +105,7 @@ class MatrixRain(Rain):
     The Matrix style animation.
     """
 
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(
         self,
         grid_object,
         speed,

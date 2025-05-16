@@ -26,6 +26,7 @@ Implementation Notes
 """
 
 import random
+
 from adafruit_led_animation.animation.rainbow import Rainbow
 
 
@@ -45,7 +46,6 @@ class RainbowSparkle(Rainbow):
                                     (default True).
     """
 
-    # pylint: disable=too-many-arguments
     def __init__(
         self,
         pixel_object,
@@ -91,10 +91,7 @@ class RainbowSparkle(Rainbow):
 
     def after_draw(self):
         self.show()
-        pixels = [
-            random.randint(0, len(self.pixel_object) - 1)
-            for n in range(self._num_sparkles)
-        ]
+        pixels = [random.randint(0, len(self.pixel_object) - 1) for n in range(self._num_sparkles)]
         for pixel in pixels:
             self.pixel_object[pixel] = self._bright_colors[
                 (self._wheel_index + pixel) % len(self._bright_colors)

@@ -3,9 +3,11 @@
 # SPDX-License-Identifier: MIT
 
 """Volume Animation Example"""
+
 import board
-from audiomp3 import MP3Decoder
 import neopixel
+from audiomp3 import MP3Decoder
+
 from adafruit_led_animation.animation import volume
 
 try:

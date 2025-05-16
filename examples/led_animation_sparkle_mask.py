@@ -7,12 +7,13 @@ interval.
 For NeoPixel FeatherWing. Update pixel_pin and pixel_num to match your wiring if using
 a different form of NeoPixels.
 """
+
 import board
 import neopixel
 
 from adafruit_led_animation.animation.sparkle import Sparkle
+from adafruit_led_animation.color import AQUA, JADE, PINK
 from adafruit_led_animation.sequence import AnimationSequence
-from adafruit_led_animation.color import JADE, AQUA, PINK
 
 # Update to match the pin connected to your NeoPixels
 pixel_pin = board.A1

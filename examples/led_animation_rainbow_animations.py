@@ -10,6 +10,7 @@ a different form of NeoPixels.
 
 This example does not work on SAMD21 (M0) boards.
 """
+
 import board
 import neopixel
 

@@ -26,8 +26,8 @@ Implementation Notes
 
 """
 
-from adafruit_led_animation.color import colorwheel
 from adafruit_led_animation.animation.chase import Chase
+from adafruit_led_animation.color import colorwheel
 
 
 class RainbowChase(Chase):
@@ -43,7 +43,6 @@ class RainbowChase(Chase):
     :param step: How many colors to skip in ``colorwheel`` per bar (default 8)
     """
 
-    # pylint: disable=too-many-arguments
     def __init__(
         self,
         pixel_object,

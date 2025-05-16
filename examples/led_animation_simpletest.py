@@ -7,8 +7,10 @@ This simpletest example displays the Blink animation.
 For NeoPixel FeatherWing. Update pixel_pin and pixel_num to match your wiring if using
 a different form of NeoPixels.
 """
+
 import board
 import neopixel
+
 from adafruit_led_animation.animation.blink import Blink
 from adafruit_led_animation.color import RED
 

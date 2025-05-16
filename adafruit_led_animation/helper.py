@@ -165,7 +165,6 @@ class PixelMap:
 
     @brightness.setter
     def brightness(self, brightness):
-        # pylint: disable=attribute-defined-outside-init
         self._pixels.brightness = min(max(brightness, 0.0), 1.0)
 
     def fill(self, color):

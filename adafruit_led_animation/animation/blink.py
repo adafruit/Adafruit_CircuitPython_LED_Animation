@@ -42,7 +42,6 @@ class Blink(ColorCycle):
     :param name: A human-readable name for the Animation. Used by the string function.
     """
 
-    # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, color, background_color=BLACK, name=None):
         self._background_color = background_color
         super().__init__(pixel_object, speed, [color, background_color], name=name)
