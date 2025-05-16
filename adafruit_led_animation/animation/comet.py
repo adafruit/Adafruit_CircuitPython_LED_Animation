@@ -49,7 +49,6 @@ class Comet(Animation):
     :param bool ring: Ring mode.  Defaults to ``False``.
     """
 
-    # pylint: disable=too-many-arguments,too-many-instance-attributes
     def __init__(
         self,
         pixel_object,
@@ -90,9 +89,7 @@ class Comet(Animation):
     def _set_color(self, color):
         self._comet_colors = [self._background_color]
         for n in range(self._tail_length):
-            self._comet_colors.append(
-                calculate_intensity(color, n * self._color_step + 0.05)
-            )
+            self._comet_colors.append(calculate_intensity(color, n * self._color_step + 0.05))
         self._computed_color = color
 
     @property

@@ -107,9 +107,9 @@ class AnimationGroup:
         self.on_cycle_complete_supported = self._members[-1].on_cycle_complete_supported
 
     def __str__(self):
-        return "<AnimationGroup %s: %s>" % (self.__class__.__name__, self.name)
+        return f"<AnimationGroup {self.__class__.__name__}: {self.name}>"
 
-    def _group_done(self, animation):  # pylint: disable=unused-argument
+    def _group_done(self, animation):
         self.on_cycle_complete()
 
     def on_cycle_complete(self):

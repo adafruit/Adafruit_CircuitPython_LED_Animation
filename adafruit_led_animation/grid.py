@@ -24,10 +24,10 @@ Implementation Notes
   https://circuitpython.org/downloads
 
 """
+
 from micropython import const
 
 from .helper import PixelMap, horizontal_strip_gridmap, vertical_strip_gridmap
-
 
 HORIZONTAL = const(1)
 VERTICAL = const(2)
@@ -79,7 +79,7 @@ class PixelGrid:
         reverse_y=False,
         top=0,
         bottom=0,
-    ):  # pylint: disable=too-many-arguments,too-many-locals
+    ):
         self._pixels = strip
         self._x = []
         self.height = height
@@ -154,7 +154,6 @@ class PixelGrid:
 
     @brightness.setter
     def brightness(self, brightness):
-        # pylint: disable=attribute-defined-outside-init
         self._pixels.brightness = min(max(brightness, 0.0), 1.0)
 
     def fill(self, color):

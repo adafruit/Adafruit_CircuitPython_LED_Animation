@@ -26,6 +26,7 @@ Implementation Notes
 """
 
 import random
+
 from adafruit_led_animation.animation import Animation
 
 __version__ = "0.0.0+auto.0"
@@ -43,10 +44,7 @@ class Sparkle(Animation):
     :param mask: array to limit sparkles within range of the mask
     """
 
-    # pylint: disable=too-many-arguments
-    def __init__(
-        self, pixel_object, speed, color, num_sparkles=1, name=None, mask=None
-    ):
+    def __init__(self, pixel_object, speed, color, num_sparkles=1, name=None, mask=None):
         if len(pixel_object) < 2:
             raise ValueError("Sparkle needs at least 2 pixels")
         if mask:
@@ -66,9 +64,7 @@ class Sparkle(Animation):
     def _set_color(self, color):
         half_color = tuple(color[rgb] // 4 for rgb in range(len(color)))
         dim_color = tuple(color[rgb] // 10 for rgb in range(len(color)))
-        for pixel in range(  # pylint: disable=consider-using-enumerate
-            len(self.pixel_object)
-        ):
+        for pixel in range(len(self.pixel_object)):
             if self.pixel_object[pixel] == self._half_color:
                 self.pixel_object[pixel] = half_color
             elif self.pixel_object[pixel] == self._dim_color:

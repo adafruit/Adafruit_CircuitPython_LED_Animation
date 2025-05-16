@@ -26,6 +26,7 @@ Implementation Notes
 """
 
 from adafruit_led_animation.sequence import AnimationSequence
+
 from . import MS_PER_SECOND
 
 
@@ -57,10 +58,7 @@ class TimedAnimationSequence(AnimationSequence):
             animations.animate()
     """
 
-    # pylint: disable=too-many-instance-attributes
-    def __init__(
-        self, *members, auto_clear=True, random_order=False, auto_reset=False, name=None
-    ):
+    def __init__(self, *members, auto_clear=True, random_order=False, auto_reset=False, name=None):
         self._animation_members = []
         self._animation_timings = []
         for x, item in enumerate(members):

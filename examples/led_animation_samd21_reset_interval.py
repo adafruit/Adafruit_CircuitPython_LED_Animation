@@ -16,9 +16,11 @@ using a different board or form of NeoPixels.
 This example will run on SAMD21 (M0) Express boards (such as Circuit Playground Express or QT Py
 Haxpress), but not on SAMD21 non-Express boards (such as QT Py or Trinket).
 """
+
 import time
-import microcontroller
+
 import board
+import microcontroller
 import neopixel
 
 from adafruit_led_animation.animation.comet import Comet
@@ -37,4 +39,4 @@ while True:
     comet.animate()
 
     if time.monotonic() > 3600:  # After an hour passes, reset the board.
-        microcontroller.reset()  # pylint: disable=no-member
+        microcontroller.reset()

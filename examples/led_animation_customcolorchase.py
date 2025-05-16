@@ -9,17 +9,16 @@ a different form of NeoPixels.
 
 This example may not work on SAMD21 (M0) boards.
 """
+
 import board
 import neopixel
 
 from adafruit_led_animation.animation.customcolorchase import CustomColorChase
-from adafruit_led_animation.sequence import AnimationSequence
 
 # colorwheel only needed for rainbowchase example
-from adafruit_led_animation.color import colorwheel
-
 # Colors for customcolorchase examples
-from adafruit_led_animation.color import PINK, GREEN, RED, BLUE
+from adafruit_led_animation.color import BLUE, GREEN, PINK, RED, colorwheel
+from adafruit_led_animation.sequence import AnimationSequence
 
 # Update to match the pin connected to your NeoPixels
 pixel_pin = board.D5
@@ -27,15 +26,11 @@ pixel_pin = board.D5
 pixel_num = 30
 brightness = 0.3
 
-pixels = neopixel.NeoPixel(
-    pixel_pin, pixel_num, brightness=brightness, auto_write=False
-)
+pixels = neopixel.NeoPixel(pixel_pin, pixel_num, brightness=brightness, auto_write=False)
 
 # colors default to RAINBOW as defined in color.py
 custom_color_chase_rainbow = CustomColorChase(pixels, speed=0.1, size=2, spacing=3)
-custom_color_chase_rainbow_r = CustomColorChase(
-    pixels, speed=0.1, size=3, spacing=3, reverse=True
-)
+custom_color_chase_rainbow_r = CustomColorChase(pixels, speed=0.1, size=3, spacing=3, reverse=True)
 
 # Example with same colors as RainbowChase
 steps = 30

@@ -25,6 +25,7 @@ Implementation Notes
 
 
 """
+
 from adafruit_led_animation.animation.comet import Comet
 from adafruit_led_animation.color import BLACK
 
@@ -50,7 +51,6 @@ class MulticolorComet(Comet):
                             to remain on and set to a color after the comet passes.
     """
 
-    # pylint: disable=too-many-arguments,too-many-instance-attributes
     def __init__(
         self,
         pixel_object,

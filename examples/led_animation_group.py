@@ -10,18 +10,17 @@ pixel objects such as the built-in NeoPixels on a Circuit Playground Bluefruit a
 This example is written for Circuit Playground Bluefruit and a 30-pixel NeoPixel strip connected to
 pad A1. It does not work on Circuit Playground Express.
 """
+
 import board
 import neopixel
 from adafruit_circuitplayground import cp
 
+from adafruit_led_animation import color
 from adafruit_led_animation.animation.blink import Blink
-from adafruit_led_animation.animation.comet import Comet
 from adafruit_led_animation.animation.chase import Chase
-
+from adafruit_led_animation.animation.comet import Comet
 from adafruit_led_animation.group import AnimationGroup
 from adafruit_led_animation.sequence import AnimationSequence
-
-from adafruit_led_animation import color
 
 strip_pixels = neopixel.NeoPixel(board.A1, 30, brightness=0.5, auto_write=False)
 cp.pixels.brightness = 0.5

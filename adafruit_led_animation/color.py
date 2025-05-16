@@ -23,8 +23,9 @@ Implementation Notes
 * Adafruit CircuitPython firmware for the supported boards:
   https://circuitpython.org/downloads
 """
+
 # Makes colorwheel() available.
-from rainbowio import colorwheel  # pylint: disable=unused-import
+from rainbowio import colorwheel
 
 RED = (255, 0, 0)
 """Red."""

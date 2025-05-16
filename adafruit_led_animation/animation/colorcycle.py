@@ -41,7 +41,6 @@ class ColorCycle(Animation):
     :param start_color: An index (from 0) for which color to start from. Default 0 (first color).
     """
 
-    # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, colors=RAINBOW, name=None, start_color=0):
         self.colors = colors
         self.start_color = start_color

@@ -42,7 +42,6 @@ class Volume(Animation):
     :param float max_volume: what volume is considered maximum where everything is lit up
     """
 
-    # pylint: disable=too-many-arguments
     def __init__(
         self,
         pixel_object,
@@ -103,7 +102,6 @@ class Volume(Animation):
                 self._num_pixels,
             )
         )
-        # pylint: disable=consider-using-min-builtin
         if lit_pixels > self._num_pixels:
             lit_pixels = self._num_pixels
 

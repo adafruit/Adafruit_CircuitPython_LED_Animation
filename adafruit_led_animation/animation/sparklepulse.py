@@ -43,7 +43,6 @@ class SparklePulse(Sparkle):
     :param min_intensity: The minimum intensity to pulse, between 0 and 1.0.  Default 0.
     """
 
-    # pylint: disable=too-many-arguments
     def __init__(
         self,
         pixel_object,
@@ -60,9 +59,7 @@ class SparklePulse(Sparkle):
         self.min_intensity = min_intensity
         self.max_intensity = max_intensity
         dotstar = len(pixel_object) == 4 and isinstance(pixel_object[0][-1], float)
-        super().__init__(
-            pixel_object, speed=speed, color=color, num_sparkles=1, name=name
-        )
+        super().__init__(pixel_object, speed=speed, color=color, num_sparkles=1, name=name)
         self._generator = pulse_generator(self._period, self, dotstar_pwm=dotstar)
 
     def _set_color(self, color):
@@ -88,7 +85,5 @@ class SparklePulse(Sparkle):
         self.reset()
 
     def reset(self):
-        dotstar = len(self.pixel_object) == 4 and isinstance(
-            self.pixel_object[0][-1], float
-        )
+        dotstar = len(self.pixel_object) == 4 and isinstance(self.pixel_object[0][-1], float)
         self._generator = pulse_generator(self._period, self, dotstar_pwm=dotstar)

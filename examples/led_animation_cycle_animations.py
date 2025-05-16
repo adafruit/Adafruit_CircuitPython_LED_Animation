@@ -8,14 +8,16 @@ two animations
 For NeoPixel FeatherWing. Update pixel_pin and pixel_num to match your wiring if using
 a different form of NeoPixels.
 """
+
 import time
+
 import board
 import neopixel
 from digitalio import DigitalInOut, Direction, Pull
 
 from adafruit_led_animation.animation.solid import Solid
+from adafruit_led_animation.color import BLUE, RED
 from adafruit_led_animation.sequence import AnimationSequence
-from adafruit_led_animation.color import RED, BLUE
 
 # Update to match the pin connected to your NeoPixels
 pixel_pin = board.D6

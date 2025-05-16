@@ -12,7 +12,7 @@ try:
     from micropython import const
 except ImportError:
 
-    def const(value):  # pylint: disable=missing-docstring
+    def const(value):
         return value
 
 

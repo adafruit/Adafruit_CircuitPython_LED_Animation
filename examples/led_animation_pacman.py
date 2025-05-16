@@ -4,8 +4,10 @@
 """
 This example animates a Pacman on a NeoPixel strip.
 """
+
 import board
 import neopixel
+
 from adafruit_led_animation.animation.pacman import Pacman
 from adafruit_led_animation.color import WHITE
 

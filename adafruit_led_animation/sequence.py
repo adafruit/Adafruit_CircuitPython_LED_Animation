@@ -27,7 +27,9 @@ Implementation Notes
 """
 
 import random
+
 from adafruit_led_animation.color import BLACK
+
 from . import MS_PER_SECOND, monotonic_ms
 
 __version__ = "0.0.0+auto.0"
@@ -73,7 +75,6 @@ class AnimationSequence:
             animations.animate()
     """
 
-    # pylint: disable=too-many-instance-attributes, too-many-arguments
     def __init__(
         self,
         *members,
@@ -82,16 +83,12 @@ class AnimationSequence:
         random_order=False,
         auto_reset=False,
         advance_on_cycle_complete=False,
-        name=None
+        name=None,
     ):
         if advance_interval and advance_on_cycle_complete:
-            raise ValueError(
-                "Cannot use both advance_interval and advance_on_cycle_complete."
-            )
+            raise ValueError("Cannot use both advance_interval and advance_on_cycle_complete.")
         self._members = members
-        self._advance_interval = (
-            advance_interval * MS_PER_SECOND if advance_interval else None
-        )
+        self._advance_interval = advance_interval * MS_PER_SECOND if advance_interval else None
         self._last_advance = monotonic_ms()
         self._current = 0
         self.auto_clear = auto_clear
@@ -115,7 +112,7 @@ class AnimationSequence:
     on_cycle_complete_supported = True
 
     def __str__(self):
-        return "<%s: %s>" % (self.__class__.__name__, self.name)
+        return f"<{self.__class__.__name__}: {self.name}>"
 
     def on_cycle_complete(self):
         """
@@ -128,7 +125,7 @@ class AnimationSequence:
             for callback in self._also_notify:
                 callback(self)
 
-    def _sequence_complete(self, animation):  # pylint: disable=unused-argument
+    def _sequence_complete(self, animation):
         if self.advance_on_cycle_complete:
             self._advance()
 

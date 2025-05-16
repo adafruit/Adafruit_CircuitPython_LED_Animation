@@ -24,16 +24,17 @@ Implementation Notes
 """
 
 import time
+
 from adafruit_led_animation.animation import Animation
 from adafruit_led_animation.color import (
     BLACK,
-    YELLOW,
-    RED,
-    PURPLE,
+    BLUE,
     CYAN,
     ORANGE,
-    BLUE,
+    PURPLE,
+    RED,
     WHITE,
+    YELLOW,
 )
 
 ORANGEYELLOW = (255, 136, 0)
@@ -47,7 +48,6 @@ class Pacman(Animation):
     :param float speed: Animation speed rate in seconds, e.g. ``0.1``.
     """
 
-    # pylint: disable=too-many-arguments, too-many-branches
     def __init__(
         self,
         pixel_object,

@@ -32,13 +32,12 @@ from adafruit_led_animation import MS_PER_SECOND, monotonic_ms
 
 
 class Animation:
-    # pylint: disable=too-many-instance-attributes
     """
     Base class for animations.
     """
+
     on_cycle_complete_supported = False
 
-    # pylint: disable=too-many-arguments
     def __init__(self, pixel_object, speed, color, peers=None, paused=False, name=None):
         self.pixel_object = pixel_object
         self.pixel_object.auto_write = False
@@ -61,7 +60,7 @@ class Animation:
         """Number of animation cycles completed."""
 
     def __str__(self):
-        return "<%s: %s>" % (self.__class__.__name__, self.name)
+        return f"<{self.__class__.__name__}: {self.name}>"
 
     def animate(self, show=True):
         """

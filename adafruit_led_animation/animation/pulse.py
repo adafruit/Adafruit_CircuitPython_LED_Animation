@@ -42,7 +42,6 @@ class Pulse(Animation):
     :param max_intensity: Highest brightness level of the pulse. Default 1.
     """
 
-    # pylint: disable=too-many-arguments
     def __init__(
         self,
         pixel_object,
@@ -72,10 +71,8 @@ class Pulse(Animation):
         """
         Resets the animation.
         """
-        dotstar = len(self.pixel_object[0]) == 4 and isinstance(
-            self.pixel_object[0][-1], float
-        )
-        from adafruit_led_animation.pulse_generator import (  # pylint: disable=import-outside-toplevel
+        dotstar = len(self.pixel_object[0]) == 4 and isinstance(self.pixel_object[0][-1], float)
+        from adafruit_led_animation.pulse_generator import (
             pulse_generator,
         )
 
