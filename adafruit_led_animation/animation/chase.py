@@ -51,10 +51,10 @@ class Chase(Animation):
         self._overflow = len(pixel_object) % self._repeat_width
         self._direction = 1 if not reverse else -1
         self._reverse = reverse
-        self._offset = 0
+        self._offset = 0 if not reverse else len(pixel_object) - size
 
         def _resetter():
-            self._offset = 0
+            self._offset = 0 if not reverse else len(self.pixel_object) - size
             self._reverse = reverse
             self._direction = 1 if not reverse else -1
 
