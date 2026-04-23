@@ -102,8 +102,7 @@ class Volume(Animation):
                 self._num_pixels,
             )
         )
-        if lit_pixels > self._num_pixels:
-            lit_pixels = self._num_pixels
+        lit_pixels = min(lit_pixels, self._num_pixels)
 
         self.pixel_object[0:lit_pixels] = [(red, green, blue)] * lit_pixels
         self.pixel_object[lit_pixels : self._num_pixels] = [(0, 0, 0)] * (

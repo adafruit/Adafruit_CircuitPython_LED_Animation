@@ -150,7 +150,7 @@ class Comet(Animation):
             if self.bounce:
                 self.reverse = not self.reverse
             elif self._ring:
-                self._tail_start = self._tail_start % self._num_pixels
+                self._tail_start %= self._num_pixels
             else:
                 self.reset()
 
@@ -166,4 +166,4 @@ class Comet(Animation):
             self._tail_start = -self._tail_length - 1
 
         if self._ring:
-            self._tail_start = self._tail_start % self._num_pixels
+            self._tail_start %= self._num_pixels

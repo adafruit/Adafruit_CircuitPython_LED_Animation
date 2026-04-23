@@ -95,8 +95,8 @@ class Pacman(Animation):
             self.ghost_timer = time.monotonic()
 
         if self.pacman[1] >= self.num_leds - 2:
-            self.direction = self.direction * -1
-            self.black_dir = self.black_dir * -1
+            self.direction *= -1
+            self.black_dir *= -1
             for ghost in self.ghosts:
                 ghost[0] = BLUE
 
@@ -120,7 +120,7 @@ class Pacman(Animation):
             ghost[1] += self.direction
 
         if self.ghosts[3][1] <= 0:
-            self.direction = self.direction * -1
-            self.black_dir = self.black_dir * -1
+            self.direction *= -1
+            self.black_dir *= -1
             for i, ghost in enumerate(self.ghosts):
                 ghost[0] = self.ghosts_original[i][0]
