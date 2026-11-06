@@ -32,6 +32,11 @@ from adafruit_led_animation.color import BLACK
 
 from . import MS_PER_SECOND, monotonic_ms
 
+try:
+    from typing import Any, Callable, Optional
+except ImportError:
+    pass
+
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
 
@@ -77,14 +82,14 @@ class AnimationSequence:
 
     def __init__(
         self,
-        *members,
-        advance_interval=None,
-        auto_clear=True,
-        random_order=False,
-        auto_reset=False,
-        advance_on_cycle_complete=False,
-        name=None,
-    ):
+        *members: Any,
+        advance_interval: Optional[float] = None,
+        auto_clear: bool = True,
+        random_order: bool = False,
+        auto_reset: bool = False,
+        advance_on_cycle_complete: bool = False,
+        name: Optional[str] = None,
+    ) -> None:
         if advance_interval and advance_on_cycle_complete:
             raise ValueError("Cannot use both advance_interval and advance_on_cycle_complete.")
         self._members = members
@@ -111,10 +116,10 @@ class AnimationSequence:
 
     on_cycle_complete_supported = True
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"<{self.__class__.__name__}: {self.name}>"
 
-    def on_cycle_complete(self):
+    def on_cycle_complete(self) -> None:
         """
         Called by some animations when they complete an animation cycle.
         Animations that support cycle complete notifications will have X property set to False.
@@ -125,11 +130,11 @@ class AnimationSequence:
             for callback in self._also_notify:
                 callback(self)
 
-    def _sequence_complete(self, animation):
+    def _sequence_complete(self, animation: Any) -> None:
         if self.advance_on_cycle_complete:
             self._advance()
 
-    def add_cycle_complete_receiver(self, callback):
+    def add_cycle_complete_receiver(self, callback: Callable[[Any], Any]) -> None:
         """
         Adds an additional callback when the cycle completes.
 
@@ -138,7 +143,7 @@ class AnimationSequence:
         """
         self._also_notify.append(callback)
 
-    def _auto_advance(self):
+    def _auto_advance(self) -> None:
         if not self._advance_interval:
             return
         now = monotonic_ms()
@@ -146,7 +151,7 @@ class AnimationSequence:
             self._last_advance = now
             self._advance()
 
-    def _advance(self):
+    def _advance(self) -> None:
         if self.auto_reset:
             self.current_animation.reset()
         if self.auto_clear:
@@ -156,7 +161,7 @@ class AnimationSequence:
         else:
             self.next()
 
-    def activate(self, index):
+    def activate(self, index: Any) -> None:
         """
         Activates a specific animation.
         """
@@ -167,7 +172,7 @@ class AnimationSequence:
         if self._color:
             self.current_animation.color = self._color
 
-    def next(self):
+    def next(self) -> None:
         """
         Jump to the next animation.
         """
@@ -176,20 +181,20 @@ class AnimationSequence:
             self.on_cycle_complete()
         self.activate(current % len(self._members))
 
-    def previous(self):
+    def previous(self) -> None:
         """
         Jump to the previous animation.
         """
         current = self._current - 1
         self.activate(current % len(self._members))
 
-    def random(self):
+    def random(self) -> None:
         """
         Jump to a random animation.
         """
         self.activate(random.randint(0, len(self._members) - 1))
 
-    def animate(self, show=True):
+    def animate(self, show: bool = True) -> bool:
         """
         Call animate() from your code's main loop.  It will draw the current animation
         or go to the next animation based on the advance_interval if set.
@@ -201,31 +206,31 @@ class AnimationSequence:
         return self.current_animation.animate(show)
 
     @property
-    def current_animation(self):
+    def current_animation(self) -> Any:
         """
         Returns the current animation in the sequence.
         """
         return self._members[self._current]
 
     @property
-    def color(self):
+    def color(self) -> Any:
         """
         Use this property to change the color of all animations in the sequence.
         """
         return self._color
 
     @color.setter
-    def color(self, color):
+    def color(self, color: Any) -> None:
         self._color = color
         self.current_animation.color = color
 
-    def fill(self, color):
+    def fill(self, color: Any) -> None:
         """
         Fills the current animation with a color.
         """
         self.current_animation.fill(color)
 
-    def freeze(self):
+    def freeze(self) -> None:
         """
         Freeze the current animation in the sequence.
         Also stops auto_advance.
@@ -236,7 +241,7 @@ class AnimationSequence:
         self._paused_at = monotonic_ms()
         self.current_animation.freeze()
 
-    def resume(self):
+    def resume(self) -> None:
         """
         Resume the current animation in the sequence, and resumes auto advance if enabled.
         """
@@ -248,13 +253,13 @@ class AnimationSequence:
         self._paused_at = 0
         self.current_animation.resume()
 
-    def reset(self):
+    def reset(self) -> None:
         """
         Resets the current animation.
         """
         self.current_animation.reset()
 
-    def show(self):
+    def show(self) -> None:
         """
         Draws the current animation group members.
         """
@@ -292,16 +297,16 @@ class AnimateOnce(AnimationSequence):
 
     """
 
-    def __init__(self, *members, **kwargs):
+    def __init__(self, *members: Any, **kwargs: Any) -> None:
         kwargs["advance_on_cycle_complete"] = True
         kwargs["advance_interval"] = 0
         super().__init__(*members, **kwargs)
         self._running = True
 
-    def on_cycle_complete(self):
+    def on_cycle_complete(self) -> None:
         super().on_cycle_complete()
         self._running = False
 
-    def animate(self, show=True):
+    def animate(self, show: bool = True) -> bool:
         super().animate(show)
         return self._running

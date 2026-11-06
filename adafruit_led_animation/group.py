@@ -31,6 +31,11 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git
 
 from adafruit_led_animation.animation import Animation
 
+try:
+    from typing import Any, Callable, Optional
+except ImportError:
+    pass
+
 
 class AnimationGroup:
     """
@@ -84,7 +89,7 @@ class AnimationGroup:
                 animations.animate()
     """
 
-    def __init__(self, *members, sync=False, name=None):
+    def __init__(self, *members: Animation, sync: bool = False, name: Optional[str] = None) -> None:
         if not members:
             raise ValueError("At least one member required in an AnimationGroup")
         self.draw_count = 0
@@ -106,13 +111,13 @@ class AnimationGroup:
         self._members[-1].add_cycle_complete_receiver(self._group_done)
         self.on_cycle_complete_supported = self._members[-1].on_cycle_complete_supported
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"<AnimationGroup {self.__class__.__name__}: {self.name}>"
 
-    def _group_done(self, animation):
+    def _group_done(self, animation: Animation) -> None:
         self.on_cycle_complete()
 
-    def on_cycle_complete(self):
+    def on_cycle_complete(self) -> None:
         """
         Called by some animations when they complete an animation cycle.
         Animations that support cycle complete notifications will have X property set to False.
@@ -123,7 +128,7 @@ class AnimationGroup:
             for callback in self._also_notify:
                 callback(self)
 
-    def add_cycle_complete_receiver(self, callback):
+    def add_cycle_complete_receiver(self, callback: Callable[[Any], Any]) -> None:
         """
         Adds an additional callback when the cycle completes.
 
@@ -132,7 +137,7 @@ class AnimationGroup:
         """
         self._also_notify.append(callback)
 
-    def animate(self, show=True):
+    def animate(self, show: bool = True) -> bool:
         """
         Call animate() from your code's main loop.  It will draw all of the animations
         in the group.
@@ -159,46 +164,46 @@ class AnimationGroup:
         return ret
 
     @property
-    def color(self):
+    def color(self) -> Any:
         """
         Use this property to change the color of all members of the animation group.
         """
         return None
 
     @color.setter
-    def color(self, color):
+    def color(self, color: Any) -> None:
         for item in self._members:
             item.color = color
 
-    def fill(self, color):
+    def fill(self, color: Any) -> None:
         """
         Fills all pixel objects in the group with a color.
         """
         for item in self._members:
             item.fill(color)
 
-    def freeze(self):
+    def freeze(self) -> None:
         """
         Freeze all animations in the group.
         """
         for item in self._members:
             item.freeze()
 
-    def resume(self):
+    def resume(self) -> None:
         """
         Resume all animations in the group.
         """
         for item in self._members:
             item.resume()
 
-    def reset(self):
+    def reset(self) -> None:
         """
         Resets the animations in the group.
         """
         for item in self._members:
             item.reset()
 
-    def show(self):
+    def show(self) -> None:
         """
         Draws the current animation group members.
         """

@@ -27,6 +27,11 @@ Implementation Notes
 # Makes colorwheel() available.
 from rainbowio import colorwheel
 
+try:
+    from typing import Any, Tuple, Union
+except ImportError:
+    pass
+
 RED = (255, 0, 0)
 """Red."""
 YELLOW = (255, 150, 0)
@@ -75,7 +80,7 @@ RAINBOW = (RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE)
 Includes, in order: red, orange, yellow, green, blue, and purple."""
 
 
-def calculate_intensity(color, intensity=1.0):
+def calculate_intensity(color: Any, intensity: float = 1.0) -> Union[int, Tuple[int, ...]]:
     """
     Takes a RGB[W] color tuple and adjusts the intensity.
     :param float intensity:
