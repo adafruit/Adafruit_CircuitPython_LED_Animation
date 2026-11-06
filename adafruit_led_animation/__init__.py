@@ -9,10 +9,15 @@ Author(s): Kattni Rembor
 """
 
 try:
+    from typing import Any
+except ImportError:
+    pass
+
+try:
     from micropython import const
 except ImportError:
 
-    def const(value):
+    def const(value: Any) -> Any:
         return value
 
 
@@ -21,7 +26,7 @@ try:
 
     monotonic_ns()  # Test monotonic_ns in 6.x
 
-    def monotonic_ms():
+    def monotonic_ms() -> int:
         """
         Return monotonic time in milliseconds.
         """
@@ -30,7 +35,7 @@ try:
 except (ImportError, NotImplementedError):
     import time
 
-    def monotonic_ms():
+    def monotonic_ms() -> int:
         """
         Implementation of monotonic_ms for platforms without time.monotonic_ns
         """

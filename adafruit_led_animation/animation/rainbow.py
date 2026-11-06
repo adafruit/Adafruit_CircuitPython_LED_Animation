@@ -29,6 +29,11 @@ from adafruit_led_animation import MS_PER_SECOND, monotonic_ms
 from adafruit_led_animation.animation import Animation
 from adafruit_led_animation.color import BLACK, colorwheel
 
+try:
+    from typing import Any, Optional
+except ImportError:
+    pass
+
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
 
@@ -46,7 +51,15 @@ class Rainbow(Animation):
                                     (default True).
     """
 
-    def __init__(self, pixel_object, speed, period=5, step=1, name=None, precompute_rainbow=True):
+    def __init__(
+        self,
+        pixel_object: Any,
+        speed: float,
+        period: float = 5,
+        step: float = 1,
+        name: Optional[str] = None,
+        precompute_rainbow: bool = True,
+    ) -> None:
         super().__init__(pixel_object, speed, BLACK, name=name)
         self._period = period
         self._step = step
@@ -96,7 +109,7 @@ class Rainbow(Animation):
                 self.cycle_complete = True
             yield
 
-    def _draw_precomputed(self, num_pixels, wheel_index):
+    def _draw_precomputed(self, num_pixels: int, wheel_index: int) -> None:
         for i in range(0, num_pixels, len(self.colors)):
             num = len(self.colors)
             if i + len(self.colors) > num_pixels:

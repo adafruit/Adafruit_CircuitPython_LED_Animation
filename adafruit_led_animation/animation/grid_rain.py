@@ -34,6 +34,11 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git
 
 from adafruit_led_animation.color import BLACK, GREEN, calculate_intensity, colorwheel
 
+try:
+    from typing import Any, List, Optional
+except ImportError:
+    pass
+
 
 class Rain(Animation):
     """
@@ -47,7 +52,16 @@ class Rain(Animation):
     :param background: Background color (Default BLACK).
     """
 
-    def __init__(self, grid_object, speed, color, count=1, length=3, background=BLACK, name=None):
+    def __init__(
+        self,
+        grid_object: Any,
+        speed: float,
+        color: Any,
+        count: int = 1,
+        length: int = 3,
+        background: Any = BLACK,
+        name: Optional[str] = None,
+    ) -> None:
         self._count = count
         self._length = length
         self._background = background
@@ -80,7 +94,7 @@ class Rain(Animation):
                 if y >= 0:
                     self.pixel_object[x, y] = color
 
-    def _generate_droplet(self, x, length):
+    def _generate_droplet(self, x: int, length: int) -> List[List[Any]]:
         return [[n, self.color] for n in range(-length, 0)]
 
 
@@ -89,10 +103,18 @@ class RainbowRain(Rain):
     Rainbow Rain animation.
     """
 
-    def __init__(self, grid_object, speed, count=1, length=3, background=BLACK, name=None):
+    def __init__(
+        self,
+        grid_object: Any,
+        speed: float,
+        count: int = 1,
+        length: int = 3,
+        background: Any = BLACK,
+        name: Optional[str] = None,
+    ) -> None:
         super().__init__(grid_object, speed, BLACK, count, length, background, name)
 
-    def _generate_droplet(self, x, length):
+    def _generate_droplet(self, x: int, length: int) -> List[List[Any]]:
         color = colorwheel(random.randint(0, 255))
         return [
             [n, calculate_intensity(color, 1.0 - -((n + 1) / (length + 1)))]
@@ -107,17 +129,17 @@ class MatrixRain(Rain):
 
     def __init__(
         self,
-        grid_object,
-        speed,
-        color=GREEN,
-        count=1,
-        length=6,
-        background=(0, 32, 0),
-        name=None,
-    ):
+        grid_object: Any,
+        speed: float,
+        color: Any = GREEN,
+        count: int = 1,
+        length: int = 6,
+        background: Any = (0, 32, 0),
+        name: Optional[str] = None,
+    ) -> None:
         super().__init__(grid_object, speed, color, count, length, background, name)
 
-    def _generate_droplet(self, x, length):
+    def _generate_droplet(self, x: int, length: int) -> List[List[Any]]:
         return [
             [n, calculate_intensity(self.color, random.randint(10, 100) * 1.0)]
             for n in range(-length, 0)

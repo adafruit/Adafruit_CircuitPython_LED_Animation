@@ -27,6 +27,11 @@ Implementation Notes
 
 import math
 
+try:
+    from typing import Any, Callable
+except ImportError:
+    pass
+
 
 class PixelMap:
     """
@@ -101,7 +106,9 @@ class PixelMap:
 
     """
 
-    def __init__(self, strip, pixel_ranges, individual_pixels=False):
+    def __init__(
+        self, strip: Any, pixel_ranges: Any, individual_pixels: bool = False
+    ) -> None:
         self._pixels = strip
         self._ranges = pixel_ranges
 
@@ -111,21 +118,21 @@ class PixelMap:
         self._individual_pixels = individual_pixels
         self._expand_ranges()
 
-    def _expand_ranges(self):
+    def _expand_ranges(self) -> None:
         if not self._individual_pixels:
             self._ranges = [list(range(start, end)) for start, end in self._ranges]
             return
         if isinstance(self._ranges[0], int):
             self._ranges = [[n] for n in self._ranges]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "[" + ", ".join([str(self[x]) for x in range(self.n)]) + "]"
 
-    def _set_pixels(self, index, val):
+    def _set_pixels(self, index: int, val: Any) -> None:
         for pixel in self._ranges[index]:
             self._pixels[pixel] = val
 
-    def __setitem__(self, index, val):
+    def __setitem__(self, index: Any, val: Any) -> None:
         if isinstance(index, slice):
             start, stop, step = index.indices(len(self._ranges))
             length = stop - start
@@ -141,7 +148,7 @@ class PixelMap:
         if self._pixels.auto_write:
             self.show()
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: Any) -> Any:
         if isinstance(index, slice):
             out = []
             for in_i in range(*index.indices(len(self._ranges))):
@@ -153,21 +160,21 @@ class PixelMap:
             raise IndexError
         return self._pixels[self._ranges[index][0]]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._ranges)
 
     @property
-    def brightness(self):
+    def brightness(self) -> float:
         """
         brightness from the underlying strip.
         """
         return self._pixels.brightness
 
     @brightness.setter
-    def brightness(self, brightness):
+    def brightness(self, brightness: float) -> None:
         self._pixels.brightness = min(max(brightness, 0.0), 1.0)
 
-    def fill(self, color):
+    def fill(self, color: Any) -> None:
         """
         Fill the used pixel ranges with color.
 
@@ -177,25 +184,27 @@ class PixelMap:
             for pixel in pixels:
                 self._pixels[pixel] = color
 
-    def show(self):
+    def show(self) -> None:
         """
         Shows the pixels on the underlying strip.
         """
         self._pixels.show()
 
     @property
-    def auto_write(self):
+    def auto_write(self) -> bool:
         """
         auto_write from the underlying strip.
         """
         return self._pixels.auto_write
 
     @auto_write.setter
-    def auto_write(self, value):
+    def auto_write(self, value: bool) -> None:
         self._pixels.auto_write = value
 
     @classmethod
-    def vertical_lines(cls, pixel_object, width, height, gridmap):
+    def vertical_lines(
+        cls, pixel_object: Any, width: int, height: int, gridmap: Callable[[int, int], int]
+    ) -> "PixelMap":
         """
         Generate a PixelMap of horizontal lines on a strip arranged in a grid.
 
@@ -222,7 +231,9 @@ class PixelMap:
         return cls(pixel_object, mapping, individual_pixels=True)
 
     @classmethod
-    def horizontal_lines(cls, pixel_object, width, height, gridmap):
+    def horizontal_lines(
+        cls, pixel_object: Any, width: int, height: int, gridmap: Callable[[int, int], int]
+    ) -> "PixelMap":
         """
         Generate a PixelMap of horizontal lines on a strip arranged in a grid.
 
@@ -248,7 +259,7 @@ class PixelMap:
         return cls(pixel_object, mapping, individual_pixels=True)
 
 
-def vertical_strip_gridmap(height, alternating=True):
+def vertical_strip_gridmap(height: int, alternating: bool = True) -> Callable[[int, int], int]:
     """
     Returns a function that determines the pixel number for a grid with strips arranged vertically.
 
@@ -257,7 +268,7 @@ def vertical_strip_gridmap(height, alternating=True):
     :return: mapper(x, y)
     """
 
-    def mapper(x, y):
+    def mapper(x: int, y: int) -> int:
         if alternating and x % 2:
             return x * height + (height - 1 - y)
         return x * height + y
@@ -265,7 +276,7 @@ def vertical_strip_gridmap(height, alternating=True):
     return mapper
 
 
-def horizontal_strip_gridmap(width, alternating=True):
+def horizontal_strip_gridmap(width: int, alternating: bool = True) -> Callable[[int, int], int]:
     """
     Determines the pixel number for a grid with strips arranged horizontally.
 
@@ -274,7 +285,7 @@ def horizontal_strip_gridmap(width, alternating=True):
     :return: mapper(x, y)
     """
 
-    def mapper(x, y):
+    def mapper(x: int, y: int) -> int:
         if alternating and y % 2:
             return y * width + (width - 1 - x)
         return y * width + x
@@ -303,7 +314,7 @@ class PixelSubset(PixelMap):
         pixels.show()
     """
 
-    def __init__(self, pixel_object, start, end):
+    def __init__(self, pixel_object: Any, start: int, end: int) -> None:
         super().__init__(
             pixel_object,
             pixel_ranges=[[n] for n in range(start, end)],

@@ -29,6 +29,11 @@ Implementation Notes
 from adafruit_led_animation.animation import Animation
 from adafruit_led_animation.color import BLACK, calculate_intensity
 
+try:
+    from typing import Any, Optional
+except ImportError:
+    pass
+
 
 class Comet(Animation):
     """
@@ -51,16 +56,16 @@ class Comet(Animation):
 
     def __init__(
         self,
-        pixel_object,
-        speed,
-        color,
-        background_color=BLACK,
-        tail_length=0,
-        reverse=False,
-        bounce=False,
-        name=None,
-        ring=False,
-    ):
+        pixel_object: Any,
+        speed: float,
+        color: Any,
+        background_color: Any = BLACK,
+        tail_length: int = 0,
+        reverse: bool = False,
+        bounce: bool = False,
+        name: Optional[str] = None,
+        ring: bool = False,
+    ) -> None:
         if tail_length == 0:
             tail_length = len(pixel_object) // 4
         if bounce and ring:
@@ -86,7 +91,7 @@ class Comet(Animation):
 
     on_cycle_complete_supported = True
 
-    def _set_color(self, color):
+    def _set_color(self, color: Any) -> None:
         self._comet_colors = [self._background_color]
         for n in range(self._tail_length):
             self._comet_colors.append(calculate_intensity(color, n * self._color_step + 0.05))

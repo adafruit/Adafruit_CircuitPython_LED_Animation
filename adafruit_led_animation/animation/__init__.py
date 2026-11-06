@@ -30,6 +30,11 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git
 
 from adafruit_led_animation import MS_PER_SECOND, monotonic_ms
 
+try:
+    from typing import Any, Callable, List, Optional
+except ImportError:
+    pass
+
 
 class Animation:
     """
@@ -38,7 +43,15 @@ class Animation:
 
     on_cycle_complete_supported = False
 
-    def __init__(self, pixel_object, speed, color, peers=None, paused=False, name=None):
+    def __init__(
+        self,
+        pixel_object: Any,
+        speed: float,
+        color: Any,
+        peers: Optional[List["Animation"]] = None,
+        paused: bool = False,
+        name: Optional[str] = None,
+    ) -> None:
         self.pixel_object = pixel_object
         self.pixel_object.auto_write = False
         self._peers = [self] + peers if peers is not None else [self]
@@ -62,7 +75,7 @@ class Animation:
     def __str__(self):
         return f"<{self.__class__.__name__}: {self.name}>"
 
-    def animate(self, show=True):
+    def animate(self, show: bool = True) -> bool:
         """
         Call animate() from your code's main loop.  It will draw the animation draw() at intervals
         configured by the speed property (set from init).
@@ -125,7 +138,7 @@ class Animation:
         return self._peers[1:]
 
     @peers.setter
-    def peers(self, peer_list):
+    def peers(self, peer_list: Optional[List["Animation"]]) -> None:
         """
         Set the animation's peers.
         :param list peer_list: List of peer animations.
@@ -148,7 +161,7 @@ class Animation:
         self._time_left_at_pause = 0
         self._paused = False
 
-    def fill(self, color):
+    def fill(self, color: Any) -> None:
         """
         Fills the pixel object with a color.
         """
@@ -163,14 +176,14 @@ class Animation:
         return self._color
 
     @color.setter
-    def color(self, color):
+    def color(self, color: Any) -> None:
         if self._color == color:
             return
         if isinstance(color, int):
             color = (color >> 16 & 0xFF, color >> 8 & 0xFF, color & 0xFF)
         self._set_color(color)
 
-    def _set_color(self, color):
+    def _set_color(self, color: Any) -> None:
         """
         Called after the color is changed, which includes at initialization.
         Override as needed.
@@ -185,7 +198,7 @@ class Animation:
         return self._speed_ms / MS_PER_SECOND
 
     @speed.setter
-    def speed(self, seconds):
+    def speed(self, seconds: float) -> None:
         self._speed_ms = int(seconds * MS_PER_SECOND)
 
     def on_cycle_complete(self):
@@ -199,7 +212,7 @@ class Animation:
             for callback in self._also_notify:
                 callback(self)
 
-    def add_cycle_complete_receiver(self, callback):
+    def add_cycle_complete_receiver(self, callback: Callable[["Animation"], Any]) -> None:
         """
         Adds an additional callback when the cycle completes.
 

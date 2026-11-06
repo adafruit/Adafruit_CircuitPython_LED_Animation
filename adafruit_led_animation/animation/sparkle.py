@@ -29,6 +29,11 @@ import random
 
 from adafruit_led_animation.animation import Animation
 
+try:
+    from typing import Any, Optional
+except ImportError:
+    pass
+
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation.git"
 
@@ -44,7 +49,15 @@ class Sparkle(Animation):
     :param mask: array to limit sparkles within range of the mask
     """
 
-    def __init__(self, pixel_object, speed, color, num_sparkles=1, name=None, mask=None):
+    def __init__(
+        self,
+        pixel_object: Any,
+        speed: float,
+        color: Any,
+        num_sparkles: int = 1,
+        name: Optional[str] = None,
+        mask: Any = None,
+    ) -> None:
         if len(pixel_object) < 2:
             raise ValueError("Sparkle needs at least 2 pixels")
         if mask:
@@ -61,7 +74,7 @@ class Sparkle(Animation):
         self._pixels = []
         super().__init__(pixel_object, speed, color, name=name)
 
-    def _set_color(self, color):
+    def _set_color(self, color: Any) -> None:
         half_color = tuple(color[rgb] // 4 for rgb in range(len(color)))
         dim_color = tuple(color[rgb] // 10 for rgb in range(len(color)))
         for pixel in range(len(self.pixel_object)):
