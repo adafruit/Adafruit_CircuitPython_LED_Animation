@@ -80,9 +80,7 @@ RAINBOW = (RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE)
 Includes, in order: red, orange, yellow, green, blue, and purple."""
 
 
-def calculate_intensity(
-    color: Any, intensity: float = 1.0
-) -> Union[int, Tuple[int, ...]]:
+def calculate_intensity(color: Any, intensity: float = 1.0) -> Union[int, Tuple[int, ...]]:
     """
     Takes a RGB[W] color tuple and adjusts the intensity.
     :param float intensity:

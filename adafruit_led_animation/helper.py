@@ -106,9 +106,7 @@ class PixelMap:
 
     """
 
-    def __init__(
-        self, strip: Any, pixel_ranges: Any, individual_pixels: bool = False
-    ) -> None:
+    def __init__(self, strip: Any, pixel_ranges: Any, individual_pixels: bool = False) -> None:
         self._pixels = strip
         self._ranges = pixel_ranges
 

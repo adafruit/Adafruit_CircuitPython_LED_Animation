@@ -89,9 +89,7 @@ class AnimationGroup:
                 animations.animate()
     """
 
-    def __init__(
-        self, *members: Animation, sync: bool = False, name: Optional[str] = None
-    ) -> None:
+    def __init__(self, *members: Animation, sync: bool = False, name: Optional[str] = None) -> None:
         if not members:
             raise ValueError("At least one member required in an AnimationGroup")
         self.draw_count = 0
